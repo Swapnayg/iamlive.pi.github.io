@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html translate="no" data-dpr="1" style="font-size: 37.52px;">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="robots" content="noindex,nofollow">
+  <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+  <title>Tiranga</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/block.js"></script>
+  <link rel="stylesheet" href="/5d/css/chunk3.css" />
+  <link rel="stylesheet" href="/5d/css/main.css" />
+  <link rel="stylesheet" href="/5d/css/chunk1.css" />
+  <link rel="stylesheet" href="/5d/css/chunk2.css" />
+  <link rel="shortcut icon" href="/images/bitbug_favicon.ico" type="image/x-icon">
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      background-color: #090909;
+      padding: 0;
+      margin: 0;
+    }
+
+    .slot-column {
+      margin-right: 0 !important;
+    }
+
+    .block-click {
+      pointer-events: none;
+    }
+
+    #result {
+      display: none;
+    }
+
+    .display-none {
+      display: none;
+    }
+    .modal {
+      display: blocked;
+      position: fixed;
+      z-index: 20001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+  }
+  .modal-content {
+    text-align: -webkit-center;
+    position: relative;
+    top: 20%;
+}
+.modal-content img {
+  width: 280px;
+  height: auto;
+  display: block;
+}
+.text-over-image {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+.text-over-image-l {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+.text-over-image-2 {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ff850f;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+}
+.text-over-image-3 {
+  position: absolute;
+  top: 72%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #8c4500;
+  font-size: 12px;
+  font-weight: none;
+  text-align: center;
+}
+.close-btn {
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background-color: transparent;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.close-x {
+  font-size: 35px;
+  font-family: none;
+  line-height: 1;
+  color: #fff;
+  padding: 0;
+  margin: 0;
+}
+
+.WinningTip__C-body-l2[data-v-e05c7c66] {
+  height: auto;
+  color: #fff;
+  font-size: .29333rem;
+  margin-bottom: .64rem;
+  text-align: center;
+}
+.WinningTip__C-body-l2 .line1[data-v-e05c7c66] {
+  height: auto;
+  width: 5.06667rem;
+  margin: auto;
+  font-size: .29333rem;
+  color: #fff;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  margin-top: .05333rem;
+}
+.WinningTip__C-body-l2 .line1>div[data-v-e05c7c66] {
+  width: .82667rem;
+  height: 1.44rem;
+}
+
+.WinningTip__C-body-l2 .line1>div .title[data-v-e05c7c66] {
+  width: .72rem;
+  height: .72rem;
+  background: #090909;
+  border-radius: 50% 50% 0 0;
+  font-size: .3rem;
+  line-height: .72rem;
+  position: relative;
+}
+
+.WinningTip__C-body-l2 .line1>div .num[data-v-e05c7c66] {
+  width: .64rem;
+  height: .64rem;
+  color: #fff;
+  border-radius: 50%;
+  line-height: .64rem;
+  text-align: center;
+  border: .01333rem solid #fff;
+  margin: .10667rem auto;
+}
+.WinningTip__C-body-l2 .line1>div .title[data-v-e05c7c66]:after {
+  content: "";
+  width: .10667rem;
+  height: .10667rem;
+  position: absolute;
+  bottom: 0;
+  right: -.10667rem;
+  z-index: 9;
+  background: var(--linearGradien-38);
+}
+
+  </style>
+</head>
+
+<body style="font-size: 12px;">
+  <div id="app">
+    <div data-v-42f27458="" class="mian game">
+      <div data-v-106b99c8="" data-v-42f27458="" class="navbar">
+        <div data-v-106b99c8="" class="navbar-left" onclick='location.href="/home"'>
+          <div data-v-42f27458="" data-v-106b99c8="" class="c-row c-row-middle-center">
+            <img data-v-42f27458="" data-v-106b99c8="" src="/images/back.c3244ab0.png" class="navbar-back">
+          </div>
+        </div>
+        <div data-v-106b99c8="" class="navbar-title">
+          <div data-v-42f27458="" data-v-106b99c8="" class="c-row c-row-middle-center">
+            <img data-v-42f27458="" data-v-106b99c8="" src="/index_files/h5setting_202401100608011fs2.png" class="logo"
+              style="width: 2.98667rem;height: 1.12rem;background-repeat: no-repeat;background-size: 2.98667rem 1.12rem;background-position: center;">
+          </div>
+        </div>
+        <div data-v-106b99c8="" class="navbar-right">
+          <div data-v-42f27458="" data-v-106b99c8="" class="c-row navbarR">
+            <div data-v-42f27458="" data-v-106b99c8="" class="c-row item c-row-middle-center"
+              onclick="location.href='/keFuMenu'">
+              <img data-v-42f27458="" data-v-106b99c8="" src="/images/audio.webp" class="item-audio">
+            </div>
+            <div data-v-42f27458="" data-v-106b99c8="" class="c-row item c-row-middle-center">
+              <img data-v-42f27458="" data-v-106b99c8="" src="/images/volume-up-line.webp" class="item-volume">
+            </div>
+          </div>
+        </div>
+      </div>
+      <%- include('element/info.ejs') -%>
+        <%- include('element/content.ejs') -%>
+          <%- include('element/list_order.ejs') -%>
+            <%- include('element/alert.ejs') -%>
+              <!---->
+              <div data-v-7692a079="" data-v-42f27458="" class="Loading c-row c-row-middle-center">
+                <div data-v-7692a079="" class="van-loading van-loading--circular">
+                  <span data-v-7692a079="" class="van-loading__spinner van-loading__spinner--circular"
+                    style="-webkit-animation-duration: 1s; animation-duration: 1s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      viewBox="0 0 200 200" width="200" height="200" preserveAspectRatio="xMidYMid meet"
+                      style="width: 100%;height: 100%;transform: translate3d(0px, 0px, 0px);content-visibility: visible;">
+                      <g transform="matrix(-0.5984085202217102,0.8011911511421204,-0.8011911511421204,-0.5984085202217102,239.9599609375,79.72173309326172)"
+                        style="display: block;">
+                        <image width="200px" height="200px" preserveAspectRatio="xMidYMid slice"
+                          xlink:href="/index_files/loadingspinner.png"></image>
+                      </g>
+                      <g transform="matrix(0.9408400058746338,0,0,0.9408400058746338,20.969436645507812,79.30152130126953)"
+                        style="display: block;">
+                        <image width="168px" height="44px" preserveAspectRatio="xMidYMid slice"
+                          xlink:href="/index_files/h5setting_202401100608011fs2.png"></image>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              <div id="myModal_5d" class="modal" style="display: none">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+            
+                  <img src="/missningBg-9deda6ac.png" alt="Popup Image">
+                  <div class="text-over-image">
+                    <!-- Your text here -->
+                    <div id="myModal_header">Congratulations</div><br>
+                  </div>
+                  <div class="text-over-image-l">
+                    <!-- Your text here -->
+                    <div data-v-e05c7c66="" class="WinningTip__C-body-l2">
+                      Predictkro results
+              
+                      <div data-v-e05c7c66="" class="line1" id="lottery_results_box">   
+           <div data-v-e05c7c66="">
+              <div data-v-e05c7c66="" class="title">A</div>
+              <div data-v-e05c7c66="" class="r_num num">0</div>
+           </div>    
+           <div data-v-e05c7c66="">
+              <div data-v-e05c7c66="" class="title">B</div>
+              <div data-v-e05c7c66="" class="r_num num">2</div>
+           </div>    
+           <div data-v-e05c7c66="">
+              <div data-v-e05c7c66="" class="title">C</div>
+              <div data-v-e05c7c66="" class="r_num num">9</div>
+           </div>    
+           <div data-v-e05c7c66="">
+              <div data-v-e05c7c66="" class="title">D</div>
+              <div data-v-e05c7c66="" class="r_num num">4</div>
+           </div>    
+           <div data-v-e05c7c66="">
+              <div data-v-e05c7c66="" class="title">E</div>
+              <div data-v-e05c7c66="" class="r_num num">8</div>
+           </div>
+        <div data-v-e05c7c66="">
+           <div data-v-e05c7c66="" class="title sum">SUM</div>
+           <div data-v-e05c7c66="" class="num" id="sum_num">23</div>
+        </div>
+     </div>
+                  </div>
+                        
+                        <br>
+                  </div>
+                  <div class="text-over-image-2">
+                    <!-- Your text here -->
+                    <div id="myModal_result">Win: 50</div><br>
+                  </div>
+                  <div class="text-over-image-3">
+                    <!-- Your text here -->
+                    <div id="myModal_result_Period">Period: 1 Minute 1234567890 </div><br>
+                  </div>
+                  <div class="close-btn">
+                    <span class="close-x">&times;</span>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+      integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+      crossorigin="anonymous"></script>
+    <script src="/5d/js/main.js"></script>
+    <script>
+      // Get the modal
+      var modal = document.getElementById("myModal_5d");
+  
+      // Get the element that closes the modal
+      var closeBtn = document.querySelector(".close-btn");
+  
+  
+  
+      // When the user clicks on the close button, close the modal
+      closeBtn.onclick = function () {
+        modal.style.display = "none";
+      }
+  
+      // When the user clicks anywhere outside of the modal, also close it
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+  
+  
+    </script>
+</body>
+
+</html>
