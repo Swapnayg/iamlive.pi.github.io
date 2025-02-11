@@ -1,5 +1,4 @@
-import 'dotenv/config'
-
+import "dotenv/config";
 import express from 'express';
 import configViewEngine from './src/config/configEngine';
 import routes from './src/routes/web';
@@ -12,7 +11,10 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-const port =  3005;
+const port =  process.env.PORT;
+
+const piNetworkApi = process.env.NETWORK_API;
+const API_KEY = process.env.PIAPI_KEY;
 
 app.use(cookieParser());
 // app.use(express.static('public'));
