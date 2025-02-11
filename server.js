@@ -4,7 +4,6 @@ import configViewEngine from './src/config/configEngine';
 import routes from './src/routes/web';
 import cronJobContronler from './src/controllers/cronJobContronler';
 import socketIoController from './src/controllers/socketIoController';
-require('dotenv').config();
 let cookieParser = require('cookie-parser');
 
 const app = express();

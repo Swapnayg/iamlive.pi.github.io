@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
-require('dotenv').config();
+
+import "dotenv/config";
 /* 
 const connection = mysql.createPool({
   host: 'dbtiran.cjakccac2nys.ap-south-1.rds.amazonaws.com',
@@ -15,8 +16,7 @@ const connection = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DBNAME,
-  port: process.env.DB_PORT
-   
+  port: process.env.DB_PORT   
 })
 
 export default connection;
