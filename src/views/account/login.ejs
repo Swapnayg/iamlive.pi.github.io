@@ -639,7 +639,36 @@
     });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
+  
     <script>
+      const Pi = window.Pi;
+      Pi.init({ version: "2.0", sandbox: true });
+      async function auth() {
+        try {
+            // Identify the user with their username / unique network-wide ID, and get permission to request payments from them.
+            const scopes = ['username', 'payments', 'wallet_address'];
+            function onIncompletePaymentFound(payment) {
+                console.log("incomplete Transaction");
+            }; // Read more about this in the SDK reference
+
+            Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+              console.log("inside");
+              console.log(auth);
+            }).catch(function(error) {
+              console.error(error);
+            });
+        } catch (err) {
+            alert(err);
+            // Not able to fetch the user
+        }
+    }
+    auth();
+
       function setCookie(cname, cvalue, exdays) {
         const d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
