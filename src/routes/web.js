@@ -9,6 +9,7 @@ import dailyController from '../controllers/dailyController';
 import k5Controller from '../controllers/k5Controller';
 import k3Controller from '../controllers/k3Controller';
 import paymentController from '../controllers/paymentController';
+import trxWingoController from "../controllers/trxWingoController.js";
 
 let router = express.Router();
 
@@ -68,6 +69,13 @@ const initWebRouter = (app) => {
     router.get('/wallet/verify/upi', middlewareController, paymentController.verifyUPIPayment);
 
     router.get('/mian', middlewareController, homeController.mianPage);
+    router.get('/mian/Language', middlewareController, homeController.languegePage);
+    router.get('/mian/avatar', middlewareController, homeController.avatarpage);
+    router.patch(
+      "/api/webapi/change/avatar",
+      middlewareController,
+      accountController.updateAvatarAPI,
+    ); 
 
     router.get('/recordsalary', middlewareController, homeController.recordsalary);
     router.get('/getrecord', middlewareController, homeController.getSalaryRecord);
@@ -95,6 +103,7 @@ const initWebRouter = (app) => {
     // BET K5D
     router.get('/5d', middlewareController, k5Controller.K5DPage);
     router.post('/api/webapi/action/5d/join', middlewareController, k5Controller.betK5D); // register
+    router.post('/api/webapi/5d/GetNoaverageEmerdList_Statistics', middlewareController, k5Controller.Stat_listOrderOld);
     router.post('/api/webapi/5d/GetNoaverageEmerdList', middlewareController, k5Controller.listOrderOld); // register
     router.post('/api/webapi/5d/GetMyEmerdList', middlewareController, k5Controller.GetMyEmerdList); // register
 
@@ -119,6 +128,7 @@ const initWebRouter = (app) => {
 
     // bet wingo
     router.post('/api/webapi/action/join', middlewareController, winGoController.betWinGo); // register
+    router.post('/api/webapi/GetNoaverageEmerdList_Statistics', middlewareController, winGoController.Stat_listOrderOld);
     router.post('/api/webapi/GetNoaverageEmerdList', middlewareController, winGoController.listOrderOld); // register
     router.post('/api/webapi/GetMyEmerdList', middlewareController, winGoController.GetMyEmerdList); // register
 
@@ -260,6 +270,43 @@ const initWebRouter = (app) => {
 
 
     router.get('/api/webapi/xpgain_value', middlewareController, userController.xpgain_value);
+
+    router.get(
+        "/trx_wingo",
+        middlewareController,
+        trxWingoController.trxWingoPage,
+      );
+      // router.get("/trx_wingo/3", middlewareController, trxWingoController.trxWingoPage3)
+      // router.get("/trx_wingo/5", middlewareController, trxWingoController.trxWingoPage3)
+      // router.get("/trx_wingo/10", middlewareController, trxWingoController.trxWingoPage10)
+
+      router.get(
+        "/trx_block",
+        middlewareController,
+        trxWingoController.trxWingoBlockPage,
+      );
+
+        // bet TRX wingo
+  router.post(
+    "/api/webapi/trx_wingo/action/join",
+    middlewareController,
+    trxWingoController.betTrxWingo,
+  ); // register
+  router.post(
+    "/api/webapi/trx_wingo/GetNoaverageEmerdList",
+    middlewareController,
+    trxWingoController.listOrderOld,
+  ); // register
+  router.post(
+    "/api/webapi/trx_wingo/GetNoaverageEmerdList_Statistics",
+    middlewareController,
+    trxWingoController.Stat_listOrderOld,
+  ); 
+  router.post(
+    "/api/webapi/trx_wingo/GetMyEmerdList",
+    middlewareController,
+    trxWingoController.GetMyEmerdList,
+  ); // register
 
     return app.use('/', router);
 }

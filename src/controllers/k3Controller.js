@@ -1,5 +1,22 @@
-import connection from "../config/connectDB";
-require('dotenv').config();
+import moment from "moment";
+import connection from "../config/connectDB.js";
+import axios from "axios";
+import _ from "lodash";
+import GameRepresentationIds from "../constants/game_representation_id.js";
+import { generatePeriod } from "../helpers/games.js";
+import en_file from "../languages/en.json";
+import hd_file from "../languages/hd.json";
+import pak_file from "../languages/pak.json";
+import my_file from "../languages/my.json";
+import tha_file from "../languages/tha.json";
+import bdt_file from "../languages/bdt.json";
+import ar_file from "../languages/ar.json";
+import bra_file from "../languages/bra.json";
+import zh_file from "../languages/zh.json";
+import id_file from "../languages/id.json";
+import md_file from "../languages/md.json";
+import vi_file from "../languages/vi.json";
+import rus_file from "../languages/rus.json";
 
 const K3Page = async (req, res) => {
     return res.render("bet/k3/k3.ejs");
@@ -277,6 +294,9 @@ const addK3 = async (game) => {
         const [setting] = await connection.query('SELECT * FROM `admin` ');
         let period = k5D[0].period;
 
+        let gameRepresentationId = GameRepresentationIds.K3[game];
+        let NewGamePeriod = generatePeriod(gameRepresentationId);
+
         let nextResult = '';
         if (game == 1) nextResult = setting[0].k3d;
         if (game == 3) nextResult = setting[0].k3d3;
@@ -303,7 +323,7 @@ const addK3 = async (game) => {
             await connection.execute(`UPDATE k3 SET result = ?,status = ? WHERE period = ? AND game = ${game}`, [result, 1, period]);
         }
         const sql = `INSERT INTO k3 SET period = ?, result = ?, game = ?, status = ?, time = ?`;
-        await connection.execute(sql, [Number(period) + 1, 0, game, 0, timeNow]);
+        await connection.execute(sql, [NewGamePeriod, 0, game, 0, timeNow]);
 
         if (game == 1) join = 'k3d';
         if (game == 3) join = 'k3d3';

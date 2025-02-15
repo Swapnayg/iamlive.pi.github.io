@@ -2,6 +2,20 @@ import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
 import "dotenv/config";
+import en_file from "../languages/en.json";
+import hd_file from "../languages/hd.json";
+import pak_file from "../languages/pak.json";
+import my_file from "../languages/my.json";
+import tha_file from "../languages/tha.json";
+import bdt_file from "../languages/bdt.json";
+import ar_file from "../languages/ar.json";
+import bra_file from "../languages/bra.json";
+import zh_file from "../languages/zh.json";
+import id_file from "../languages/id.json";
+import md_file from "../languages/md.json";
+import vi_file from "../languages/vi.json";
+import rus_file from "../languages/rus.json";
+
 
 let timeNow = Date.now();
 
@@ -1115,12 +1129,13 @@ const timeCreate = () => {
 
 
 const register = async (req, res) => {
-    let { username, password, invitecode } = req.body;
+    let { username, password, invitecode, countrycode } = req.body;
     let id_user = randomNumber(10000, 99999);
     let name_user = "Member" + randomNumber(10000, 99999);
     let code = randomString(5) + randomNumber(10000, 99999);
     let ip = ipAddress(req);
     let time = timeCreate();
+    console.log(countrycode);
 
     invitecode = '2cOCs36373';
 
@@ -1158,8 +1173,9 @@ const register = async (req, res) => {
             veri = ?,
             ip_address = ?,
             status = ?,
-            time = ?`;
-            await connection.execute(sql, [id_user, username, name_user, md5(password), 0, 2, code, invitecode, 1, ip, 1, time]);
+            time = ?,
+            dial_code = ?`;
+            await connection.execute(sql, [id_user, username, name_user, md5(password), 0, 2, code, invitecode, 1, ip, 1, time, countrycode]);
             await connection.execute('INSERT INTO point_list SET phone = ?, level = 2', [username]);
             return res.status(200).json({
                 message: 'registration success',//Register Sucess

@@ -2,8 +2,22 @@ import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
 import request from 'request';
+import "dotenv/config";
 import e from "express";
-require('dotenv').config();
+import en_file from "../languages/en.json";
+import hd_file from "../languages/hd.json";
+import pak_file from "../languages/pak.json";
+import my_file from "../languages/my.json";
+import tha_file from "../languages/tha.json";
+import bdt_file from "../languages/bdt.json";
+import ar_file from "../languages/ar.json";
+import bra_file from "../languages/bra.json";
+import zh_file from "../languages/zh.json";
+import id_file from "../languages/id.json";
+import md_file from "../languages/md.json";
+import vi_file from "../languages/vi.json";
+import rus_file from "../languages/rus.json";
+
 
 let timeNow = Date.now();
 
@@ -51,7 +65,9 @@ const loginPage = async (req, res) => {
 }
 
 const registerPage = async (req, res) => {
-    return res.render("account/register.ejs");
+    var whatsapp1 = process.env.WHATSAPP_LOCAL_KEY;
+    var whatsapp2 = process.env.WHATSAPP_INTERNATIONAL_KEY;
+    return res.render("account/register.ejs", {whatsapp1, whatsapp2});
 }
 
 const forgotPage = async (req, res) => {
@@ -59,7 +75,7 @@ const forgotPage = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    let { username, pwd } = req.body;
+    let { username, pwd , countrycode} = req.body;
 
     if (!username || !pwd || !username) {//!isNumber(username)
         return res.status(200).json({
@@ -68,7 +84,7 @@ const login = async (req, res) => {
     }
 
     try {
-        const [rows] = await connection.query('SELECT * FROM users WHERE phone = ? AND password = ? ', [username, md5(pwd)]);
+        const [rows] = await connection.query('SELECT * FROM users WHERE phone = ? AND password = ? AND dial_code = ? ', [username, md5(pwd), countrycode]);
         if (rows.length == 1) {
             if (rows[0].status == 1) {
                 const { password, money, ip, veri, ip_address, status, time, ...others } = rows[0];
@@ -103,7 +119,7 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
     let now = new Date().getTime();
-    let { username, pwd, invitecode } = req.body;
+    let { username, pwd, invitecode, countrycode } = req.body;
     let id_user = randomNumber(10000, 99999);
     let otp2 = randomNumber(100000, 999999);
     let name_user = "Member" + randomNumber(10000, 99999);
@@ -144,8 +160,8 @@ const register = async (req, res) => {
                     } else {
                         ctv = check_i[0].ctv;
                     }
-                    const sql = "INSERT INTO users SET id_user = ?,phone = ?,name_user = ?,password = ?, plain_password = ?, money = ?,code = ?,invite = ?,ctv = ?,veri = ?,otp = ?,ip_address = ?,status = ?,time = ?";
-                    await connection.execute(sql, [id_user, username, name_user, md5(pwd), pwd, 0, code, invitecode, ctv, 1, otp2, ip, 1, time]);
+                    const sql = "INSERT INTO users SET id_user = ?,phone = ?,name_user = ?,password = ?, plain_password = ?, money = ?,code = ?,invite = ?,ctv = ?,veri = ?,otp = ?,ip_address = ?,status = ?,time = ?,dial_code = ?";
+                    await connection.execute(sql, [id_user, username, name_user, md5(pwd), pwd, 0, code, invitecode, ctv, 1, otp2, ip, 1, time, countrycode]);
                     await connection.execute('INSERT INTO point_list SET phone = ?', [username]);
                     let [check_code] = await connection.query('SELECT * FROM users WHERE invite = ? ', [invitecode]);
                     if(check_i.name_user !=='Admin'){
@@ -371,6 +387,35 @@ const keFuMenu = async(req, res) => {
 }
 
 
+const updateAvatarAPI = async (req, res) => {
+    try {
+      let auth = req.cookies.auth;
+      let avatar = req.body.avatar;
+      const [rows] = await connection.query(
+        "SELECT * FROM users WHERE token = ?",
+        [auth],
+      );
+      if (rows.length == 0) {
+        return res.status(400).json({
+          message: "Account does not exist",
+          status: false,
+        });
+      }
+      await connection.execute("UPDATE users SET avatar = ? WHERE token = ?", [
+        avatar,
+        auth,
+      ]);
+      return res.status(200).json({
+        message: "Change avatar successfully",
+        status: true,
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Internal Server Error", status: false });
+    }
+  };
+
 module.exports = {
     login,
     register,
@@ -380,5 +425,6 @@ module.exports = {
     verifyCode,
     verifyCodePass,
     forGotPassword,
-    keFuMenu
+    keFuMenu,
+    updateAvatarAPI
 }

@@ -1,8 +1,22 @@
-import connection from "../config/connectDB";
-// import jwt from 'jsonwebtoken'
-// import md5 from "md5";
-// import e from "express";
-require('dotenv').config();
+import moment from "moment";
+import connection from "../config/connectDB.js";
+import axios from "axios";
+import _ from "lodash";
+import GameRepresentationIds from "../constants/game_representation_id.js";
+import { generatePeriod } from "../helpers/games.js";
+import en_file from "../languages/en.json";
+import hd_file from "../languages/hd.json";
+import pak_file from "../languages/pak.json";
+import my_file from "../languages/my.json";
+import tha_file from "../languages/tha.json";
+import bdt_file from "../languages/bdt.json";
+import ar_file from "../languages/ar.json";
+import bra_file from "../languages/bra.json";
+import zh_file from "../languages/zh.json";
+import id_file from "../languages/id.json";
+import md_file from "../languages/md.json";
+import vi_file from "../languages/vi.json";
+import rus_file from "../languages/rus.json";
 
 
 const winGoPage = async (req, res) => {
@@ -387,7 +401,6 @@ const betWinGo = async (req, res) => {
 
 const listOrderOld = async (req, res) => {
     let { typeid, pageno, pageto } = req.body;
-
     if (typeid != 1 && typeid != 3 && typeid != 5 && typeid != 10) {
         return res.status(200).json({
             message: 'Error!',
@@ -412,11 +425,12 @@ const listOrderOld = async (req, res) => {
     if (typeid == 3) game = 'wingo3';
     if (typeid == 5) game = 'wingo5';
     if (typeid == 10) game = 'wingo10';
-
     const [wingo] = await connection.query(`SELECT * FROM wingo WHERE status != 0 AND game = '${game}' ORDER BY id DESC LIMIT ${pageno}, ${pageto} `);
     const [wingoAll] = await connection.query(`SELECT * FROM wingo WHERE status != 0 AND game = '${game}' `);
     const [period] = await connection.query(`SELECT period FROM wingo WHERE status = 0 AND game = '${game}' ORDER BY id DESC LIMIT 1 `);
-    if (!wingo[0]) {
+   
+
+   if (!wingo[0]) {
         return res.status(200).json({
             code: 0,
             msg: "No more data",
@@ -444,6 +458,51 @@ const listOrderOld = async (req, res) => {
         status: true
     });
 }
+
+const Stat_listOrderOld = async (req, res) => {
+    let { typeid, pageno, pageto } = req.body;
+    if (typeid != 1 && typeid != 3 && typeid != 5 && typeid != 10) {
+        return res.status(200).json({
+            message: 'Error!',
+            status: true
+        });
+    }
+
+    
+    let game = '';
+    if (typeid == 1) game = 'wingo';
+    if (typeid == 3) game = 'wingo3';
+    if (typeid == 5) game = 'wingo5';
+    if (typeid == 10) game = 'wingo10';
+    const [wingo] = await connection.query(`SELECT amount FROM wingo WHERE status != 0 AND game = '${game}' ORDER BY id DESC LIMIT ${pageno}, ${pageto} `);
+    
+   if (!wingo[0]) {
+        return res.status(200).json({
+            code: 0,
+            msg: "No more data",
+            data: {
+                gameslist: [],
+            },
+            status: false
+        });
+    }
+    if (!pageno || !pageto || !wingo[0]) {
+        return res.status(200).json({
+            message: 'Error!',
+            status: true
+        });
+    }
+
+    return res.status(200).json({
+        code: 0,
+        msg: "Receive success",
+        data: {
+            gameslist: wingo,
+        },
+        status: true
+    });
+  };
+  
 
 const GetMyEmerdList = async (req, res) => {
     let { typeid, pageno, pageto } = req.body;
@@ -656,6 +715,9 @@ const addWinGo = async (game) => {
             result = arr[0];
             await connection.execute(`UPDATE wingo SET amount = ?,status = ? WHERE period = ? AND game = "${join}"`, [result, 1, period]);
         }
+        let gameRepresentationId = GameRepresentationIds.WINGO[game];
+        let NewGamePeriod = generatePeriod(gameRepresentationId);
+
         const sql = `INSERT INTO wingo SET 
         period = ?,
         amount = ?,
@@ -663,7 +725,7 @@ const addWinGo = async (game) => {
         status = ?,
         time = ?`;
 
-        await connection.execute(sql, [Number(period) + 1, 0, join, 0, timeNow]);
+        await connection.execute(sql, [NewGamePeriod, 0, join, 0, timeNow]);
 
         if (game == 1) join = 'wingo1';
         if (game == 3) join = 'wingo3';
@@ -836,6 +898,7 @@ module.exports = {
     winGoPage,
     betWinGo,
     listOrderOld,
+    Stat_listOrderOld,
     GetMyEmerdList,
     handlingWinGo1P,
     addWinGo,

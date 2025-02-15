@@ -5,8 +5,9 @@ import routes from './src/routes/web';
 import cronJobContronler from './src/controllers/cronJobContronler';
 import socketIoController from './src/controllers/socketIoController';
 let cookieParser = require('cookie-parser');
-
+const cors = require('cors');
 const app = express();
+app.use(cors());
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
