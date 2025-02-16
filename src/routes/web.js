@@ -117,6 +117,7 @@ const initWebRouter = (app) => {
 
     // login | register 
     router.post('/api/webapi/login', accountController.login); // login
+    router.post('/api/webapi/pilogin', accountController.pi_login); // login
     router.post('/api/webapi/register', accountController.register); // register
     router.get('/aviator', middlewareController, userController.aviator);
     router.get('/api/webapi/getnotificationCount', middlewareController, userController.getnotificationCount);

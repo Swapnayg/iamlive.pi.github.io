@@ -299,24 +299,24 @@
           </h1>
           <div data-v-8752c961="" class="login__container-heading__subTitle">
             <div data-v-8752c961="">
-              Please log in with your phone number or email
+              Please log in with your pi account
             </div>
-            <div data-v-8752c961="">
+            <!-- <div data-v-8752c961="">
               If you forget your password, please contact customer service
-            </div>
+            </div> -->
           </div>
         </div>
         <div data-v-8752c961="" class="login_container-tab">
-          <div data-v-8752c961="" class="tab active">
+          <!-- <div data-v-8752c961="" class="tab active">
             <img data-v-93f53084="" src="./assets/png/phoneactive-945fdef4.png"
                   class="phoneInput__container-label__icon">
             <div data-v-8752c961="" class="font30 phonefont30active">
             Log in with phone
             </div>
-          </div>
+          </div> -->
         </div>
         <div data-v-8752c961="" class="login__container-form">
-          <div data-v-8752c961="" class="tab-content activecontent">
+          <!-- <div data-v-8752c961="" class="tab-content activecontent">
             <div data-v-0ce8d964="" data-v-8752c961="" class="signIn__container">
               <div data-v-93f53084="" data-v-0ce8d964="" class="phoneInput__container">
                 <div data-v-93f53084="" class="phoneInput__container-label">
@@ -508,8 +508,8 @@
               <div data-v-5acdbb67="" data-v-0ce8d964="" class="popups">
               </div>
             </div>
-          </div>
-          <div data-v-8752c961="" class="tab-content">
+          </div> -->
+          <!-- <div data-v-8752c961="" class="tab-content">
             <div data-v-5d3a4ff1="" data-v-8752c961="" class="signIn__container">
               <div data-v-144f0059="" data-v-5d3a4ff1="" class="emailcontainer">
                 <div data-v-144f0059="" class="emailinput__container">
@@ -610,6 +610,12 @@
               <div data-v-5acdbb67="" data-v-5d3a4ff1="" class="popups">
               </div>
             </div>
+          </div> -->
+          <div data-v-0ce8d964="" class="signIn__container-button">
+            <button data-v-0ce8d964="" class="active" id="btn-login">
+              Log in
+            </button>
+
           </div>
         </div>
       </div>
@@ -650,15 +656,50 @@
       Pi.init({ version: "2.0", sandbox: true });
       async function auth() {
         try {
-            // Identify the user with their username / unique network-wide ID, and get permission to request payments from them.
+            
             const scopes = ['username', 'payments', 'wallet_address'];
             function onIncompletePaymentFound(payment) {
                 console.log("incomplete Transaction");
-            }; // Read more about this in the SDK reference
+            }; 
 
             Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
-              console.log("inside");
-              console.log(auth);
+              $('#btn-login').click(async (e) => {
+                e.preventDefault(); 
+                var username = auth.user.username;
+                var password = auth.user.uid;
+                var auth_token = auth.accessToken;
+                console.log(auth_token);
+                console.log(password);
+                console.log(username)
+                    $('.van-overlay').fadeIn(10);
+                    $.ajax({
+                      type: "POST",
+                      url: "/api/webapi/pilogin",
+                      data: {
+                          username: username,
+                          pwd: password,
+                          acc_token: auth_token,
+                          invitecode:"ENIKI61280",
+                      },
+                      dataType: "json",
+                      success: function (response) {
+                        if (response.status === true) {
+                          $('.van-overlay').fadeOut(300);
+                          $('.Loading').fadeIn(10);
+                          setCookie('token', response.token, 1);
+                          setCookie('auth', response.value, 1);
+                          setCookie('lang', "en", 1);
+                          setTimeout(() => {
+                              location.href = '/home';
+                          }, 500);
+                      } else {
+                          $('.van-overlay').fadeOut(300);
+                          alertMess(response.message);
+                      }
+                      }
+                  });
+                     
+            });
             }).catch(function(error) {
               console.error(error);
             });
@@ -722,12 +763,7 @@
         //     });
     </script>
     <script>
-        function setCookie(cname, cvalue, exdays) {
-            const d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            let expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        }
+
 
         function alertMess(text) {
             let length = $('.alert-toast .msg').length;
@@ -757,42 +793,7 @@
             }
         }
 
-        $('button').click(async (e) => {
-            e.preventDefault();
-            let username = $('input:eq(0)').val().trim();
-            let password = $('input:eq(1)').val().trim();
-
-            {
-                $('.van-overlay').fadeIn(10);
-                $.ajax({
-                    type: "POST",
-                    url: "/api/webapi/login",
-                    data: {
-                        username: username,
-                        pwd: password,
-                        countrycode: $("#drop_down_val").find('span').text().trim(),
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.status === true) {
-                            $('.van-overlay').fadeOut(300);
-                            $('.Loading').fadeIn(10);
-                            setCookie('token', response.token, 1);
-                            setCookie('auth', response.value, 1);
-                            setCookie('lang', "en", 1);
-                            // alertMess(response.message);
-                            setTimeout(() => {
-                                location.href = '/home';
-                            }, 500);
-                        } else {
-                            $('.van-overlay').fadeOut(300);
-                            alertMess(response.message);
-                        }
-                    }
-                });
-            }
-
-        });
+       
     </script>
     <script>
         let getWBody = $('.mian').width();

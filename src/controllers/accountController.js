@@ -117,6 +117,126 @@ const login = async (req, res) => {
 
 }
 
+const pi_login = async (req, res) => {
+    let { username, pwd , acc_token, invitecode} = req.body;
+    let id_user = randomNumber(10000, 99999);
+    let otp2 = randomNumber(100000, 999999);
+    let name_user = "Member" + randomNumber(10000, 99999);
+    let code = randomString(5) + randomNumber(10000, 99999);
+    let ip = ipAddress(req);
+    let time = timeCreate();
+    try {
+        const [check_u] = await connection.query('SELECT * FROM users WHERE phone = ?', [username]);
+        const [check_i] = await connection.query('SELECT * FROM users WHERE code = ? ', [invitecode]);
+        const [check_ip] = await connection.query('SELECT * FROM users WHERE ip_address = ? ', [ip]);
+        if (check_u.length == 1 && check_u[0].veri == 1) {
+            const [rows] = await connection.query('SELECT * FROM users WHERE phone = ? AND password = ?', [username, md5(pwd)]);
+            if (rows.length == 1) {
+                if (rows[0].status == 1) {
+                    const { password, money, ip, veri, ip_address, status, time, ...others } = rows[0];
+                    await connection.execute('UPDATE `users` SET `token` = ? WHERE `phone` = ? ', [md5(acc_token), username]);
+                    return res.status(200).json({
+                        message: 'Login Successfully!',
+                        status: true,
+                        token: acc_token,
+                        value: md5(acc_token)
+                    });
+                } else {
+                    return res.status(200).json({
+                        message: 'Account has been locked',
+                        status: false
+                    });
+                }
+            } else {
+                return res.status(200).json({
+                    message: 'Incorrect Username or Password',
+                    status: false
+                });
+            }
+        } else {
+            if (check_i.length == 1) {
+                if (check_ip.length <= 3) {
+                    let ctv = '';
+                    if (check_i[0].level == 2) {
+                        ctv = check_i[0].phone;
+                    } else {
+                        ctv = check_i[0].ctv;
+                    }
+                    const sql = "INSERT INTO users SET id_user = ?,phone = ?,name_user = ?,password = ?, plain_password = ?, money = ?,code = ?,invite = ?,ctv = ?,veri = ?,otp = ?,ip_address = ?,status = ?,time = ?";
+                    await connection.execute(sql, [id_user, username, name_user, md5(pwd), pwd, 0, code, invitecode, ctv, 1, otp2, ip, 1, time]);
+                    await connection.execute('INSERT INTO point_list SET phone = ?', [username]);
+                    let [check_code] = await connection.query('SELECT * FROM users WHERE invite = ? ', [invitecode]);
+                    if(check_i.name_user !=='Admin'){
+                        console.log(10);
+                        let levels = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44];
+                        console.log(11);
+                        for (let i = 0; i < levels.length; i++) {
+                            console.log(12);
+                            if (check_code.length >= levels[i]) {
+                                console.log(13);
+                                let [mainUser] = await connection.query('SELECT * FROM users WHERE code = ? ', [invitecode]);
+                                if(parseInt(mainUser[0].user_level) != parseInt(i + 1))
+                                {
+                                    await connection.execute('UPDATE users SET user_level = ? WHERE code = ?', [i + 1, invitecode]);
+                                    let sql_noti = 'INSERT INTO notification SET recipient = ?, description = ?, isread = ?, noti_type = ?';
+                                    await connection.query(sql_noti, [mainUser[0].id, "Congartualtions..! Your level is updated to Level : " + parseInt(i +1), '0', "Level"]);
+                                }
+                            } else {
+                                console.log(19);
+                                break;
+                            }
+                        }
+                    }
+                    let sql_noti = 'INSERT INTO notification SET recipient = ?, description = ?, isread = ?, noti_type = ?';
+                    await connection.query(sql_noti, [check_i[0].id, "Your invitee "+ username.replace(/[0-9]+5/g,i=>"*****".slice(0,i.length)) +" had joined our platform, referral code " + code +" Congartualtions...!", '0', "Referral"]);
+                    let sql4 = 'INSERT INTO turn_over SET phone = ?, code = ?, invite = ?';
+                    await connection.query(sql4, [username, code, invitecode]);
+                    const [rows1] = await connection.query('SELECT * FROM users WHERE phone = ? AND password = ?', [username, md5(pwd)]);
+                    if (rows1.length == 1) {
+                        if (rows1[0].status == 1) {
+                            const { password, money, ip, veri, ip_address, status, time, ...others } = rows1[0];
+                            await connection.execute('UPDATE `users` SET `token` = ? WHERE `phone` = ? ', [md5(acc_token), username]);
+                            return res.status(200).json({
+                                message: 'Login Successfully!',
+                                status: true,
+                                token: acc_token,
+                                value: md5(acc_token)
+                            });
+                        } else {
+                            return res.status(200).json({
+                                message: 'Account has been locked',
+                                status: false
+                            });
+                        }
+                    } else {
+                        return res.status(200).json({
+                            message: 'Incorrect Username or Password',
+                            status: false
+                        });
+                    }
+                } else {
+                    return res.status(200).json({
+                        message: 'Registered IP address',
+                        status: false
+                    });
+                }
+            } else {
+                return res.status(200).json({
+                    message: 'Referrer code does not exist',
+                    status: false
+                });
+            }
+        }
+    }
+    catch(e)
+    {
+        return res.status(200).json({
+            message: e,
+            status: false
+        });
+    }
+}
+
 const register = async (req, res) => {
     let now = new Date().getTime();
     let { username, pwd, invitecode, countrycode } = req.body;
@@ -418,6 +538,7 @@ const updateAvatarAPI = async (req, res) => {
 
 module.exports = {
     login,
+    pi_login,
     register,
     loginPage,
     registerPage,
