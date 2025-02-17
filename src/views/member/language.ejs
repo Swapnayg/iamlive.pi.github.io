@@ -323,7 +323,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="en" onclick="checkboxCheck('en');">
+                        <input type="radio" checked="checked" name="radio" data-lang="en" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -342,7 +342,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="hd"  onclick="checkboxCheck('hd');">
+                        <input type="radio" checked="checked" name="radio" data-lang="hd" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -358,7 +358,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="pak"  onclick="checkboxCheck('pak');">
+                        <input type="radio" checked="checked" name="radio" data-lang="pak" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -374,7 +374,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="my"  onclick="checkboxCheck('my');">
+                        <input type="radio" checked="checked" name="radio" data-lang="my" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -390,7 +390,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="tha"  onclick="checkboxCheck('tha');">
+                        <input type="radio" checked="checked" name="radio" data-lang="tha"  >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -406,7 +406,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="bdt"  onclick="checkboxCheck('bdt');">
+                        <input type="radio" checked="checked" name="radio" data-lang="bdt">
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -422,7 +422,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="ar"  onclick="checkboxCheck('ar');">
+                        <input type="radio" checked="checked" name="radio" data-lang="ar" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -438,7 +438,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="bra"  onclick="checkboxCheck('bra');">
+                        <input type="radio" checked="checked" name="radio" data-lang="bra" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -454,7 +454,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="zh"  onclick="checkboxCheck('zh');">
+                        <input type="radio" checked="checked" name="radio" data-lang="zh" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -470,7 +470,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="id"  onclick="checkboxCheck('id');">
+                        <input type="radio" checked="checked" name="radio" data-lang="id"  >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -486,7 +486,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="md"  onclick="checkboxCheck('md');">
+                        <input type="radio" checked="checked" name="radio" data-lang="md" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -505,7 +505,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="vi"  onclick="checkboxCheck('vi');">
+                        <input type="radio" checked="checked" name="radio" data-lang="vi" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -524,7 +524,7 @@
                   </div>
                   <div data-v-0341cbde="" class="settingPanel__container-items-right">
                     <label class="container">
-                        <input type="radio" checked="checked" name="radio" data-lang="rus" onclick="checkboxCheck('rus');">
+                        <input type="radio" checked="checked" name="radio" data-lang="rus" >
                         <span class="checkmark"></span>
                       </label>
                   </div>
@@ -533,26 +533,69 @@
 
         </div>
     </div>
+    
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <script>
-    function setCookie(cname, cvalue, exdays) {
-        const d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        let expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-    // A $( document ).ready() block.
-$( document ).ready(function() {
-   var sel_lang = '<%=lang%>';
-$("input[type='radio'][data-lang='"+sel_lang+"']").prop("checked", true);
-});
-function checkboxCheck(e)
-{
-    setCookie('lang', e, 1);
-    redirect_link = '/mian';
-  window.location.href = redirect_link;
-}
+  const Pi = window.Pi;
+  Pi.init({ version: "2.0", sandbox: true });
+  async function auth() {
+    try {
+        
+        const scopes = ['username', 'payments', 'wallet_address'];
+        function onIncompletePaymentFound(payment) {
+            console.log("incomplete Transaction");
+        }; 
+  
+        Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+            var username = auth.user.username;
+            var password = auth.user.uid;
+            var auth_token = auth.accessToken;
+            $.ajax({
+              type: "POST",
+              url: "/api/webapi/getlang",
+              data: {
+                  authtoken:auth_token,
+              },
+              dataType: "json",
+              success: function (response) {
+                var sel_lang = response.lang;
+                $("input[type='radio'][data-lang='"+sel_lang+"']").prop("checked", true);
+              }
+            });
+              $("input[name='radio']").click(function(e){
+                $.ajax({
+                  type: "POST",
+                  url: "/api/webapi/setlang",
+                  data: {
+                      authtoken:auth_token,
+                      lang_code: $(this).attr('data-lang'),
+                  },
+                  dataType: "json",
+                  success: function (response1) {
+                    if(response1.status == true)
+                    {
+                      window.location.href = '/mian';
+                    }
+                  }
+                });
+                
+            });
+        })
+          }
+          catch (err) {
+              alert(err);
+              // Not able to fetch the user
+          }
+          }
+  auth();
+          
+
 </script>
 </body>
 

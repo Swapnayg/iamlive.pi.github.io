@@ -2,19 +2,8 @@ import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
 import request from 'request';
-import en_file from "../languages/en.json";
-import hd_file from "../languages/hd.json";
-import pak_file from "../languages/pak.json";
-import my_file from "../languages/my.json";
-import tha_file from "../languages/tha.json";
-import bdt_file from "../languages/bdt.json";
-import ar_file from "../languages/ar.json";
-import bra_file from "../languages/bra.json";
-import zh_file from "../languages/zh.json";
-import id_file from "../languages/id.json";
-import md_file from "../languages/md.json";
-import vi_file from "../languages/vi.json";
-import rus_file from "../languages/rus.json";
+import { getlang_data } from "../helpers/get_langauges.js";
+
 
 const axios = require('axios');
 let timeNow = Date.now();
@@ -67,8 +56,7 @@ const aviator = async (req, res) => {
 }
 
 const userInfo = async (req, res) => {
-    let auth = req.cookies.auth;
-
+    let auth = req.body.authtoken;
     if (!auth) {
         return res.status(200).json({
             message: 'Failed',
@@ -76,7 +64,7 @@ const userInfo = async (req, res) => {
             timeStamp: timeNow,
         });
     }
-    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
 
     if (!rows) {
         return res.status(200).json({
@@ -1616,7 +1604,7 @@ const listWithdraw = async (req, res) => {
 }
 
 const getnotificationCount = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     if (!auth) {
         return res.status(200).json({
             message: 'Failed',
@@ -2026,10 +2014,34 @@ const updatenotifications = async (req, res) => {
 };
 
 
+const check_login_val = async (req, res) => {
+    let auth = req.body.authtoken;
+    let username =  req.body.username;
+    let password =  req.body.pwd;
+    let message = '';
+    const [rows] = await connection.query('SELECT * FROM users WHERE phone = ? AND password = ?', [username, md5(password)]);
+    if (rows.length == 1) {
+        let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [md5(auth)]);
+        if (user.length == 1) {
+            message = "exits";
+        }
+        else{
+            message = "login";
+        }
+    }
+    else{
+        message = "register";
+    }
+    return res.status(200).json({
+        message: 'Successful',//Register Sucess
+        data: message,
+        status: true
+    });
+}
 const xpgain_value = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let xp_gain_val = 0;
-    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [auth]);
+    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [md5(auth)]);
     const [wingo_xp] = await connection.query(`SELECT SUM(money) as total FROM minutes_1 WHERE phone = ? `, user[0].phone);
     const [k3_xp] = await connection.query(`SELECT SUM(money) as total FROM result_k3 WHERE phone = ? `, user[0].phone);
     const [d5_xp] = await connection.query(`SELECT SUM(money) as total FROM result_5d WHERE phone = ? `, user[0].phone);
@@ -2045,18 +2057,54 @@ const xpgain_value = async (req, res) => {
     {
         d5_xp[0].total = 0;
     }
+    let level = user[0].level;
 
     xp_gain_val = parseInt(wingo_xp[0].total) + parseInt(k3_xp[0].total) + parseInt(d5_xp[0].total);
 
     return res.status(200).json({
         message: 'Successful',//Register Sucess
         xp_value: xp_gain_val,
-        status: true
+        level: level,
+        status: true,
+        language:user[0].lang_code,
     });
 
 };
+const getlang_datacall = async (req, res) => {
+    let lang_code = req.body.lang_code;
+    var lang_data = getlang_data(lang_code);
+    return res.status(200).json({
+        message: 'Successful',//Register Sucess
+        status: true,
+        data:lang_data,
+    });
+}
+const set_lang_data = async (req, res) => {
+    let lang_code = req.body.lang_code;
+    console.log(lang_code);
+    let auth = req.body.authtoken;
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
+    let user = rows[0];
+    await connection.execute("UPDATE users SET lang_code = ? WHERE phone = ? ", [lang_code, user.phone]);
+    return res.status(200).json({
+        message: 'Successful',//Register Sucess
+        status: true,
+    });
+}
+const get_lang_data = async (req, res) => {
+    let auth = req.body.authtoken;
+    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [md5(auth)]);
+    return res.status(200).json({
+        message: 'Successful',//Register Sucess
+        status: true,
+        lang:user[0].lang_code,
+    });
+}
 
 module.exports = {
+    get_lang_data,
+    set_lang_data,
+    getlang_datacall,
     userInfo,
     changeUser,
     promotion,
@@ -2068,6 +2116,7 @@ module.exports = {
     listWithdraw,
     changePassword,
     checkInHandling,
+    check_login_val,
     infoUserBank,
     addBank,
     withdrawal3,
@@ -2086,5 +2135,5 @@ module.exports = {
     getnotificationCount,
     getnotifications,
     updatenotifications,
-    xpgain_value    
+    xpgain_value
 }

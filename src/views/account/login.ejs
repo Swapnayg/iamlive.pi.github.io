@@ -668,9 +668,6 @@
                 var username = auth.user.username;
                 var password = auth.user.uid;
                 var auth_token = auth.accessToken;
-                console.log(auth_token);
-                console.log(password);
-                console.log(username)
                     $('.van-overlay').fadeIn(10);
                     $.ajax({
                       type: "POST",
@@ -679,7 +676,6 @@
                           username: username,
                           pwd: password,
                           acc_token: auth_token,
-                          invitecode:"ENIKI61280",
                       },
                       dataType: "json",
                       success: function (response) {
@@ -736,31 +732,7 @@
             setCookie('token', '', 0);
             setCookie('auth', '', 0);
         }
-        // $.ajax({
-        //     type: "GET",
-        //     url: "/api/webapi/GetUserInfo",
-        //     data: {
-                
-        //     },
-        //     dataType: "json",
-        //     success: function (response) {
-        //         if (data.status === false) {
-        //             unsetCookie();
-        //             return false;
-        //         };
-        //         location.href = "/";
-        //     }
-        // });
-        // fetch('/api/webapi/GetUserInfo')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log(data);
-        //         if (data.status === false) {
-        //             unsetCookie();
-        //             return false;
-        //         };
-        //         location.href = "/";
-        //     });
+
     </script>
     <script>
 

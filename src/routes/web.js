@@ -29,137 +29,139 @@ const initWebRouter = (app) => {
     });
     router.get('/home', homeController.homePage);
 
-    router.get('/checkIn', middlewareController, homeController.checkInPage);
-    router.get('/activity', middlewareController, homeController.activityPage);
-    router.get('/dailytask', middlewareController, homeController.dailytaskPage);
-    router.get('/invibonus', middlewareController, homeController.invibonusPage);
-    router.get('/rebate', middlewareController, homeController.rebatePage);
-    router.get('/jackpot', middlewareController, homeController.jackpotPage);
-    router.get('/vip', middlewareController, homeController.vipPage);
-    router.get('/checkDes', middlewareController, homeController.checkDes);
-    router.get('/checkRecord', middlewareController, homeController.checkRecord);
-    router.get('/wallet/transfer', middlewareController, homeController.transfer);
+    router.get('/checkIn', homeController.checkInPage);
+    router.get('/activity', homeController.activityPage);
+    router.get('/dailytask', homeController.dailytaskPage);
+    router.get('/invibonus', homeController.invibonusPage);
+    router.get('/rebate', homeController.rebatePage);
+    router.get('/jackpot', homeController.jackpotPage);
+    router.get('/vip', homeController.vipPage);
+    router.get('/checkDes', homeController.checkDes);
+    router.get('/checkRecord', homeController.checkRecord);
+    router.get('/wallet/transfer', homeController.transfer);
 
-    router.get('/promotion', middlewareController, homeController.promotionPage);
-    router.get('/promotion1', middlewareController, homeController.promotion1Page);
-    router.get('/promotion/myTeam', middlewareController, homeController.promotionmyTeamPage);
-    router.get('/promotion/promotionDes', middlewareController, homeController.promotionDesPage);
-    router.get('/promotion/comhistory', middlewareController, homeController.comhistoryPage);
-    router.get('/promotion/bethistory', middlewareController, homeController.mybethistoryPage);
-    router.get('/promotion/tutorial', middlewareController, homeController.tutorialPage);
-    router.get('/promotion/bonusrecord', middlewareController, homeController.bonusRecordPage);
+    router.get('/promotion', homeController.promotionPage);
+    router.get('/promotion1', homeController.promotion1Page);
+    router.get('/promotion/myTeam', homeController.promotionmyTeamPage);
+    router.get('/promotion/promotionDes', homeController.promotionDesPage);
+    router.get('/promotion/comhistory', homeController.comhistoryPage);
+    router.get('/promotion/bethistory', homeController.mybethistoryPage);
+    router.get('/promotion/tutorial', homeController.tutorialPage);
+    router.get('/promotion/bonusrecord', homeController.bonusRecordPage);
 
-    router.get('/wallet', middlewareController, homeController.walletPage);
-    router.get('/wallet/recharge', middlewareController, homeController.rechargePage);
-    router.get('/wallet/withdrawal', middlewareController, homeController.withdrawalPage);
-    router.get('/wallet/rechargerecord', middlewareController, homeController.rechargerecordPage);
-    router.get('/wallet/withdrawalrecord', middlewareController, homeController.withdrawalrecordPage);
-    router.get('/wallet/addBank', middlewareController, homeController.addBank);
-    router.get('/wallet/transactionhistory', middlewareController, homeController.transactionhistoryPage);
+    router.get('/wallet', homeController.walletPage);
+    router.get('/wallet/recharge', homeController.rechargePage);
+    router.get('/wallet/withdrawal', homeController.withdrawalPage);
+    router.get('/wallet/rechargerecord', homeController.rechargerecordPage);
+    router.get('/wallet/withdrawalrecord', homeController.withdrawalrecordPage);
+    router.get('/wallet/addBank', homeController.addBank);
+    router.get('/wallet/transactionhistory', homeController.transactionhistoryPage);
     
 
-    router.get('/wallet/paynow/manual_upi', middlewareController, paymentController.initiateManualUPIPayment); 
-    router.get('/wallet/paynow/manual_usdt', middlewareController, paymentController.initiateManualUSDTPayment);
-    router.post('/wallet/paynow/manual_upi_request', middlewareController, paymentController.addManualUPIPaymentRequest);
-    router.post('/wallet/paynow/manual_usdt_request', middlewareController, paymentController.addManualUSDTPaymentRequest);
-    router.get('/wallet/paynow/pipay', middlewareController, paymentController.initiatePiPayment);
-    router.post('/wallet/verify/pipay', middlewareController, paymentController.verifyPiPayment);
-    router.get('/wallet/verify/pipay', middlewareController, paymentController.verifyPiPayment);
-    router.post('/wallet/paynow/upi', middlewareController, paymentController.initiateUPIPayment);
-    router.get('/wallet/verify/upi', middlewareController, paymentController.verifyUPIPayment);
+    router.get('/wallet/paynow/manual_upi', paymentController.initiateManualUPIPayment); 
+    router.get('/wallet/paynow/manual_usdt', paymentController.initiateManualUSDTPayment);
+    router.post('/wallet/paynow/manual_upi_request', paymentController.addManualUPIPaymentRequest);
+    router.post('/wallet/paynow/manual_usdt_request', paymentController.addManualUSDTPaymentRequest);
+    router.get('/wallet/paynow/pipay', paymentController.initiatePiPayment);
+    router.post('/wallet/verify/pipay', paymentController.verifyPiPayment);
+    router.get('/wallet/verify/pipay', paymentController.verifyPiPayment);
+    router.post('/wallet/paynow/upi', paymentController.initiateUPIPayment);
+    router.get('/wallet/verify/upi', paymentController.verifyUPIPayment);
 
-    router.get('/mian', middlewareController, homeController.mianPage);
-    router.get('/mian/Language', middlewareController, homeController.languegePage);
-    router.get('/mian/avatar', middlewareController, homeController.avatarpage);
+    router.get('/mian', homeController.mianPage);
+    router.get('/mian/Language', homeController.languegePage);
+    router.get('/mian/avatar', homeController.avatarpage);
     router.patch(
       "/api/webapi/change/avatar",
-      middlewareController,
       accountController.updateAvatarAPI,
     ); 
 
-    router.get('/recordsalary', middlewareController, homeController.recordsalary);
-    router.get('/getrecord', middlewareController, homeController.getSalaryRecord);
-    router.get('/about', middlewareController, homeController.aboutPage);
-    router.get('/notification', middlewareController, homeController.notificationPage);
-	router.get('/wingochat', middlewareController, homeController.wingochat);
-    router.get('/k3chat', middlewareController, homeController.k3chat);
-    router.get('/d5chat', middlewareController, homeController.d5chat);
-    router.get('/redenvelopes', middlewareController, homeController.redenvelopes);
-    router.get('/mian/forgot', middlewareController, homeController.forgot);
+    router.get('/recordsalary', homeController.recordsalary);
+    router.get('/getrecord', homeController.getSalaryRecord);
+    router.get('/about', homeController.aboutPage);
+    router.get('/notification', homeController.notificationPage);
+	router.get('/wingochat', homeController.wingochat);
+    router.get('/k3chat', homeController.k3chat);
+    router.get('/d5chat', homeController.d5chat);
+    router.get('/redenvelopes', homeController.redenvelopes);
+    router.get('/mian/forgot', homeController.forgot);
     router.get('/newtutorial', homeController.newtutorial);
-    router.get('/about/privacyPolicy', middlewareController, homeController.privacyPolicy);
-    router.get('/about/riskAgreement', middlewareController, homeController.riskAgreement);
-    router.post('/api/betting/get_betting', middlewareController, homeController.d_get_betting);
-    router.get('/myProfile', middlewareController, homeController.myProfilePage);
+    router.get('/about/privacyPolicy', homeController.privacyPolicy);
+    router.get('/about/riskAgreement', homeController.riskAgreement);
+    router.post('/api/betting/get_betting', homeController.d_get_betting);
+    router.get('/myProfile', homeController.myProfilePage);
 
 
 
     // BET wingo
-    router.get('/win', middlewareController, winGoController.winGoPage);
-    router.get('/win/3', middlewareController, winGoController.winGoPage3);
-    router.get('/win/5', middlewareController, winGoController.winGoPage5);
-    router.get('/win/10', middlewareController, winGoController.winGoPage10);
+    router.get('/win', winGoController.winGoPage);
+    router.get('/win/3', winGoController.winGoPage3);
+    router.get('/win/5', winGoController.winGoPage5);
+    router.get('/win/10', winGoController.winGoPage10);
 
     // BET K5D
-    router.get('/5d', middlewareController, k5Controller.K5DPage);
-    router.post('/api/webapi/action/5d/join', middlewareController, k5Controller.betK5D); // register
-    router.post('/api/webapi/5d/GetNoaverageEmerdList_Statistics', middlewareController, k5Controller.Stat_listOrderOld);
-    router.post('/api/webapi/5d/GetNoaverageEmerdList', middlewareController, k5Controller.listOrderOld); // register
-    router.post('/api/webapi/5d/GetMyEmerdList', middlewareController, k5Controller.GetMyEmerdList); // register
+    router.get('/5d', k5Controller.K5DPage);
+    router.post('/api/webapi/action/5d/join', k5Controller.betK5D); // register
+    router.post('/api/webapi/5d/GetNoaverageEmerdList_Statistics', k5Controller.Stat_listOrderOld);
+    router.post('/api/webapi/5d/GetNoaverageEmerdList', k5Controller.listOrderOld); // register
+    router.post('/api/webapi/5d/GetMyEmerdList', k5Controller.GetMyEmerdList); // register
 
     // BET K3
-    router.get('/k3', middlewareController, k3Controller.K3Page);
+    router.get('/k3', k3Controller.K3Page);
 
-    router.post('/api/webapi/action/k3/join', middlewareController, k3Controller.betK3); // register
-    router.post('/api/webapi/k3/GetNoaverageEmerdList', middlewareController, k3Controller.listOrderOld); // register
-    router.post('/api/webapi/k3/GetMyEmerdList', middlewareController, k3Controller.GetMyEmerdList); // register
+    router.post('/api/webapi/action/k3/join', k3Controller.betK3); // register
+    router.post('/api/webapi/k3/GetNoaverageEmerdList', k3Controller.listOrderOld); // register
+    router.post('/api/webapi/k3/GetMyEmerdList', k3Controller.GetMyEmerdList); // register
 
 
     // login | register 
     router.post('/api/webapi/login', accountController.login); // login
     router.post('/api/webapi/pilogin', accountController.pi_login); // login
     router.post('/api/webapi/register', accountController.register); // register
-    router.get('/aviator', middlewareController, userController.aviator);
-    router.get('/api/webapi/getnotificationCount', middlewareController, userController.getnotificationCount);
-    router.get('/api/webapi/updatenotifications', middlewareController, userController.updatenotifications);
-    router.get('/api/webapi/getnotifications', middlewareController, userController.getnotifications);
-    router.get('/api/webapi/GetUserInfo', middlewareController, userController.userInfo); // get info account
-    router.put('/api/webapi/change/userInfo', middlewareController, userController.changeUser); // get info account
-    router.put('/api/webapi/change/pass', middlewareController, userController.changePassword); // get info account
+    router.get('/aviator', userController.aviator);
+    router.post('/api/webapi/getnotificationCount', userController.getnotificationCount);
+    router.get('/api/webapi/updatenotifications', userController.updatenotifications);
+    router.get('/api/webapi/getnotifications', userController.getnotifications);
+    router.post('/api/webapi/GetUserInfo', userController.userInfo); // get info account
+    router.put('/api/webapi/change/userInfo', userController.changeUser); // get info account
+    router.put('/api/webapi/change/pass', userController.changePassword); // get info account
+    router.post('/api/webapi/getlangdata', userController.getlang_datacall);
+    router.post('/api/webapi/getlang', userController.get_lang_data);
+    router.post('/api/webapi/setlang', userController.set_lang_data);
 
     // bet wingo
-    router.post('/api/webapi/action/join', middlewareController, winGoController.betWinGo); // register
-    router.post('/api/webapi/GetNoaverageEmerdList_Statistics', middlewareController, winGoController.Stat_listOrderOld);
-    router.post('/api/webapi/GetNoaverageEmerdList', middlewareController, winGoController.listOrderOld); // register
-    router.post('/api/webapi/GetMyEmerdList', middlewareController, winGoController.GetMyEmerdList); // register
+    router.post('/api/webapi/action/join', winGoController.betWinGo); // register
+    router.post('/api/webapi/GetNoaverageEmerdList_Statistics', winGoController.Stat_listOrderOld);
+    router.post('/api/webapi/GetNoaverageEmerdList', winGoController.listOrderOld); // register
+    router.post('/api/webapi/GetMyEmerdList', winGoController.GetMyEmerdList); // register
 
 
     // promotion
-    router.post('/api/webapi/promotion', middlewareController, userController.promotion); // register
-    router.post('/api/webapi/checkIn', middlewareController, userController.checkInHandling); // register
-    router.post('/api/webapi/check/Info', middlewareController, userController.infoUserBank); // register
-    router.post('/api/webapi/addBank', middlewareController, userController.addBank); // register
-    router.post('/api/webapi/otp', middlewareController, userController.verifyCode); // register
-    router.post('/api/webapi/use/redenvelope', middlewareController, userController.useRedenvelope); // register
+    router.post('/api/webapi/promotion', userController.promotion); // register
+    router.post('/api/webapi/checkIn', userController.checkInHandling); // register
+    router.post('/api/webapi/check/Info', userController.infoUserBank); // register
+    router.post('/api/webapi/addBank', userController.addBank); // register
+    router.post('/api/webapi/otp', userController.verifyCode); // register
+    router.post('/api/webapi/use/redenvelope', userController.useRedenvelope); // register
 
     // wallet
-    router.post('/api/webapi/recharge', middlewareController, userController.recharge);
-    router.post('/api/webapi/cancel_recharge', middlewareController, userController.cancelRecharge); // register
-    router.post('/wowpay/create', middlewareController, userController.wowpay);
-    router.post('/api/webapi/confirm_recharge', middlewareController, userController.confirmRecharge);
-    router.get('/api/webapi/myTeam', middlewareController, userController.listMyTeam); // register
-    router.get('/api/webapi/recharge/list', middlewareController, userController.listRecharge); // register
-    router.get('/api/webapi/withdraw/list', middlewareController, userController.listWithdraw); // register
-    router.post('/api/webapi/recharge/check', middlewareController, userController.recharge2); // register
-    router.post('/api/webapi/withdrawal', middlewareController, userController.withdrawal3); // register
-    router.post('/api/webapi/callback_bank', middlewareController, userController.callback_bank); // register
-    router.post('/api/webapi/recharge/update', middlewareController, userController.updateRecharge); // update recharge
-    router.post('/api/webapi/transfer', middlewareController, userController.transfer); // register
-    router.get('/api/webapi/transfer_history', middlewareController, userController.transferHistory); //
-    router.get('/api/webapi/confirm_recharge_usdt', middlewareController, userController.confirmUSDTRecharge); //
-    router.post('/api/webapi/confirm_recharge_usdt', middlewareController, userController.confirmUSDTRecharge); //
+    router.post('/api/webapi/recharge', userController.recharge);
+    router.post('/api/webapi/cancel_recharge', userController.cancelRecharge); // register
+    router.post('/wowpay/create', userController.wowpay);
+    router.post('/api/webapi/confirm_recharge', userController.confirmRecharge);
+    router.get('/api/webapi/myTeam', userController.listMyTeam); // register
+    router.get('/api/webapi/recharge/list', userController.listRecharge); // register
+    router.get('/api/webapi/withdraw/list', userController.listWithdraw); // register
+    router.post('/api/webapi/recharge/check', userController.recharge2); // register
+    router.post('/api/webapi/withdrawal', userController.withdrawal3); // register
+    router.post('/api/webapi/callback_bank', userController.callback_bank); // register
+    router.post('/api/webapi/recharge/update', userController.updateRecharge); // update recharge
+    router.post('/api/webapi/transfer', userController.transfer); // register
+    router.get('/api/webapi/transfer_history', userController.transferHistory); //
+    router.get('/api/webapi/confirm_recharge_usdt', userController.confirmUSDTRecharge); //
+    router.post('/api/webapi/confirm_recharge_usdt', userController.confirmUSDTRecharge); //
 
-    router.post('/api/webapi/search', middlewareController, userController.search); // register
+    router.post('/api/webapi/search', userController.search); // register
 
 
     // daily
@@ -270,42 +272,40 @@ const initWebRouter = (app) => {
     router.post('/api/webapi/admin/k3/editResult', adminController.middlewareAdminController, adminController.editResult2); // get info account
 
 
-    router.get('/api/webapi/xpgain_value', middlewareController, userController.xpgain_value);
+    router.post('/api/webapi/xpgain_value', userController.xpgain_value);
+    router.post('/api/webapi/check_login', userController.check_login_val);
 
     router.get(
         "/trx_wingo",
-        middlewareController,
         trxWingoController.trxWingoPage,
       );
-      // router.get("/trx_wingo/3", middlewareController, trxWingoController.trxWingoPage3)
-      // router.get("/trx_wingo/5", middlewareController, trxWingoController.trxWingoPage3)
-      // router.get("/trx_wingo/10", middlewareController, trxWingoController.trxWingoPage10)
+      // router.get("/trx_wingo/3", trxWingoController.trxWingoPage3)
+      // router.get("/trx_wingo/5", trxWingoController.trxWingoPage3)
+      // router.get("/trx_wingo/10", trxWingoController.trxWingoPage10)
 
       router.get(
         "/trx_block",
-        middlewareController,
         trxWingoController.trxWingoBlockPage,
       );
 
         // bet TRX wingo
   router.post(
     "/api/webapi/trx_wingo/action/join",
-    middlewareController,
     trxWingoController.betTrxWingo,
   ); // register
   router.post(
     "/api/webapi/trx_wingo/GetNoaverageEmerdList",
-    middlewareController,
+    
     trxWingoController.listOrderOld,
   ); // register
   router.post(
     "/api/webapi/trx_wingo/GetNoaverageEmerdList_Statistics",
-    middlewareController,
+   
     trxWingoController.Stat_listOrderOld,
   ); 
   router.post(
     "/api/webapi/trx_wingo/GetMyEmerdList",
-    middlewareController,
+    
     trxWingoController.GetMyEmerdList,
   ); // register
 
