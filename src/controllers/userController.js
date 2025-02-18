@@ -2081,7 +2081,6 @@ const getlang_datacall = async (req, res) => {
 }
 const set_lang_data = async (req, res) => {
     let lang_code = req.body.lang_code;
-    console.log(lang_code);
     let auth = req.body.authtoken;
     const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
     let user = rows[0];
