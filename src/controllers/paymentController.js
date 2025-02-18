@@ -4,6 +4,7 @@ import moment from "moment";
 import crypto from "crypto";
 import querystring from "querystring";
 import "dotenv/config";
+import md5 from "md5";
 
 let timeNow = Date.now();
 
@@ -94,7 +95,7 @@ const addManualUPIPaymentRequest = async (req, res) => {
             })
         }
 
-        const user = await getUserDataByAuthToken(auth)
+        const user = await getUserDataByAuthToken(md5(auth))
 
         const pendingRechargeList = await rechargeTable.getRecordByPhoneAndStatus({ phone: user.phone, status: PaymentStatusMap.PENDING, type: PaymentMethodsMap.UPI_GATEWAY })
 
@@ -165,7 +166,7 @@ const addManualUSDTPaymentRequest = async (req, res) => {
             })
         }
 
-        const user = await getUserDataByAuthToken(auth)
+        const user = await getUserDataByAuthToken(md5(auth))
 
         const pendingRechargeList = await rechargeTable.getRecordByPhoneAndStatus({ phone: user.phone, status: PaymentStatusMap.PENDING, type: PaymentMethodsMap.UPI_GATEWAY })
 
@@ -227,7 +228,7 @@ const initiateUPIPayment = async (req, res) => {
     }
 
     try {
-        const user = await getUserDataByAuthToken(auth)
+        const user = await getUserDataByAuthToken(md5(auth))
 
         const pendingRechargeList = await rechargeTable.getRecordByPhoneAndStatus({ phone: user.phone, status: PaymentStatusMap.PENDING, type: PaymentMethodsMap.UPI_GATEWAY })
 
@@ -313,7 +314,7 @@ const verifyUPIPayment = async (req, res) => {
         })
     }
     try {
-        const user = await getUserDataByAuthToken(auth)
+        const user = await getUserDataByAuthToken(md5(auth))
 
         const recharge = await rechargeTable.getRechargeByOrderId({ orderId })
 
@@ -404,7 +405,7 @@ const initiatePiPayment = async (req, res) => {
     // }
 
     try {
-        const user = await getUserDataByAuthToken(auth)
+        const user = await getUserDataByAuthToken(md5(auth))
         const query = req.query
 
         const [bank_recharge_momo] = await connection.query("SELECT * FROM bank_recharge WHERE type = 'momo'");

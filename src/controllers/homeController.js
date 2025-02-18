@@ -28,7 +28,7 @@ const rebatePage = async (req, res) => {
 const vipPage = async (req, res) => {
     var sandbox = process.env.SANDBOX_MODE;
     let auth = req.body.authtoken;
-    const [userinfo] = await connection.query('SELECT `name_user` FROM users WHERE `token` = ? ', [auth]);
+    const [userinfo] = await connection.query('SELECT `name_user` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userid = userinfo[0].name_user;
     return res.render("checkIn/vip.ejs", {  UserName : userid , sandbox});
 }
@@ -185,7 +185,7 @@ const avatarpage = async (req, res) => {
 
 const d_get_betting = async (req, res) => {
     let auth = req.body.authtoken;
-    const [user] = await connection.query('SELECT `phone` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone` FROM users WHERE `token` = ? ', [md5(auth)]);
     let phone = user[0].phone;
     let gameJoin = req.body.gameJoin;
     var betting_list = '';
@@ -286,7 +286,7 @@ const newtutorial = async (req, res) => {
 
 const forgot = async (req, res) => {
     let auth = req.body.authtoken;
-    const [user] = await connection.query('SELECT `time_otp` FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT `time_otp` FROM users WHERE token = ? ', [md5(auth)]);
     let time = user[0].time_otp;
     var sandbox = process.env.SANDBOX_MODE;
     return res.render("member/forgot.ejs", { time, sandbox });
@@ -311,7 +311,7 @@ const myProfilePage = async (req, res) => {
 const getSalaryRecord = async (req, res) => {
     const auth = req.body.authtoken;
 
-    const [rows] = await connection.query(`SELECT * FROM users WHERE token = ?`, [auth]);
+    const [rows] = await connection.query(`SELECT * FROM users WHERE token = ?`, [md5(auth)]);
     let rowstr = rows[0];
     if (!rows) {
         return res.status(200).json({

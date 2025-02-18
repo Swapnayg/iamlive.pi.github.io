@@ -5,6 +5,7 @@ import _ from "lodash";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
 import "dotenv/config";
+import md5 from "md5";
 
 export const TRX_WINGO_GAME_STATUS_MAP = {
   PENDING: 0,
@@ -96,7 +97,7 @@ const rosesPlus = async (auth, money) => {
 
   const [user] = await connection.query(
     "SELECT `phone`, `code`, `invite`, `user_level`, `total_money` FROM users WHERE token = ? AND veri = 1 LIMIT 1 ",
-    [auth],
+    [md5(auth)],
   );
   let userInfo = user[0];
   const [f1] = await connection.query(
@@ -166,7 +167,7 @@ const rosesPlus = async (auth, money) => {
 //     const [level] = await connection.query('SELECT * FROM level ');
 //     let level0 = level[0];
 
-//     const [user] = await connection.query('SELECT `phone`, `code`, `invite` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
+//     const [user] = await connection.query('SELECT `phone`, `code`, `invite` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
 //     let userInfo = user[0];
 //     const [f1] = await connection.query('SELECT `phone`, `code`, `invite`, `rank` FROM users WHERE code = ? AND veri = 1  LIMIT 1 ', [userInfo.invite]);
 //     if (money >= 10000) {
@@ -200,7 +201,7 @@ const rosesPlus = async (auth, money) => {
 // const rosesPlus = async (auth, money) => {
 //     const [level] = await connection.query('SELECT * FROM level ');
 
-//     const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `user_level` FROM users WHERE token = ? AND veri = 1 LIMIT 1 ', [auth]);
+//     const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `user_level` FROM users WHERE token = ? AND veri = 1 LIMIT 1 ', [md5(auth)]);
 //     let userInfo = user[0];
 //     const [f1] = await connection.query('SELECT `phone`, `code`, `invite`, `rank`, `user_level` FROM users WHERE code = ? AND veri = 1 LIMIT 1 ', [userInfo.invite]);
 
@@ -244,7 +245,7 @@ const rosesPlus = async (auth, money) => {
 
 // const rosesPlus = async (auth, money) => {
 //     const [level] = await connection.query('SELECT * FROM level ');
-//     const [user] = await connection.query('SELECT `phone`, `code`, `invite` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
+//     const [user] = await connection.query('SELECT `phone`, `code`, `invite` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
 //     let userInfo = user[0];
 //     const [f1] = await connection.query('SELECT `phone`, `code`, `invite`, `rank` FROM users WHERE code = ? AND veri = 1  LIMIT 1 ', [userInfo.invite]);
 //     let infoF1 = f1[0];
@@ -284,7 +285,7 @@ const betTrxWingo = async (req, res) => {
     );
     const [user] = await connection.query(
       "SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ",
-      [auth],
+      [md5(auth)],
     );
     if (!trxWingoNow[0] || !user[0] || !isNumber(x) || !isNumber(money)) {
       return res.status(200).json({
@@ -440,11 +441,11 @@ const betTrxWingo = async (req, res) => {
       ]);
       await connection.query(
         "UPDATE `users` SET `money` = `money` - ? WHERE `token` = ? ",
-        [money * x, auth],
+        [money * x, md5(auth)],
       );
       const [users] = await connection.query(
         "SELECT `money`, `level` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ",
-        [auth],
+        [md5(auth)],
       );
       await rosesPlus(auth, money * x);
       // const [level] = await connection.query('SELECT * FROM level ');
@@ -509,7 +510,7 @@ const listOrderOld = async (req, res) => {
   let auth = req.body.authtoken;
   const [user] = await connection.query(
     "SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ",
-    [auth],
+    [md5(auth)],
   );
 
   let game = "";
@@ -651,7 +652,7 @@ const GetMyEmerdList = async (req, res) => {
 
   const [user] = await connection.query(
     "SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1 LIMIT 1",
-    [auth],
+    [md5(auth)],
   );
   const [trx_wingo_bets] = await connection.query(
     "SELECT * FROM trx_wingo_bets WHERE phone = ? AND game = ? ORDER BY id DESC LIMIT ?, ?",

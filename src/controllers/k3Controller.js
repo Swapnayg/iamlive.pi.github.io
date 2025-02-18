@@ -2,6 +2,7 @@ import moment from "moment";
 import connection from "../config/connectDB.js";
 import axios from "axios";
 import _ from "lodash";
+import md5 from "md5";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
 import "dotenv/config";
@@ -50,7 +51,7 @@ const rosesPlus = async (auth, money) => {
     const [level] = await connection.query('SELECT * FROM level ');
     let level0 = level[0];
 
-    const [user] = await connection.query('SELECT `phone`, `code`, `invite` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`, `invite` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
     let userInfo = user[0];
     const [f1] = await connection.query('SELECT `phone`, `code`, `invite`, `rank` FROM users WHERE code = ? AND veri = 1  LIMIT 1 ', [userInfo.invite]);
     if (money >= 10000) {
@@ -131,7 +132,7 @@ const betK3 = async (req, res) => {
         // }
 
         const [k3Now] = await connection.query(`SELECT period FROM k3 WHERE status = 0 AND game = ${game} ORDER BY id DESC LIMIT 1 `);
-        const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
+        const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
         if (k3Now.length < 1 || user.length < 1) {
             return res.status(200).json({
                 message: 'Error!',
@@ -231,8 +232,8 @@ const betK3 = async (req, res) => {
             let timeNow = Date.now();
             const sql = `INSERT INTO result_k3 SET id_product = ?,phone = ?,code = ?,invite = ?,stage = ?,level = ?,money = ?,price = ?,amount = ?,fee = ?,game = ?,join_bet = ?, typeGame = ?,bet = ?,status = ?,time = ?`;
             await connection.execute(sql, [id_product, userInfo.phone, userInfo.code, userInfo.invite, period.period, userInfo.level, total, price, xvalue, fee, game, gameJoin, typeGame, listJoin, 0, timeNow]);
-            await connection.execute('UPDATE `users` SET `money` = `money` - ? WHERE `token` = ? ', [total, auth]);
-            const [users] = await connection.query('SELECT `money`, `level` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
+            await connection.execute('UPDATE `users` SET `money` = `money` - ? WHERE `token` = ? ', [total, md5(auth)]);
+            const [users] = await connection.query('SELECT `money`, `level` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
             await rosesPlus(auth, total);
             const [level] = await connection.query('SELECT * FROM level ');
             let level0 = level[0];
@@ -1032,7 +1033,7 @@ const listOrderOld = async (req, res) => {
             status: false
         });
     }
-    const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
 
     let game = Number(gameJoin);
 
@@ -1087,7 +1088,7 @@ const GetMyEmerdList = async (req, res) => {
 
     let game = Number(gameJoin);
 
-    const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1 LIMIT 1 ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1 LIMIT 1 ', [md5(auth)]);
     const [result_5d] = await connection.query(`SELECT * FROM result_k3 WHERE phone = ? AND game = '${game}' ORDER BY id DESC LIMIT ${Number(pageno) + ',' + Number(pageto)}`, [user[0].phone]);
     const [result_5dAll] = await connection.query(`SELECT * FROM result_k3 WHERE phone = ? AND game = '${game}' ORDER BY id DESC `, [user[0].phone]);
 

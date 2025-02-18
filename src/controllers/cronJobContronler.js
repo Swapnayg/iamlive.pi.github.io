@@ -2,6 +2,7 @@ import connection from "../config/connectDB";
 import winGoController from "./winGoController";
 import k5Controller from "./k5Controller";
 import k3Controller from "./k3Controller";
+import md5 from "md5";
 import "dotenv/config";
 import trxWingoController, {
     TRX_WINGO_GAME_TYPE_MAP,

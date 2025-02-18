@@ -19,7 +19,7 @@ const verifyCode = async (req, res) => {
     let timeEnd = (+new Date) + 1000 * (60 * 2 + 0) + 500;
     let otp = randomNumber(100000, 999999);
 
-    conswit[rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
+    conswit[rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
     if (!rows) {
         return res.status(200).json({
             message: 'Account does not exist',
@@ -52,7 +52,7 @@ const verifyCode = async (req, res) => {
 
 const aviator = async (req, res) => {
     let auth = req.body.authtoken;
-    res.redirect(`https://247cashwin.cloud/theninja/src/api/userapi.php?action=loginandregisterbyauth&token=${auth}`);
+    res.redirect(`https://247cashwin.cloud/theninja/src/api/userapi.php?action=loginandregisterbyauth&token=${md5(auth)}`);
     //res.redirect(`https://jetx.asia/#/jet/loginbyauth/${auth}`);
 }
 
@@ -109,7 +109,7 @@ const changeUser = async (req, res) => {
     let name = req.body.name;
     let type = req.body.type;
 
-    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
     if (!rows || !type || !name) return res.status(200).json({
         message: 'Failed',
         status: false,
@@ -117,7 +117,7 @@ const changeUser = async (req, res) => {
     });;
     switch (type) {
         case 'editname':
-            await connection.query('UPDATE users SET name_user = ? WHERE `token` = ? ', [name, auth]);
+            await connection.query('UPDATE users SET name_user = ? WHERE `token` = ? ', [name, md5(auth)]);
             return res.status(200).json({
                 message: 'Username modification successful',
                 status: true,
@@ -147,7 +147,7 @@ const changePassword = async (req, res) => {
         status: false,
         timeStamp: timeNow,
     });;
-    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? AND `password` = ? ', [auth, md5(password)]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? AND `password` = ? ', [md5(auth), md5(password)]);
     if (rows.length == 0) return res.status(200).json({
         message: 'Incorrect password',
         status: false,
@@ -173,7 +173,7 @@ const changePassword = async (req, res) => {
     //     timeStamp: timeNow,
     // });;
 
-    await connection.query('UPDATE users SET otp = ?, password = ?, plain_password = ? WHERE `token` = ? ', [randomNumber(100000, 999999), md5(newPassWord), newPassWord, auth]);
+    await connection.query('UPDATE users SET otp = ?, password = ?, plain_password = ? WHERE `token` = ? ', [randomNumber(100000, 999999), md5(newPassWord), newPassWord, md5(auth)]);
     return res.status(200).json({
         message: 'Password modification successful',
         status: true,
@@ -191,7 +191,7 @@ const checkInHandling = async (req, res) => {
         status: false,
         timeStamp: timeNow,
     });;
-    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
     if (!rows) return res.status(200).json({
         message: 'Failed',
         status: false,
@@ -440,7 +440,7 @@ const promotion = async (req, res) => {
         });
     }
 
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `roses_f`, `roses_f1`, `roses_today` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `roses_f`, `roses_f1`, `roses_today` FROM users WHERE `token` = ? ', [md5(auth)]);
     const [level] = await connection.query('SELECT * FROM level');
 
     if (!user) {
@@ -660,7 +660,7 @@ const myTeam = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     const [level] = await connection.query('SELECT * FROM level');
     if (!user) {
         return res.status(200).json({
@@ -688,7 +688,7 @@ const listMyTeam = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     if (!user) {
         return res.status(200).json({
             message: 'Failed',
@@ -780,7 +780,7 @@ const recharge = async (req, res) => {
             })
         }
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`name_user`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`name_user`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -942,7 +942,7 @@ const cancelRecharge = async (req, res) => {
             })
         }
 
-        const [user] = await connection.query('SELECT `phone`, `code`,`name_user`,`invite` FROM users WHERE `token` = ? ', [auth]);
+        const [user] = await connection.query('SELECT `phone`, `code`,`name_user`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
 
         if (!user) {
             return res.status(200).json({
@@ -1053,7 +1053,7 @@ const infoUserBank = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `money` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `money` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1133,7 +1133,7 @@ const withdrawal3 = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `money` FROM users WHERE `token` = ? AND password = ?', [auth, md5(password)]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `money` FROM users WHERE `token` = ? AND password = ?', [md5(auth), md5(password)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -1281,7 +1281,7 @@ const transfer = async (req, res) => {
     let time = new Date().getTime();
     let client_transaction_id = id_order;
 
-    const [user] = await connection.query('SELECT `id`,`phone`,`money`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `id`,`phone`,`money`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     let sender_phone = userInfo.phone;
     let sender_money = parseInt(userInfo.money);
@@ -1429,7 +1429,7 @@ const transfer = async (req, res) => {
 const transferHistory = async (req, res) => {
     let auth = req.body.authtoken;
 
-    const [user] = await connection.query('SELECT `phone`,`money`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`,`money`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1460,7 +1460,7 @@ const recharge2 = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1497,7 +1497,7 @@ const listRecharge = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1525,7 +1525,7 @@ const search = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `level` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite`, `level` FROM users WHERE `token` = ? ', [md5(auth)]);
     if (user.length == 0) {
         return res.status(200).json({
             message: 'Failed',
@@ -1586,7 +1586,7 @@ const listWithdraw = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1614,7 +1614,7 @@ const getnotificationCount = async (req, res) => {
             N_Count: 0,
         });
     }
-    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [auth]);
+    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [md5(auth)]);
     const [notifications] = await connection.query(`SELECT COUNT(id) as total FROM notification WHERE recipient  = ? AND isread = ? `,[user[0]?.id, '0']);
 
     let countNot = notifications[0].total;
@@ -1637,7 +1637,7 @@ const useRedenvelope = async (req, res) => {
             timeStamp: timeNow,
         })
     }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1736,7 +1736,7 @@ const confirmRecharge = async (req, res) => {
         })
     }
 
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
 
     if (!user) {
@@ -1850,7 +1850,7 @@ const confirmUSDTRecharge = async (req, res) => {
     //     })
     // }
 
-    // const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    // const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     // let userInfo = user[0];
 
     // if (!user) {
@@ -1954,7 +1954,7 @@ const updateRecharge = async (req, res) => {
     //         })
     //     }
     // }
-    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [auth]);
+    const [user] = await connection.query('SELECT `phone`, `code`,`invite` FROM users WHERE `token` = ? ', [md5(auth)]);
     let userInfo = user[0];
     if (!user) {
         return res.status(200).json({
@@ -1984,7 +1984,7 @@ const updateRecharge = async (req, res) => {
 
 const getnotifications = async (req, res) => {
     let auth = req.body.authtoken;
-    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [auth]);
+    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [md5(auth)]);
     const [rows] = await connection.query('SELECT * FROM notification WHERE `recipient` = ? ORDER BY id DESC',[user[0]?.id]);
 
     if (!rows) {
@@ -2006,7 +2006,7 @@ const getnotifications = async (req, res) => {
 
 const updatenotifications = async (req, res) => {
     let auth = req.body.authtoken;
-    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [auth]);
+    let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [md5(auth)]);
     await connection.execute("UPDATE notification SET isread = ?  WHERE `recipient` = ? AND  isread = ? ", [1,user[0]?.id,'0'] );
     return res.status(200).json({
         message: 'Updated',

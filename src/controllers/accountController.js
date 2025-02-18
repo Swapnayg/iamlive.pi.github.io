@@ -556,7 +556,7 @@ const forGotPassword = async (req, res) => {
 const keFuMenu = async(req, res) => {
     let auth = req.body.authtoken;
 
-    const [users] = await connection.query('SELECT `level`, `ctv` FROM users WHERE token = ?', [auth]);
+    const [users] = await connection.query('SELECT `level`, `ctv` FROM users WHERE token = ?', [md5(auth)]);
 
     let telegram = '';
     if (users.length == 0) {
@@ -586,7 +586,7 @@ const updateAvatarAPI = async (req, res) => {
       let avatar = req.body.avatar;
       const [rows] = await connection.query(
         "SELECT * FROM users WHERE token = ?",
-        [auth],
+        [md5(auth)],
       );
       if (rows.length == 0) {
         return res.status(400).json({

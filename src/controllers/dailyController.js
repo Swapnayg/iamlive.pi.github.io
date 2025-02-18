@@ -44,7 +44,7 @@ const pageInfo = async(req, res) => {
 const giftPage = async(req, res) => {
     var sandbox = process.env.SANDBOX_MODE;
     let auth = req.body.authtoken;
-    const [rows] = await connection.execute('SELECT `phone` FROM `users` WHERE `token` = ? AND veri = 1', [auth]);
+    const [rows] = await connection.execute('SELECT `phone` FROM `users` WHERE `token` = ? AND veri = 1', [md5(auth)]);
     let money = 0;
     let money2 = 0;
     if(rows.length != 0) {
@@ -65,7 +65,7 @@ const settings = async(req, res) => {
     let type = req.body.type;
     let value = req.body.value;
 
-    const [rows] = await connection.execute('SELECT `phone` FROM `users` WHERE `token` = ? AND veri = 1', [auth]);
+    const [rows] = await connection.execute('SELECT `phone` FROM `users` WHERE `token` = ? AND veri = 1', [md5(auth)]);
     if (rows.length == 0) {
         return res.status(200).json({
             message: 'Error',
@@ -99,12 +99,12 @@ const middlewareDailyController = async(req, res, next) => {
     if (!auth) {
         return res.redirect("/login");
     }
-    const [rows] = await connection.execute('SELECT `token`,`level`, `status` FROM `users` WHERE `token` = ? AND veri = 1', [auth]);
+    const [rows] = await connection.execute('SELECT `token`,`level`, `status` FROM `users` WHERE `token` = ? AND veri = 1', [md5(auth)]);
     if (!rows) {
         return res.redirect("/login");
     }
     try {
-        if (auth == rows[0].token && rows[0].status == 1) {
+        if (md5(auth) == rows[0].token && rows[0].status == 1) {
             if (rows[0].level == 2) {
                 next();
             } else {
@@ -121,7 +121,7 @@ const middlewareDailyController = async(req, res, next) => {
 const statistical = async(req, res) => {
     const auth = req.body.authtoken;
     
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     let userInfo = user[0];
     // cấp dưới trực tiếp all
@@ -263,7 +263,7 @@ const userInfo = async(req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -384,7 +384,7 @@ const userInfo = async(req, res) => {
 const infoCtv = async(req, res) => {
     const auth = req.body.authtoken;
      
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -654,7 +654,7 @@ const infoCtv2 = async(req, res) => {
         return years + '-' + months + '-' + days + ' ' + hours + ':' + minutes + ':' + seconds + ' ' + ampm;
     }
     
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -789,7 +789,7 @@ function timerJoin(params = '', addHours = 0) {
             timeStamp: timeNow,
         });
     }
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -831,7 +831,7 @@ function timerJoin(params = '', addHours = 0) {
 
 const listRedenvelops = async(req, res) => {
     let auth = req.body.authtoken;
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -853,7 +853,7 @@ const listMember = async(req, res) => {
     let auth = req.body.authtoken;
     let {pageno, limit } = req.body;
 
-    let [checkInfo] = await connection.execute('SELECT * FROM users WHERE token = ?', [auth]);
+    let [checkInfo] = await connection.execute('SELECT * FROM users WHERE token = ?', [md5(auth)]);
 
     if(checkInfo.length == 0) {
         return res.status(200).json({
@@ -900,7 +900,7 @@ const listMember = async(req, res) => {
 
 const listRechargeP = async(req, res) => {
     let auth = req.body.authtoken;
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -930,7 +930,7 @@ const listRechargeP = async(req, res) => {
 
 const listWithdrawP = async(req, res) => {
     let auth = req.body.authtoken;
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -994,7 +994,7 @@ const listRechargeMem = async(req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1059,7 +1059,7 @@ const listWithdrawMem = async(req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1124,7 +1124,7 @@ const listRedenvelope = async(req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1189,7 +1189,7 @@ const listBet = async(req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1232,7 +1232,7 @@ const buffMoney = async(req, res) => {
     }
 
     const [users] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (users.length == 0) {
         return res.status(200).json({

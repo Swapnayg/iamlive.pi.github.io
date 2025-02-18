@@ -149,12 +149,12 @@ const middlewareAdminController = async (req, res, next) => {
     if (!auth) {
         return res.redirect("/login");
     }
-    const [rows] = await connection.execute('SELECT `token`,`level`, `status` FROM `users` WHERE `token` = ? AND veri = 1', [auth]);
+    const [rows] = await connection.execute('SELECT `token`,`level`, `status` FROM `users` WHERE `token` = ? AND veri = 1', [md5(auth)]);
     if (!rows) {
         return res.redirect("/login");
     }
     try {
-        if (auth == rows[0].token && rows[0].status == 1) {
+        if (md5(auth) == rows[0].token && rows[0].status == 1) {
             if (rows[0].level == 1) {
                 next();
             } else {
@@ -184,10 +184,10 @@ const totalJoin = async (req, res) => {
     if (typeid == '3') game = 'wingo5';
     if (typeid == '4') game = 'wingo10';
 
-    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
 
     if (rows.length > 0) {
-        const [wingoall] = await connection.query(`SELECT * FROM minutes_1 WHERE game = "${game}" AND status = 0 AND level = 0 ORDER BY id ASC `, [auth]);
+        const [wingoall] = await connection.query(`SELECT * FROM minutes_1 WHERE game = "${game}" AND status = 0 AND level = 0 ORDER BY id ASC `, [md5(auth)]);
         const [winGo1] = await connection.execute(`SELECT * FROM wingo WHERE status = 0 AND game = '${game}' ORDER BY id DESC LIMIT 1 `, []);
         const [winGo10] = await connection.execute(`SELECT * FROM wingo WHERE status != 0 AND game = '${game}' ORDER BY id DESC LIMIT 10 `, []);
         const [setting] = await connection.execute(`SELECT * FROM admin `, []);
@@ -864,7 +864,7 @@ const deleteBankRechargeById = async (id) => {
 const tranfermode = async (req, res) => {
     let auth = req.body.authtoken;
     let tran_mode = req.body.mode_tran;
-    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
+    const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [md5(auth)]);
     let user = rows[0];
     await connection.execute("UPDATE users SET transfer_mode = ?  WHERE `level` = ? ", [tran_mode,1] );
     return res.status(200).json({
@@ -965,7 +965,7 @@ const createBonus = async (req, res) => {
             timeStamp: timeNow,
         });
     }
-    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0) {
         return res.status(200).json({
@@ -1596,7 +1596,7 @@ const listRechargeMem = async (req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1653,7 +1653,7 @@ const listWithdrawMem = async (req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1710,7 +1710,7 @@ const listRedenvelope = async (req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -1819,7 +1819,7 @@ const listBet = async (req, res) => {
     }
 
     const [user] = await connection.query('SELECT * FROM users WHERE phone = ? ', [phone]);
-    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
+    const [auths] = await connection.query('SELECT * FROM users WHERE token = ? ', [md5(auth)]);
 
     if (user.length == 0 || auths.length == 0) {
         return res.status(200).json({
@@ -2079,7 +2079,7 @@ const getSalary = async (req, res) => {
 
 const gettranfermode = async (req, res) => {
     let auth = req.body.authtoken;
-    const [rows] = await connection.query('SELECT transfer_mode FROM users WHERE `token` = ? ', [auth]);
+    const [rows] = await connection.query('SELECT transfer_mode FROM users WHERE `token` = ? ', [md5(auth)]);
 
     if (!rows) {
         return res.status(200).json({

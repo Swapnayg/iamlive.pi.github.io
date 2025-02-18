@@ -5,6 +5,7 @@ import _ from "lodash";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
 import "dotenv/config";
+import md5 from "md5";
 
 const winGoPage = async (req, res) => {
     var sandbox = process.env.SANDBOX_MODE;
@@ -354,7 +355,7 @@ const betWinGo = async (req, res) => {
         today = ?,
         time = ?`;
         await connection.execute(sql, [id_product, userInfo.phone, userInfo.code, userInfo.invite, period, userInfo.level, total, x, fee, 0, gameJoin, join, 0, checkTime, timeNow]);
-        await connection.execute('UPDATE `users` SET `money` = `money` - ? WHERE `token` = ? ', [money * x, auth]);
+        await connection.execute('UPDATE `users` SET `money` = `money` - ? WHERE `token` = ? ', [money * x, md5(auth)]);
         const [users] = await connection.query('SELECT `money`, `level` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
         await rosesPlus(auth, money * x);
         // const [level] = await connection.query('SELECT * FROM level ');
@@ -521,7 +522,6 @@ const GetMyEmerdList = async (req, res) => {
         });
     }
     let auth = req.body.authtoken;
-
     let game = '';
     if (typeid == 1) game = 'wingo';
     if (typeid == 3) game = 'wingo3';
