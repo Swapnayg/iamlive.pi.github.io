@@ -1,4 +1,17 @@
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
 
 
 function showListOrder3(list_orders, x) {
@@ -114,6 +127,7 @@ $.ajax({
         pageno: "0",
         pageto: "10",
         language: "vi",
+        authtoken:auth_token,
     },
     dataType: "json",
     success: function(response) {
@@ -144,6 +158,7 @@ $.ajax({
                 pageno: "0",
                 pageto: "10",
                 language: "vi",
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function(response) {
@@ -595,6 +610,7 @@ $(".game-list .tab .li:eq(0)").click(function (e) {
       pageno: "0",
       pageto: "10",
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -624,6 +640,7 @@ $(".game-list .tab .li:eq(1)").click(function (e) {
       pageno: "0",
       pageto: "10",
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -662,6 +679,7 @@ $(".game-list .tab .li:eq(2)").click(function (e) {
         pageno: "0",
         pageto: "100",
         language: "vi",
+        authtoken:auth_token,
     },
     dataType: "json",
     success: function(response1) {
@@ -681,6 +699,7 @@ $(".game-list .tab .li:eq(2)").click(function (e) {
       pageno: "0",
       pageto: "10",
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -731,6 +750,7 @@ $(".foot .right").click(function (e) {
       join: join,
       x: x,
       money: money,
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1296,6 +1316,7 @@ $.ajax({
     pageno: "0",
     pageto: "10",
     language: "vi",
+    authtoken:auth_token,
   },
   dataType: "json",
   success: function (response) {
@@ -1355,6 +1376,7 @@ $.ajax({
     pageno: "0",
     pageto: "10",
     language: "vi",
+    authtoken:auth_token,
   },
   dataType: "json",
   success: function (response) {
@@ -1379,6 +1401,7 @@ $(".game-list .con-box:eq(0) .page-nav .arr:eq(1)").click(function (e) {
       pageno: pageno,
       pageto: pageto,
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1435,6 +1458,7 @@ $(".game-list .con-box:eq(0) .page-nav .arr:eq(0)").click(function (e) {
       pageno: pageno,
       pageto: pageto,
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1491,6 +1515,7 @@ $(".game-list .con-box:eq(1) .page-nav .arr:eq(1)").click(function (e) {
       pageno: pageno,
       pageto: pageto,
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1564,6 +1589,7 @@ $(".game-list .con-box:eq(1) .page-nav .arr:eq(0)").click(function (e) {
       pageno: pageno,
       pageto: pageto,
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1769,6 +1795,7 @@ var pageno = 0;
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1825,6 +1852,7 @@ var pageno = 0;
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1865,3 +1893,11 @@ var pageno = 0;
       },
     });
   });
+
+});
+}
+catch (err) {
+alert(err);
+}
+}
+auth();

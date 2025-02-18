@@ -73,7 +73,7 @@ const initiateManualUSDTPayment = async (req, res) => {
 const addManualUPIPaymentRequest = async (req, res) => {
     try {
         const data = req.body
-        let auth = req.body.authtoken;
+        let auth = req.cookies.auth;
         let money = parseInt(data.money);
         let utr = parseInt(data.utr);
         const minimumMoneyAllowed = parseInt(process.env.MINIMUM_MONEY)
@@ -143,7 +143,7 @@ const addManualUPIPaymentRequest = async (req, res) => {
 const addManualUSDTPaymentRequest = async (req, res) => {
     try {
         const data = req.body
-        let auth = req.body.authtoken;
+        let auth = req.cookies.auth;
         let money_usdt = parseInt(data.money);
         let money = money_usdt * 92;
         let utr = parseInt(data.utr);
@@ -213,7 +213,7 @@ const addManualUSDTPaymentRequest = async (req, res) => {
 
 const initiateUPIPayment = async (req, res) => {
     const type = PaymentMethodsMap.UPI_GATEWAY
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     let money = parseInt(req.body.money);
 
     const minimumMoneyAllowed = parseInt(process.env.MINIMUM_MONEY)
@@ -302,7 +302,7 @@ const initiateUPIPayment = async (req, res) => {
 
 const verifyUPIPayment = async (req, res) => {
     const type = PaymentMethodsMap.UPI_GATEWAY
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     let orderId = req.query.client_txn_id;
 
     if (!auth || !orderId) {
@@ -390,7 +390,7 @@ const verifyUPIPayment = async (req, res) => {
 
 const initiatePiPayment = async (req, res) => {
     const type = PaymentMethodsMap.WOW_PAY
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     let money = parseInt(req.query.money);
 
     // const minimumMoneyAllowed = parseInt(process.env.MINIMUM_MONEY)

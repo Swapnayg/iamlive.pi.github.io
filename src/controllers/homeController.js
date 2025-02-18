@@ -8,7 +8,7 @@ import "dotenv/config";
 const homePage = async (req, res) => {
     const [settings] = await connection.query('SELECT `app` FROM admin');
     let app = settings[0].app;
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     var sandbox = process.env.SANDBOX_MODE;
     return res.render("home/index.ejs", { app , sandbox});
 }
@@ -27,7 +27,7 @@ const rebatePage = async (req, res) => {
 
 const vipPage = async (req, res) => {
     var sandbox = process.env.SANDBOX_MODE;
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     const [userinfo] = await connection.query('SELECT `name_user` FROM users WHERE `token` = ? ', [auth]);
     let userid = userinfo[0].name_user;
     return res.render("checkIn/vip.ejs", {  UserName : userid , sandbox});
@@ -184,7 +184,7 @@ const avatarpage = async (req, res) => {
 }
 
 const d_get_betting = async (req, res) => {
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     const [user] = await connection.query('SELECT `phone` FROM users WHERE `token` = ? ', [auth]);
     let phone = user[0].phone;
     let gameJoin = req.body.gameJoin;
@@ -285,7 +285,7 @@ const newtutorial = async (req, res) => {
 }
 
 const forgot = async (req, res) => {
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     const [user] = await connection.query('SELECT `time_otp` FROM users WHERE token = ? ', [auth]);
     let time = user[0].time_otp;
     var sandbox = process.env.SANDBOX_MODE;
@@ -309,7 +309,7 @@ const myProfilePage = async (req, res) => {
 
 
 const getSalaryRecord = async (req, res) => {
-    const auth = req.body.authtoken;
+    const auth = req.cookies.auth;
 
     const [rows] = await connection.query(`SELECT * FROM users WHERE token = ?`, [auth]);
     let rowstr = rows[0];

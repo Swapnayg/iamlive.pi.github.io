@@ -214,7 +214,7 @@ const rosesPlus = async (auth, money) => {
 
 const betWinGo = async (req, res) => {
     let { typeid, join, x, money } = req.body;
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
 
     if (typeid != 1 && typeid != 3 && typeid != 5 && typeid != 10) {
         return res.status(200).json({
@@ -408,7 +408,7 @@ const listOrderOld = async (req, res) => {
             status: false
         });
     }
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
     const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
 
     let game = '';
@@ -520,7 +520,7 @@ const GetMyEmerdList = async (req, res) => {
             status: false
         });
     }
-    let auth = req.body.authtoken;
+    let auth = req.cookies.auth;
 
     let game = '';
     if (typeid == 1) game = 'wingo';

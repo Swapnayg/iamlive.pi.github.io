@@ -1,3 +1,19 @@
+
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+
 function showListOrder3(list_orders, x) {
     if (list_orders.length == 0) {
       return $(`.game-list .con-box:eq(${x}) .hb`).html(
@@ -114,6 +130,7 @@ $.ajax({
         pageno: "0",
         pageto: "10",
         language: "vi",
+        authtoken:auth_token,
     },
     dataType: "json",
     success: function(response) {
@@ -144,6 +161,7 @@ $.ajax({
                 pageno: "0",
                 pageto: "10",
                 language: "vi",
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function(response) {
@@ -588,6 +606,7 @@ var myModal_result_Period = document.getElementById("myModal_result_Period");
         pageno: "0",
         pageto: "10",
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -617,6 +636,7 @@ var myModal_result_Period = document.getElementById("myModal_result_Period");
         pageno: "0",
         pageto: "10",
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -654,6 +674,7 @@ var myModal_result_Period = document.getElementById("myModal_result_Period");
         pageno: "0",
         pageto: "100",
         language: "vi",
+        authtoken:auth_token,
     },
     dataType: "json",
     success: function(response1) {
@@ -673,6 +694,7 @@ var myModal_result_Period = document.getElementById("myModal_result_Period");
       pageno: "0",
       pageto: "10",
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -723,6 +745,7 @@ var myModal_result_Period = document.getElementById("myModal_result_Period");
         join: join,
         x: x,
         money: money,
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1285,6 +1308,7 @@ var myModal_result_Period = document.getElementById("myModal_result_Period");
       pageno: "0",
       pageto: "10",
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1344,6 +1368,7 @@ function timerJoin(params = '', addHours = 0) {
       pageno: "0",
       pageto: "10",
       language: "vi",
+      authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -1368,6 +1393,7 @@ function timerJoin(params = '', addHours = 0) {
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1424,6 +1450,7 @@ function timerJoin(params = '', addHours = 0) {
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1480,6 +1507,7 @@ function timerJoin(params = '', addHours = 0) {
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1553,6 +1581,7 @@ function timerJoin(params = '', addHours = 0) {
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1763,6 +1792,7 @@ function timerJoin(params = '', addHours = 0) {
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1819,6 +1849,7 @@ function timerJoin(params = '', addHours = 0) {
         pageno: pageno,
         pageto: pageto,
         language: "vi",
+        authtoken:auth_token,
       },
       dataType: "json",
       success: function (response) {
@@ -1859,3 +1890,11 @@ function timerJoin(params = '', addHours = 0) {
       },
     });
   });
+
+});
+}
+catch (err) {
+alert(err);
+}
+}
+auth();
