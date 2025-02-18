@@ -15,7 +15,6 @@ import rus_file from "../languages/rus.json";
 export function getlang_data(lang_code) {
     var lang_data = {};
 let lang = lang_code;
-console.log(lang_code);
 if(lang== "en")
 {
     lang_data = en_file;

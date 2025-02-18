@@ -157,7 +157,12 @@
         </div>
         
     </div>
-    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/adminlte.min.js"></script>
     <script src="/js/admin/admin.js"></script>
@@ -194,12 +199,26 @@
 
     </script>
     <script>
-        let phone = $('body').attr('id');
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          let phone = $('body').attr('id');
         $.ajax({
             type: "POST",
             url: `/manager/member/info/<%=phone%>`,
             data: {
-
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -232,35 +251,6 @@
                 }
             }
         });
-    </script>
-
-    <!--Withdraw-->
-    <script>
-        const RenderWithdraw = (datas) => {
-            if (datas.length == 0) {
-                $('#list-withdraw').html(`
-                    <tr class="text-center">
-                    <td colspan="7">No more data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.id_order}</td>
-                    <td><b style="color: #3498db">${formatMoney(data.money)}</b></td>
-                    <td style="min-width: 210px;"><b>${data.name_bank}</b></td>
-                    <td class="project-state"><span class="badge badge-${(data.status == '1' ? 'success' : 'danger')}">${(data.status == '1' ? 'success' : 'closed')}</span></td>
-                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-withdraw").html(html);
-        }
-
         var pageno = 0;
         var limit = 15;
         var page = 1;
@@ -272,6 +262,7 @@
             pageno: pageno,
             limit: limit,
             language: "vi",
+            authtoken:auth_token,
         },
         dataType: "json",
         success: function (response) {
@@ -291,6 +282,7 @@
             pageno: pageno,
             limit: limit,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -317,6 +309,7 @@
             pageno: pageno,
             limit: limit,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -325,36 +318,6 @@
             }
         });
         });
-    </script>
-    <!--Withdraw-->
-
-    <!--Recharge-->
-    <script>
-        const RenderRecharge = (datas) => {
-            if (datas.length == 0) {
-                $('#list-recharge').html(`
-                    <tr class="text-center">
-                    <td colspan="7">No more data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.transaction_id}</td>
-                    <td><b style="color: #3498db">${formatMoney(data.money)}</b></td>
-                    <td style="min-width: 210px;"><b>${(data.type == "bank") ? "BANK" : "MOMO"}</b></td>
-                    <td class="project-state"><span class="badge badge-${(data.status == '1' ? 'success' : 'warning')}">${(data.status == '1' ? 'success' : 'closed')}</span></td>
-                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-recharge").html(html);
-        }
-
         var pageno1 = 0;
         var limit1 = 15;
         var page1 = 1;
@@ -366,6 +329,7 @@
             pageno: pageno1,
             limit: limit1,
             language: "vi",
+            authtoken:auth_token,
         },
         dataType: "json",
         success: function (response) {
@@ -385,6 +349,7 @@
             pageno: pageno1,
             limit: limit1,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -411,6 +376,7 @@
             pageno: pageno1,
             limit: limit1,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -419,36 +385,6 @@
             }
         });
         });
-    </script>
-    <!--Recharge-->
-
-    <!--Redenvelope-->
-    <script>
-        const RenderRedenvelopes = (datas) => {
-            if (datas.length == 0) {
-                $('#list-redenvelope').html(`
-                    <tr class="text-center">
-                    <td colspan="7">No more data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                ` 
-                <tr class="text-center" style="">
-                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.phone}</td>
-                    <td><b style="color: #3498db">${formatMoney(data.money)}</b></td>
-                    <td style="min-width: 210px;"><b>${data.id_redenvelops}</b></td>
-                    <td class="project-state"><span class="badge badge-success">success</span></td>
-                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-redenvelope").html(html);
-        }
-
         var pageno2 = 0;
         var limit2 = 15;
         var page2 = 1;
@@ -460,6 +396,7 @@
             pageno: pageno2,
             limit: limit2,
             language: "vi",
+            authtoken:auth_token,
         },
         dataType: "json",
         success: function (response) {
@@ -486,6 +423,7 @@
             pageno: pageno2,
             limit: limit2,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -512,6 +450,7 @@
             pageno: pageno2,
             limit: limit2,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -520,35 +459,6 @@
             }
         });
         });
-    </script>
-    <!--Redenvelope-->
-
-    <!-- BET-->
-    <script>
-        const RenderBet = (datas) => {
-            if (datas.length == 0) {
-                $('#list-bet').html(`
-                    <tr class="text-center">
-                    <td colspan="7">No more data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.stage}</td>
-                    <td><b style="color: #3498db">${(data.status == 1) ? "+" : "-"} ${formatMoney(data.money)}</b></td>
-                    <td style="min-width: 210px;"><b>${(data.game.toUpperCase())}</b></td>
-                    <td class="project-state"><span class="badge badge-${(data.status == '1' ? 'success' : 'danger')}">${(data.status == '1' ? 'win' : 'loss')}</span></td>
-                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-bet").html(html);
-        }
 
         var pageno3 = 0;
         var limit3 = 30;
@@ -561,6 +471,7 @@
             pageno: pageno3,
             limit: limit3,
             language: "vi",
+            authtoken:auth_token,
         },
         dataType: "json",
         success: function (response) {
@@ -580,6 +491,7 @@
             pageno: pageno3,
             limit: limit3,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -606,6 +518,7 @@
             pageno: pageno3,
             limit: limit3,
             language: "vi",
+            authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -614,8 +527,115 @@
             }
         });
         });
+	});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+        
     </script>
-    <!-- BET-->
+    <script>
+        const RenderWithdraw = (datas) => {
+            if (datas.length == 0) {
+                $('#list-withdraw').html(`
+                    <tr class="text-center">
+                    <td colspan="7">No more data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.id_order}</td>
+                    <td><b style="color: #3498db">${formatMoney(data.money)}</b></td>
+                    <td style="min-width: 210px;"><b>${data.name_bank}</b></td>
+                    <td class="project-state"><span class="badge badge-${(data.status == '1' ? 'success' : 'danger')}">${(data.status == '1' ? 'success' : 'closed')}</span></td>
+                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-withdraw").html(html);
+        }
+
+        const RenderRecharge = (datas) => {
+            if (datas.length == 0) {
+                $('#list-recharge').html(`
+                    <tr class="text-center">
+                    <td colspan="7">No more data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.transaction_id}</td>
+                    <td><b style="color: #3498db">${formatMoney(data.money)}</b></td>
+                    <td style="min-width: 210px;"><b>${(data.type == "bank") ? "BANK" : "MOMO"}</b></td>
+                    <td class="project-state"><span class="badge badge-${(data.status == '1' ? 'success' : 'warning')}">${(data.status == '1' ? 'success' : 'closed')}</span></td>
+                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-recharge").html(html);
+        }
+        const RenderRedenvelopes = (datas) => {
+            if (datas.length == 0) {
+                $('#list-redenvelope').html(`
+                    <tr class="text-center">
+                    <td colspan="7">No more data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                ` 
+                <tr class="text-center" style="">
+                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.phone}</td>
+                    <td><b style="color: #3498db">${formatMoney(data.money)}</b></td>
+                    <td style="min-width: 210px;"><b>${data.id_redenvelops}</b></td>
+                    <td class="project-state"><span class="badge badge-success">success</span></td>
+                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-redenvelope").html(html);
+        }
+        const RenderBet = (datas) => {
+            if (datas.length == 0) {
+                $('#list-bet').html(`
+                    <tr class="text-center">
+                    <td colspan="7">No more data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td style="color: #e74c3c;font-weight: 600;min-width: 210px">${data.stage}</td>
+                    <td><b style="color: #3498db">${(data.status == 1) ? "+" : "-"} ${formatMoney(data.money)}</b></td>
+                    <td style="min-width: 210px;"><b>${(data.game.toUpperCase())}</b></td>
+                    <td class="project-state"><span class="badge badge-${(data.status == '1' ? 'success' : 'danger')}">${(data.status == '1' ? 'win' : 'loss')}</span></td>
+                    <td style="min-width: 210px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-bet").html(html);
+        }
+
+    </script>
     
 </body>
 

@@ -338,8 +338,12 @@
             </span> <span class="mint-indicator-text" style="display: none;"></span></div>
         <div class="mint-indicator-mask"></div>
     </div>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/js/client.js"></script>
     <script>
         function popup() {
@@ -398,7 +402,21 @@
 
         // });
 
-        $('.submit').click(function (e) {
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('.submit').click(function (e) {
             e.preventDefault();
             let id = $(this).attr('id');
             let utr = $('input:eq(0)').val().trim();;
@@ -410,6 +428,7 @@
                     type: 'submit',
                     typeid: id,
                     utr: utr,
+                    access_token:auth_token,
                 },
                 dataType: "json",
                 success: function (response) {
@@ -424,7 +443,13 @@
                 }
             });
         });
-
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
     </script>
 
 </body>

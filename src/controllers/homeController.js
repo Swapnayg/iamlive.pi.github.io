@@ -2,179 +2,152 @@ import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
 const fs = require('fs');
+import "dotenv/config";
 
 
 const homePage = async (req, res) => {
     const [settings] = await connection.query('SELECT `app` FROM admin');
     let app = settings[0].app;
-    let auth = req.cookies.auth;
-    var lang_data = {};
-    let lang = req.cookies.lang;
-if(lang== "en")
-{
-    lang_data = en_file;
-}
-else if(lang== "hd")
-{
-    lang_data = hd_file;
-}
-else if(lang== "pak")
-{
-    lang_data = pak_file;     
-}
-else if(lang== "my")
-{
-    lang_data = my_file;        
-}
-else if(lang== "tha")
-{
-    lang_data = tha_file;         
-}
-else if(lang== "bdt")
-{
-    lang_data = bdt_file;               
-}
-else if(lang== "ar")
-{
-    lang_data = ar_file;                     
-}
-else if(lang== "bra")
-{
-    lang_data = bra_file;                         
-}
-else if(lang== "zh")
-{
-    lang_data = zh_file;                             
-}
-else if(lang== "id")
-{
-    lang_data = id_file;                                 
-}
-else if(lang== "md")
-{
-    lang_data = md_file;                                     
-}
-else if(lang== "vi")
-{
-    lang_data = vi_file;                                         
-}
-else if(lang== "rus")
-{
-    lang_data = rus_file;                                             
-}
-    return res.render("home/index.ejs", { app  ,lang_data});
+    let auth = req.body.authtoken;
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("home/index.ejs", { app , sandbox});
 }
 
 
 
 const activityPage = async (req, res) => {
-    return res.render("checkIn/activity.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/activity.ejs", {sandbox});
 }
 
 const rebatePage = async (req, res) => {
-    return res.render("checkIn/rebate.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/rebate.ejs", {sandbox});
 }
 
 const vipPage = async (req, res) => {
-    let auth = req.cookies.auth;
+    var sandbox = process.env.SANDBOX_MODE;
+    let auth = req.body.authtoken;
     const [userinfo] = await connection.query('SELECT `name_user` FROM users WHERE `token` = ? ', [auth]);
     let userid = userinfo[0].name_user;
-    return res.render("checkIn/vip.ejs", {  UserName : userid });
+    return res.render("checkIn/vip.ejs", {  UserName : userid , sandbox});
 }
 
 const jackpotPage = async (req, res) => {
-    return res.render("checkIn/jackpot.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/jackpot.ejs", {sandbox});
 }
 
 const dailytaskPage = async (req, res) => {
-    return res.render("checkIn/dailytask.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/dailytask.ejs", {sandbox});
 }
 
 const invibonusPage = async (req, res) => {
-    return res.render("checkIn/invibonus.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/invibonus.ejs", {sandbox});
 }
 
 const checkInPage = async (req, res) => {
-    return res.render("checkIn/checkIn.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/checkIn.ejs", {sandbox});
 }
 
 const checkDes = async (req, res) => {
-    return res.render("checkIn/checkDes.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/checkDes.ejs", {sandbox});
 }
 
 const checkRecord = async (req, res) => {
-    return res.render("checkIn/checkRecord.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("checkIn/checkRecord.ejs", {sandbox});
 }
 
 const addBank = async (req, res) => {
-    return res.render("wallet/addbank.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/addbank.ejs", {sandbox});
 }
 
 // promotion
 const promotionPage = async (req, res) => {
-    return res.render("promotion/promotion.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/promotion.ejs", {sandbox});
 }
 
 const promotion1Page = async (req, res) => {
-    return res.render("promotion/promotion1.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/promotion1.ejs", {sandbox});
 }
 
 const promotionmyTeamPage = async (req, res) => {
-    return res.render("promotion/myTeam.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/myTeam.ejs", {sandbox});
 }
 
 const promotionDesPage = async (req, res) => {
-    return res.render("promotion/promotionDes.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/promotionDes.ejs", {sandbox});
 }
 
 const comhistoryPage = async (req, res) => {
-    return res.render("promotion/comhistory.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/comhistory.ejs", {sandbox});
 }
 
 const mybethistoryPage = async (req, res) => {
-    return res.render("promotion/mybethistory.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/mybethistory.ejs", {sandbox});
 }
 
 
 const tutorialPage = async (req, res) => {
-    return res.render("promotion/tutorial.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/tutorial.ejs", {sandbox});
 }
 
 const bonusRecordPage = async (req, res) => {
-    return res.render("promotion/bonusrecord.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("promotion/bonusrecord.ejs", {sandbox});
 }
 
 // wallet
 
 
 const transactionhistoryPage = async (req, res) => {
-    return res.render("wallet/transactionhistory.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/transactionhistory.ejs", {sandbox});
 }
 
 
 const walletPage = async (req, res) => {
-    return res.render("wallet/index.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/index.ejs", {sandbox});
 }
 
 const rechargePage = async (req, res) => {
+    var sandbox = process.env.SANDBOX_MODE;
     return res.render("wallet/recharge.ejs", {
-        MinimumMoney: process.env.MINIMUM_MONEY
+        MinimumMoney: process.env.MINIMUM_MONEY, sandbox
     });
 }
 
 const rechargerecordPage = async (req, res) => {
-    return res.render("wallet/rechargerecord.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/rechargerecord.ejs", {sandbox});
 }
 
 const withdrawalPage = async (req, res) => {
-    return res.render("wallet/withdrawal.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/withdrawal.ejs" , {sandbox});
 }
 
 const withdrawalrecordPage = async (req, res) => {
-    return res.render("wallet/withdrawalrecord.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/withdrawalrecord.ejs", {sandbox});
 }
 const transfer = async (req, res) => {
-    return res.render("wallet/transfer.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("wallet/transfer.ejs", {sandbox});
 }
 
 
@@ -196,20 +169,22 @@ const readFileAsync = async () => {
 const mianPage = async (req, res) => {
     const [settings] = await connection.query('SELECT `cskh` FROM admin');
     let cskh = settings[0].cskh;
-    return res.render("member/index.ejs",{cskh});
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/index.ejs",{cskh, sandbox});
 }
 
 const languegePage = async (req, res) => {
-    return res.render("member/language.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/language.ejs", {sandbox});
 }
 
 const avatarpage = async (req, res) => {
-    let lang = req.cookies.lang;
-    return res.render("member/avatar.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/avatar.ejs", {sandbox});
 }
 
 const d_get_betting = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [user] = await connection.query('SELECT `phone` FROM users WHERE `token` = ? ', [auth]);
     let phone = user[0].phone;
     let gameJoin = req.body.gameJoin;
@@ -237,11 +212,13 @@ const d_get_betting = async (req, res) => {
     });
 }
 const aboutPage = async (req, res) => {
-    return res.render("member/about/index.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/about/index.ejs", {sandbox});
 }
 
 const notificationPage = async (req, res) => {
-    return res.render("member/notification.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/notification.ejs", {sandbox});
 }
 
 const wingochat = async (req, res) => {
@@ -256,7 +233,8 @@ const wingochat = async (req, res) => {
     var f_messId= process.env.Firebase_MessageSenId;
     var f_appid= process.env.Firebase_AppId;
     var f_mesuareId= process.env.Firebase_MeasurementId;
-    return res.render("member/wingochat.ejs", { d_period: period, d_amount :amount,d_f_api: f_api, d_f_authdomain :f_authdomain,d_f_dburl:f_dburl,d_f_projid:f_projid,d_f_stobck:f_stobck,d_f_messId:f_messId,d_f_appid:f_appid,d_f_mesuareId:f_mesuareId});
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/wingochat.ejs", { d_period: period, d_amount :amount,d_f_api: f_api, d_f_authdomain :f_authdomain,d_f_dburl:f_dburl,d_f_projid:f_projid,d_f_stobck:f_stobck,d_f_messId:f_messId,d_f_appid:f_appid,d_f_mesuareId:f_mesuareId, sandbox});
 }
 
 const k3chat = async (req, res) => {
@@ -271,7 +249,8 @@ const k3chat = async (req, res) => {
     var f_messId= process.env.Firebase_MessageSenId;
     var f_appid= process.env.Firebase_AppId;
     var f_mesuareId= process.env.Firebase_MeasurementId;
-    return res.render("member/k3chat.ejs", { kd_period: k_period, kd_amount :k_amount,d_f_api: f_api, d_f_authdomain :f_authdomain,d_f_dburl:f_dburl,d_f_projid:f_projid,d_f_stobck:f_stobck,d_f_messId:f_messId,d_f_appid:f_appid,d_f_mesuareId:f_mesuareId});
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/k3chat.ejs", { kd_period: k_period, kd_amount :k_amount,d_f_api: f_api, d_f_authdomain :f_authdomain,d_f_dburl:f_dburl,d_f_projid:f_projid,d_f_stobck:f_stobck,d_f_messId:f_messId,d_f_appid:f_appid,d_f_mesuareId:f_mesuareId, sandbox});
 }
 
 const d5chat = async (req, res) => {
@@ -286,43 +265,51 @@ const d5chat = async (req, res) => {
     var f_messId= process.env.Firebase_MessageSenId;
     var f_appid= process.env.Firebase_AppId;
     var f_mesuareId= process.env.Firebase_MeasurementId;
-    return res.render("member/d5chat.ejs", { d5_period: d5_period, d5_amount :d5_amount , d_f_api: f_api, d_f_authdomain :f_authdomain,d_f_dburl:f_dburl,d_f_projid:f_projid,d_f_stobck:f_stobck,d_f_messId:f_messId,d_f_appid:f_appid,d_f_mesuareId:f_mesuareId});
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/d5chat.ejs", { d5_period: d5_period, d5_amount :d5_amount , d_f_api: f_api, d_f_authdomain :f_authdomain,d_f_dburl:f_dburl,d_f_projid:f_projid,d_f_stobck:f_stobck,d_f_messId:f_messId,d_f_appid:f_appid,d_f_mesuareId:f_mesuareId, sandbox});
 }
 
 const recordsalary = async (req, res) => {
-    return res.render("member/about/recordsalary.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/about/recordsalary.ejs", {sandbox});
 }
 
 const privacyPolicy = async (req, res) => {
-    return res.render("member/about/privacyPolicy.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/about/privacyPolicy.ejs", {sandbox});
 }
 
 const newtutorial = async (req, res) => {
-    return res.render("member/newtutorial.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/newtutorial.ejs", {sandbox});
 }
 
 const forgot = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [user] = await connection.query('SELECT `time_otp` FROM users WHERE token = ? ', [auth]);
     let time = user[0].time_otp;
-    return res.render("member/forgot.ejs", { time });
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/forgot.ejs", { time, sandbox });
 }
 
 const redenvelopes = async (req, res) => {
-    return res.render("member/redenvelopes.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/redenvelopes.ejs", {sandbox});
 }
 
 const riskAgreement = async (req, res) => {
-    return res.render("member/about/riskAgreement.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/about/riskAgreement.ejs", {sandbox});
 }
 
 const myProfilePage = async (req, res) => {
-    return res.render("member/myProfile.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("member/myProfile.ejs", {sandbox});
 }
 
 
 const getSalaryRecord = async (req, res) => {
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
 
     const [rows] = await connection.query(`SELECT * FROM users WHERE token = ?`, [auth]);
     let rowstr = rows[0];

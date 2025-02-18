@@ -94,7 +94,7 @@
     margin-top: 20px;
 }
 
-@charset "UTF-8";[data-v-167a3387]:root {
+[data-v-167a3387]:root {
     --van-picker-background: #22275B;
     --van-picker-option-text-color: #fff;
     --van-border-color: rgba(55, 73, 146, .5);
@@ -686,17 +686,31 @@
                 
             </div>
         </div>
-        <!---->
         <%- include('../nav') -%>
         
           
     </div>
     </div>
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/js/qr.js"></script>
     <script src="/js/client.js"></script>
     <script>
         $(document).ready(function () {
+            $(window).scroll(function() {
+                if ($(window).scrollTop() + $(window).height() > $(".main").height() && action == 'inactive') {
+                    action = 'active';
+                    start = start + limit;
+                    setTimeout(function() {
+                        load_country_data(limit, start);
+                    }, 1200);
+                }
+            });
             function alertMess(text, sic) {
                 $('body').append(
                     `
@@ -721,8 +735,6 @@
                 navigator.clipboard.writeText($(this).attr('data-clipboard-text'));
             });
         });
-    </script>
-    <script>
         function RosesRender(datas) {
             let html = datas.map((e) => {
                 let html = '';
@@ -746,11 +758,35 @@
                 </div>
                 `);
         }
-        $.ajax({
+        function copy(selector) {
+            var $temp = $("<div>");
+            $("body").append($temp);
+            $temp.attr("contenteditable", true)
+                .html($(selector).html()).select()
+                .on("focus", function () { document.execCommand('selectAll', false, null); })
+                .focus();
+            document.execCommand("copy");
+            $temp.remove();
+        }
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
             type: "POST",
             url: "/api/webapi/promotion",
             data: {
-
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -791,19 +827,6 @@
                 makeCode();
             }
         });
-
-        function copy(selector) {
-            var $temp = $("<div>");
-            $("body").append($temp);
-            $temp.attr("contenteditable", true)
-                .html($(selector).html()).select()
-                .on("focus", function () { document.execCommand('selectAll', false, null); })
-                .focus();
-            document.execCommand("copy");
-            $temp.remove();
-        }
-    </script>
-    <!-- <script>
         var limit = 15;
         var start = 0;
         var action = 'inactive';
@@ -813,7 +836,8 @@
                 method: "POST",
                 data: {
                     limit: limit,
-                    start: start
+                    start: start,
+                    authtoken:auth_token,
                 },
                 cache: false,
                 success: function(data) {
@@ -831,16 +855,14 @@
             action = 'active';
             load_country_data(limit, start);
         }
-        $(window).scroll(function() {
-            if ($(window).scrollTop() + $(window).height() > $(".main").height() && action == 'inactive') {
-                action = 'active';
-                start = start + limit;
-                setTimeout(function() {
-                    load_country_data(limit, start);
-                }, 1200);
-            }
-        });
-    </script> -->
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+    </script>
 </body>
 
 </html>

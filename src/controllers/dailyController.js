@@ -1,41 +1,49 @@
 import connection from "../config/connectDB";
 import jwt from 'jsonwebtoken'
 import md5 from "md5";
-require('dotenv').config();
+import "dotenv/config";
 
 let timeNow = Date.now();
 
 const dailyPage = async(req, res) => {
-    return res.render("daily/statistical.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/statistical.ejs", {sandbox}); 
 }
 
 const listMeber = async(req, res) => {
-    return res.render("daily/members.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/members.ejs", {sandbox}); 
 }
 
 const profileMember = async(req, res) => {
-    return res.render("daily/profileMember.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/profileMember.ejs", {sandbox}); 
 }
 
 const settingPage = async(req, res) => {
-    return res.render("daily/settings.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/settings.ejs", {sandbox}); 
 }
 
 const listRecharge = async(req, res) => {
-    return res.render("daily/listRecharge.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/listRecharge.ejs", {sandbox}); 
 }
 
 const listWithdraw = async(req, res) => {
-    return res.render("daily/listWithdraw.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/listWithdraw.ejs", {sandbox}); 
 }
 
 const pageInfo = async(req, res) => {
+    var sandbox = process.env.SANDBOX_MODE;
     let phone = req.params.phone;
-    return res.render("daily/profileMember.ejs", {phone}); 
+    return res.render("daily/profileMember.ejs", {phone, sandbox}); 
 }
 
 const giftPage = async(req, res) => {
-    let auth = req.cookies.auth;
+    var sandbox = process.env.SANDBOX_MODE;
+    let auth = req.body.authtoken;
     const [rows] = await connection.execute('SELECT `phone` FROM `users` WHERE `token` = ? AND veri = 1', [auth]);
     let money = 0;
     let money2 = 0;
@@ -44,15 +52,16 @@ const giftPage = async(req, res) => {
         money = point_list[0].money;
         money2 = point_list[0].money_us;
     }
-    return res.render("daily/giftPage.ejs", {money, money2}); 
+    return res.render("daily/giftPage.ejs", {money, money2, sandbox}); 
 }
 
 const support = async(req, res) => {
-    return res.render("daily/support.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("daily/support.ejs", {sandbox}); 
 }
 
 const settings = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let type = req.body.type;
     let value = req.body.value;
 
@@ -86,7 +95,7 @@ const settings = async(req, res) => {
 // xác nhận admin
 const middlewareDailyController = async(req, res, next) => {
     // xác nhận token
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
     if (!auth) {
         return res.redirect("/login");
     }
@@ -110,7 +119,7 @@ const middlewareDailyController = async(req, res, next) => {
 }
 
 const statistical = async(req, res) => {
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
     
     const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
 
@@ -243,7 +252,7 @@ function timerJoin(params = '', addHours = 0) {
 
 
 const userInfo = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     if (!phone) {
         return res.status(200).json({
@@ -373,7 +382,7 @@ const userInfo = async(req, res) => {
 }
 
 const infoCtv = async(req, res) => {
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
      
     const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
 
@@ -613,7 +622,7 @@ const infoCtv = async(req, res) => {
 }
 
 const infoCtv2 = async(req, res) => {
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
     const timeDate = req.body.timeDate;
      
     function formateT(params) {
@@ -769,7 +778,7 @@ function timerJoin(params = '', addHours = 0) {
     }
     const d = new Date();
     const time = d.getTime();
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = req.body.money;
 
 
@@ -821,7 +830,7 @@ function timerJoin(params = '', addHours = 0) {
 }
 
 const listRedenvelops = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
 
     if (user.length == 0) {
@@ -841,7 +850,7 @@ const listRedenvelops = async(req, res) => {
 }
 
 const listMember = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let {pageno, limit } = req.body;
 
     let [checkInfo] = await connection.execute('SELECT * FROM users WHERE token = ?', [auth]);
@@ -890,7 +899,7 @@ const listMember = async(req, res) => {
 }
 
 const listRechargeP = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
 
     if (user.length == 0) {
@@ -920,7 +929,7 @@ const listRechargeP = async(req, res) => {
 }
 
 const listWithdrawP = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [user] = await connection.query('SELECT * FROM users WHERE token = ? ', [auth]);
 
     if (user.length == 0) {
@@ -950,7 +959,7 @@ const listWithdrawP = async(req, res) => {
 }
 
 const listRechargeMem = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let {pageno, limit } = req.body;
 
@@ -1015,7 +1024,7 @@ const listRechargeMem = async(req, res) => {
 }
 
 const listWithdrawMem = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let {pageno, limit } = req.body;
 
@@ -1080,7 +1089,7 @@ const listWithdrawMem = async(req, res) => {
 }
 
 const listRedenvelope = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let {pageno, limit } = req.body;
 
@@ -1145,7 +1154,7 @@ const listRedenvelope = async(req, res) => {
 }
 
 const listBet = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let {pageno, limit } = req.body;
 
@@ -1210,7 +1219,7 @@ const listBet = async(req, res) => {
 }
 
 const buffMoney = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.body.username;
     let select = req.body.select;
     let money = req.body.money;

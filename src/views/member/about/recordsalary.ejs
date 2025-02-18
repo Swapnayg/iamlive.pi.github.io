@@ -153,28 +153,56 @@
     </div>
     
   </div>
-  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://momentjs.com/downloads/moment.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/dist/js/adminlte.min.js"></script>
   <script src="/js/admin/admin.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
   <script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+    async function auth() {
+      try {
+          
+          const scopes = ['username', 'payments', 'wallet_address'];
+          function onIncompletePaymentFound(payment) {
+              console.log("incomplete Transaction");
+          }; 
+    
+          Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+              var username = auth.user.username;
+              var password = auth.user.uid;
+              var auth_token = auth.accessToken;
+              $.ajax({
+                type: "POST",
+                url: "/getrecord",
+                data: {
+                  authtoken:auth_token,
+              },
+                dataType: "json",
+                success: function (response) {
+                  // Update the table with the new data
+                  updateTable(response);
+          
+                },
+                error: function (xhr, status, error) {
+                  console.log('Error fetching data:', error);
+          
+                }
+              });
+                });
+        }
+    catch (err) {
+        alert(err);
+    }
+    }
+    auth();
 
 
-    $.ajax({
-      type: "GET",
-      url: "/getrecord",
-      dataType: "json",
-      success: function (response) {
-        // Update the table with the new data
-        updateTable(response);
-
-      },
-      error: function (xhr, status, error) {
-        console.log('Error fetching data:', error);
-
-      }
-    });
 
     // Function to update the table with new data
     function updateTable(data) {

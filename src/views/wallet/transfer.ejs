@@ -218,21 +218,118 @@
             </div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
             <script src="/js/client.js"></script>
+        <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://momentjs.com/downloads/moment.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+            <script src="/js/client.js"></script>
             <script>
+
+                const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/GetUserInfo",
+            data: {
+                authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+                let user = response.data;
+                $('.wallet-user .name').text(user.name_user);
+                $("#prof_image").attr("src","/assets/png/"+ user.user_avatar);
+                $('.money').text("₹" + user.money_user + ".00");
+                $('.balance .item:eq(0) div:eq(1)').text("₹" + response.totalRecharge + ".00");
+                $('.balance .item:eq(1) div:eq(1)').text("₹" + response.totalWithdraw + ".00");
+            }
+        });
+        $('button').click(async (e) => {
+            e.preventDefault();
+            let phone = $('input:eq(0)').val().trim();
+            let amount = $('input:eq(1)').val().trim();
+            let status = validateForm(phone, amount, 'Please fill in the necessary part.');
+            if (status) {
+                $('.van-overlay').fadeIn(10);
                 $.ajax({
-                    type: "GET",
-                    url: "/api/webapi/GetUserInfo",
+                    type: "POST",
+                    url: "/api/webapi/transfer",
+                    data: {
+                        phone: phone,
+                        amount: amount,
+                        authtoken:auth_token,
+                    },
                     dataType: "json",
                     success: function (response) {
-                        let user = response.data;
-                        $('.wallet-user .name').text(user.name_user);
-                        $("#prof_image").attr("src","/assets/png/"+ data.data.user_avatar);
-                        $('.money').text("₹" + user.money_user + ".00");
-                        $('.balance .item:eq(0) div:eq(1)').text("₹" + response.totalRecharge + ".00");
-                        $('.balance .item:eq(1) div:eq(1)').text("₹" + response.totalWithdraw + ".00");
+                        if(response.status != false)
+                        {
+                            if(response.transfer_mode.trim()=='instant')
+                            {
+                                $('.money').text("₹" + response.curr_user_m + ".00");
+                            }
+                            $('input:eq(0)').val('');
+                            $('input:eq(1)').val('');
+                            alertMess(response.message);
+                        }
+                        $('input:eq(0)').val('');
+                        $('input:eq(1)').val('');
+                        alertMess(response.message);
                     }
                 });
+            }
 
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/api/webapi/transfer_history",
+            data: {
+                authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.status === true) {
+                    loadTransactionHistory(response.datas);
+                }
+            }
+        });
+
+        
+        $.ajax({
+            type: "POST",
+            url: "/api/webapi/transfer_history",
+            data: {
+                authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.status === true) {
+
+                    loadTransactionReceiveHistory(response.receive);
+                }
+
+            }
+        });
+
+		        });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+                
                 function alertMess(text) {
                     let length = $('.alert-toast .msg').length;
                     if (length == 0) {
@@ -260,41 +357,7 @@
                         return true;
                     }
                 }
-                $('button').click(async (e) => {
-                    e.preventDefault();
-                    let phone = $('input:eq(0)').val().trim();
-                    let amount = $('input:eq(1)').val().trim();
-                    let status = validateForm(phone, amount, 'Please fill in the necessary part.');
-                    if (status) {
-                        $('.van-overlay').fadeIn(10);
-                        $.ajax({
-                            type: "POST",
-                            url: "/api/webapi/transfer",
-                            data: {
-                                phone: phone,
-                                amount: amount,
-                            },
-                            dataType: "json",
-                            success: function (response) {
-                                if(response.status != false)
-                                {
-                                    if(response.transfer_mode.trim()=='instant')
-                                    {
-                                        $('.money').text("₹" + response.curr_user_m + ".00");
-                                    }
-                                    $('input:eq(0)').val('');
-                                    $('input:eq(1)').val('');
-                                    alertMess(response.message);
-                                }
-                                $('input:eq(0)').val('');
-                                $('input:eq(1)').val('');
-                                alertMess(response.message);
-                            }
-                        });
-                    }
-
-                });
-
+                
                 function loadTransactionHistory(datas) {
                     let html = datas.map((data) => {
                         return `
@@ -309,16 +372,7 @@
                     $('.promotion .bd.lisys').html(html);
                 }
 
-                $.ajax({
-                    type: "GET",
-                    url: "/api/webapi/transfer_history",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.status === true) {
-                            loadTransactionHistory(response.datas);
-                        }
-                    }
-                });
+           
 
                 function loadTransactionReceiveHistory(receive) {
                     let html = receive.map((r_data) => {
@@ -334,18 +388,6 @@
                     $('.promotion .bd.lisys-r').html(html);
                 }
 
-                $.ajax({
-                    type: "GET",
-                    url: "/api/webapi/transfer_history",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.status === true) {
-
-                            loadTransactionReceiveHistory(response.receive);
-                        }
-
-                    }
-                });
 
 
 

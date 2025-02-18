@@ -482,7 +482,7 @@ style="z-index: 2001;">
   
   <div id="app" data-v-app="">
     <div data-v-1690b988="" class="ar-loading-view"
-      style="display: none; --7688837a: &#39;Roboto&#39;, &#39;Inter&#39;, sans-serif;">
+      style="display: none;">
       <div data-v-1690b988="" class="loading-wrapper">
         <div data-v-1690b988="" class="loading-animat">
           <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 200"
@@ -564,7 +564,7 @@ style="z-index: 2001;">
         </div>
       </div>
     </div>
-    <div data-v-9bebd08e="" class="content" style="--7688837a: &#39;Roboto&#39;, &#39;Inter&#39;, sans-serif;">
+    <div data-v-9bebd08e="" class="content" style="">
       <div data-v-58c5e826="" data-v-9bebd08e="" class="navbar">
         <div data-v-58c5e826="" class="navbar-fixed" style="background: rgb(43 50 112);">
           <div data-v-58c5e826="" class="navbar__content">
@@ -2930,13 +2930,13 @@ style="z-index: 2001;">
 
 
     <!-- <div class="customer" id="customerId"
-      style="--7688837a: &#39;Roboto&#39;, &#39;Inter&#39;, sans-serif; --17a7a9f6: bahnschrift;"
+      style=" --17a7a9f6: bahnschrift;"
       onclick="window.location='/keFuMenu'">
       <img class="" data-origin="https://www.bigdaddygame2.com/assets/png/icon_sevice-1ca64bcf.png"
         src="./index_files/icon_sevice-1ca64bcf.png">
     </div> -->
     <div data-v-76c247f8="" class="tabbar__container"
-      style="--7688837a: &#39;Roboto&#39;, &#39;Inter&#39;, sans-serif;">
+      style="">
       <div data-v-76c247f8="" class="tabbar__container-item" onclick="window.location='/home'">
         <svg data-v-76c247f8="" xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"
           fill="none" class="">
@@ -3132,24 +3132,46 @@ style="z-index: 2001;">
       // Select the overlay element
       $('.van-overlay').fadeIn(10);
       $(".button__badge").css({"display":"none"});
-      $.ajax({
-        type: "GET",
-        url: "/api/webapi/getnotificationCount",
-        data: {
-
-        },
-        dataType: "json",
-        success: function (response) {
-          if(response.message == "Failed")
-          {
-            $(".button__badge").css({"display":"none"});
+      const Pi = window.Pi;
+      Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+      async function auth() {
+        try {
+            
+            const scopes = ['username', 'payments', 'wallet_address'];
+            function onIncompletePaymentFound(payment) {
+                console.log("incomplete Transaction");
+            }; 
+      
+            Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+                var username = auth.user.username;
+                var password = auth.user.uid;
+                var auth_token = auth.accessToken;
+                $.ajax({
+                  type: "GET",
+                  url: "/api/webapi/getnotificationCount",
+                  data: {
+                    authtoken:auth_token,
+                  },
+                  dataType: "json",
+                  success: function (response) {
+                    if(response.message == "Failed")
+                    {
+                      $(".button__badge").css({"display":"none"});
+                    }
+                    else{
+                      $(".button__badge").text(response.N_Count);
+                      $(".button__badge").css({"display":"block"});
+                    }
+                  }
+                });
+            });
           }
-          else{
-            $(".button__badge").text(response.N_Count);
-            $(".button__badge").css({"display":"block"});
-          }
-        }
-      });
+      catch (err) {
+          alert(err);
+      }
+      }
+      auth();
+      
     });
     $(window).on('load', function () {
       // Select the overlay element

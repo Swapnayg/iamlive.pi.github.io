@@ -4,23 +4,26 @@ import axios from "axios";
 import _ from "lodash";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
-
-
+import "dotenv/config";
 
 const winGoPage = async (req, res) => {
-    return res.render("bet/wingo/win.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win.ejs", {sandbox});
 }
 
 const winGoPage3 = async (req, res) => {
-    return res.render("bet/wingo/win3.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win3.ejs", {sandbox});
 }
 
 const winGoPage5 = async (req, res) => {
-    return res.render("bet/wingo/win5.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win5.ejs" ,{sandbox});
 }
 
 const winGoPage10 = async (req, res) => {
-    return res.render("bet/wingo/win10.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win10.ejs", {sandbox});
 }
 
 
@@ -211,7 +214,7 @@ const rosesPlus = async (auth, money) => {
 
 const betWinGo = async (req, res) => {
     let { typeid, join, x, money } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     if (typeid != 1 && typeid != 3 && typeid != 5 && typeid != 10) {
         return res.status(200).json({
@@ -405,7 +408,7 @@ const listOrderOld = async (req, res) => {
             status: false
         });
     }
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [auth]);
 
     let game = '';
@@ -517,7 +520,7 @@ const GetMyEmerdList = async (req, res) => {
             status: false
         });
     }
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let game = '';
     if (typeid == 1) game = 'wingo';

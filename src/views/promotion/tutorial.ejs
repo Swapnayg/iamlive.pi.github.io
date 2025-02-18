@@ -188,7 +188,13 @@
     
         </div>
         </div>
+  
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/js/client.js"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
         <script src="/js/client.js"></script>
         <script>
             $('.nav .van-tabbar-item:eq(0) img').attr('src', '/images/home1.png');
@@ -217,21 +223,45 @@
                 </div>
                 `);
             }
-            $.ajax({
-                type: "POST",
-                url: "/api/webapi/promotion",
-                data: {
 
-                },
-                dataType: "json",
-                success: function (response) {
-                    if (response.status === false) return location.href = '/home';
-                    RosesRender(response.level);
-                    console.log(response.info.code);
-                    $('.btn-box .btn:eq(0)').attr('data-clipboard-text', response.info[0].code);
-                    $('.btn-box .btn:eq(1)').attr('data-clipboard-text', window.location.hostname + `/register?r_code=${response.info[0].code}`);
-                }
-            });
+            const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/promotion",
+            data: {
+                authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.status === false) return location.href = '/home';
+                RosesRender(response.level);
+                console.log(response.info.code);
+                $('.btn-box .btn:eq(0)').attr('data-clipboard-text', response.info[0].code);
+                $('.btn-box .btn:eq(1)').attr('data-clipboard-text', window.location.hostname + `/register?r_code=${response.info[0].code}`);
+            }
+        });
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+            
         </script>
 </body>
 

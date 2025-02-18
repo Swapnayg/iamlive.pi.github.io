@@ -77,7 +77,7 @@ const initWebRouter = (app) => {
     ); 
 
     router.get('/recordsalary', homeController.recordsalary);
-    router.get('/getrecord', homeController.getSalaryRecord);
+    router.post('/getrecord', homeController.getSalaryRecord);
     router.get('/about', homeController.aboutPage);
     router.get('/notification', homeController.notificationPage);
 	router.get('/wingochat', homeController.wingochat);
@@ -118,11 +118,11 @@ const initWebRouter = (app) => {
     router.post('/api/webapi/login', accountController.login); // login
     router.post('/api/webapi/pilogin', accountController.pi_login); // login
     router.post('/api/webapi/register', accountController.register); // register
-    router.post('/api/webapi/pi_register', accountController.pi_admin_register);
+    router.post('/api/webapi/pi_register', accountController.pi_register_con);
     router.get('/aviator', userController.aviator);
     router.post('/api/webapi/getnotificationCount', userController.getnotificationCount);
-    router.get('/api/webapi/updatenotifications', userController.updatenotifications);
-    router.get('/api/webapi/getnotifications', userController.getnotifications);
+    router.post('/api/webapi/updatenotifications', userController.updatenotifications);
+    router.post('/api/webapi/getnotifications', userController.getnotifications);
     router.post('/api/webapi/GetUserInfo', userController.userInfo); // get info account
     router.put('/api/webapi/change/userInfo', userController.changeUser); // get info account
     router.put('/api/webapi/change/pass', userController.changePassword); // get info account
@@ -150,16 +150,16 @@ const initWebRouter = (app) => {
     router.post('/api/webapi/cancel_recharge', userController.cancelRecharge); // register
     router.post('/wowpay/create', userController.wowpay);
     router.post('/api/webapi/confirm_recharge', userController.confirmRecharge);
-    router.get('/api/webapi/myTeam', userController.listMyTeam); // register
-    router.get('/api/webapi/recharge/list', userController.listRecharge); // register
-    router.get('/api/webapi/withdraw/list', userController.listWithdraw); // register
+    router.post('/api/webapi/myTeam', userController.listMyTeam); // register
+    router.post('/api/webapi/recharge/list', userController.listRecharge); // register
+    router.post('/api/webapi/withdraw/list', userController.listWithdraw); // register
     router.post('/api/webapi/recharge/check', userController.recharge2); // register
     router.post('/api/webapi/withdrawal', userController.withdrawal3); // register
     router.post('/api/webapi/callback_bank', userController.callback_bank); // register
     router.post('/api/webapi/recharge/update', userController.updateRecharge); // update recharge
     router.post('/api/webapi/transfer', userController.transfer); // register
-    router.get('/api/webapi/transfer_history', userController.transferHistory); //
-    router.get('/api/webapi/confirm_recharge_usdt', userController.confirmUSDTRecharge); //
+    router.post('/api/webapi/transfer_history', userController.transferHistory); //
+    router.post('/api/webapi/confirm_recharge_usdt', userController.confirmUSDTRecharge); //
     router.post('/api/webapi/confirm_recharge_usdt', userController.confirmUSDTRecharge); //
 
     router.post('/api/webapi/search', userController.search); // register

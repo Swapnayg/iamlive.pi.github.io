@@ -34,6 +34,24 @@
             padding: 0;
             margin: 0;
         }
+        #loading {
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.7;
+            background-color: #fff;
+            z-index: 99;
+          }
+          
+          #loading-image {
+            z-index: 100;
+          }
+          
         #vip_lev_img
         {
             width: 1.33333rem;
@@ -886,7 +904,13 @@
         </div>
     </div>
 
-
+    <div id="loading">
+        <div class="shape shape-1" data-v-1690b988=""></div>
+        <div class="shape shape-2" data-v-1690b988=""></div>
+        <div class="shape shape-3" data-v-1690b988=""></div>
+        <div class="shape shape-4" data-v-1690b988=""></div>
+      </div>
+      
     <%- include('../nav') -%>
     <input type="hidden" id="lang_code" name="lang_code" value="en">
 
@@ -899,9 +923,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script>
         
-        window.onload = function () {
-            $('.Loading').fadeOut(10);
-        }
+        
+
         $(document).on('click', '.toggle-password', function () {
 
             $(this).toggleClass("fa-eye-slash");
@@ -965,7 +988,7 @@
 
             $("#not_count").css({"display":"none"});
         const Pi = window.Pi;
-Pi.init({ version: "2.0", sandbox: true });
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
 async function auth() {
   try {
       
@@ -1088,6 +1111,7 @@ async function auth() {
                           }
                         }
                     });
+                    $('#loading').hide();
                 }
             }
             });

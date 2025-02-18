@@ -172,28 +172,29 @@
 
             
         </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </div>    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/js/client.js"></script>
     <script>
-        function alertMess(text, sic) {
-            $('body').append(
-                `
-                <div data-v-1dcba851="" class="msg">
-                    <div data-v-1dcba851="" class="msg-content v-enter-active v-enter-to" style=""> ${text} </div>
-                </div>
-                `
-            );
-            setTimeout(() => {
-                $('.msg .msg-content').removeClass('v-enter-active v-enter-to');
-                $('.msg .msg-content').addClass('v-leave-active v-leave-to');
-                setTimeout(() => {
-                    $('.msg').remove();
-                }, 100);
-                sic.removeClass('block-click');
-            }, 1000);
-        }
-        $('button').click(function (e) {
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('button').click(function (e) {
             e.preventDefault();
             let name_bank = $('.ipt:eq(0)').val().trim();
             let name_user = $('.ipt:eq(1)').val().trim();
@@ -207,12 +208,12 @@
                     type: "POST",
                     url: "/api/webapi/addBank",
                     data: {
+                        access_token:auth_token,
                         name_bank: name_bank,
                         name_user: name_user,
                         stk: stk,
                         email: email,
                         sdt: sdt,
-                       
                         tinh: tinh,
                     },
                     dataType: "json",
@@ -230,6 +231,33 @@
                 alertMess('Please enter full information', $(this));
             }
         });
+		        });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+        
+
+
+        function alertMess(text, sic) {
+            $('body').append(
+                `
+                <div data-v-1dcba851="" class="msg">
+                    <div data-v-1dcba851="" class="msg-content v-enter-active v-enter-to" style=""> ${text} </div>
+                </div>
+                `
+            );
+            setTimeout(() => {
+                $('.msg .msg-content').removeClass('v-enter-active v-enter-to');
+                $('.msg .msg-content').addClass('v-leave-active v-leave-to');
+                setTimeout(() => {
+                    $('.msg').remove();
+                }, 100);
+                sic.removeClass('block-click');
+            }, 1000);
+        }
     </script>
 </body>
 

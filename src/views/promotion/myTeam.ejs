@@ -241,7 +241,13 @@
                     
                 </div>
             </div>
+  
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script src="/js/client.js"></script>
+        <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://momentjs.com/downloads/moment.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
             <script src="/js/client.js"></script>
             <script>
                 $(document).on('click', '.details-button, .details-arrow', function () {
@@ -328,108 +334,129 @@
                     });
 
                 }
-                $.ajax({
-                    type: "GET",
-                    url: "/api/webapi/myTeam",
-                    dataType: "json",
-                    success: function (response) {
-                        console.log('user name is :' + response.f1);
-                        const f1Copy = [...response.f1];
-                        f1Copy.splice(0, 4);
-                        const f1Data = response.f1.map(item => {
-                            item.daily_turn_over = item.daily_turn_over || 0;
-                            item.invite_count = Array.isArray(item.invite_count) ? item.invite_count.join(', ') : '';
-                            item.total_turn_over = item.total_turn_over || 0;
-                            return item;
-                        });
-                        const totalTurnover = f1Data.reduce((total, item) => {
-                            const turnover = parseFloat(item.total_turn_over);
-                            return isNaN(turnover) ? total : total + turnover;
-                        }, 0);
+                const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
-                        const totalMoneySum = response.f1.reduce((total, user) => {
-                            const money = parseFloat(user.total_money) || 0;
-                            return total + money;
-                        }, 0);
-
-                        $('#total-mem').text(`Total Recharge: ${totalMoneySum} | Total Turnover: ${parseFloat(totalTurnover)}`);
-                        MemRender(f1Data);
-                    }
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/myTeam",
+            dataType: "json",
+            success: function (response) {
+                console.log('user name is :' + response.f1);
+                const f1Copy = [...response.f1];
+                f1Copy.splice(0, 4);
+                const f1Data = response.f1.map(item => {
+                    item.daily_turn_over = item.daily_turn_over || 0;
+                    item.invite_count = Array.isArray(item.invite_count) ? item.invite_count.join(', ') : '';
+                    item.total_turn_over = item.total_turn_over || 0;
+                    return item;
                 });
-            </script>
-            <script>
+                const totalTurnover = f1Data.reduce((total, item) => {
+                    const turnover = parseFloat(item.total_turn_over);
+                    return isNaN(turnover) ? total : total + turnover;
+                }, 0);
 
-                function filterData(uid, level) {
-                    $.ajax({
-                        type: "GET",
-                        url: "/api/webapi/myTeam",
-                        dataType: "json",
-                        success: function (response) {
-                            const allData = response.f1;
-                            const filteredData = allData.filter(item => {
-                                const uidMatch = uid === "" || item.id_user.includes(uid);
-                                const levelMatch = level === "" || parseInt(item.user_level) === parseInt(level);
+                const totalMoneySum = response.f1.reduce((total, user) => {
+                    const money = parseFloat(user.total_money) || 0;
+                    return total + money;
+                }, 0);
 
-                                return uidMatch && levelMatch;
-                            });
+                $('#total-mem').text(`Total Recharge: ${totalMoneySum} | Total Turnover: ${parseFloat(totalTurnover)}`);
+                MemRender(f1Data);
+            }
+        });
+        function filterData(uid, level) {
+            $.ajax({
+                type: "POST",
+                url: "/api/webapi/myTeam",
+                data: {
+                    authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                    const allData = response.f1;
+                    const filteredData = allData.filter(item => {
+                        const uidMatch = uid === "" || item.id_user.includes(uid);
+                        const levelMatch = level === "" || parseInt(item.user_level) === parseInt(level);
 
-                            if (filteredData.length > 0) {
-                                let html = '';
-                                filteredData.forEach(data => {
-                                    html += `
-                                     <div data-v-0ff6946a="" class="item">
-                                        <div data-v-0ff6946a="" class="bd van-row">
-                                            <div data-v-0ff6946a="" class="c-tc van-col van-col--5">${data.id_user}</div>
-                                            <div data-v-0ff6946a="" class="c-tc van-ellipsis van-col van-col--6">${data.name_user}</div>
-                                            <div data-v-0ff6946a="" class="c-tc red van-col van-col--4">${data.daily_turn_over}  </div>
-                                            <!--<div data-v-0ff6946a="" class="c-tc van-col van-col--4">
-                                                <span data-v-0ff6946a="">${(data.status == 1) ? 'Open' : 'Close'}</span>
-                                            </div> -->
-                                            <div data-v-0ff6946a="" class="c-tc red van-col van-col--4">${data.user_level}</div>
-                                            <div data-v-0ff6946a="" class="c-tc van-col van-col--4">
-                                                <span data-v-0ff6946a="" class="details-button">Details</span>
-                                                <span data-v-0ff6946a="" class="details-arrow" style="display: none;">▼</span>
-                                            </div>
-                                        </div>
-                                        <div data-v-0ff6946a="" class="bdshow" style="display: none;">
-                                            <div data-v-0ff6946a="" class="c-row c-row-between">
-                                                <div data-v-0ff6946a="">Today TO: ${data.daily_turn_over}</div>
-                                                <div data-v-0ff6946a="">Self RC: ${data.total_money}</div>
-                                            </div>
-                                           
-                <div data-v-0ff6946a="" id="subordinateList">Subordinate: ${data.invite_count}</div>
-                                        </div>
-                                 </div>
-                    `;
-                                });
-                                $('#van-list').html(html);
-
-                                $('.showListButton').on('click', function () {
-                                    const inviteCount = $(this).data('invite-count');
-                                    console.log(inviteCount);
-                                    const listHTML = Array.isArray(inviteCount) ? `<ul>${inviteCount.map(item => `<li>${item}</li>`).join('')}</ul>` : 'No Subordinates';
-                                    $('#subordinateList').html(`Subordinate: ${listHTML}`);
-                                });
-                            }
-                        }
+                        return uidMatch && levelMatch;
                     });
+
+                    if (filteredData.length > 0) {
+                        let html = '';
+                        filteredData.forEach(data => {
+                            html += `
+                             <div data-v-0ff6946a="" class="item">
+                                <div data-v-0ff6946a="" class="bd van-row">
+                                    <div data-v-0ff6946a="" class="c-tc van-col van-col--5">${data.id_user}</div>
+                                    <div data-v-0ff6946a="" class="c-tc van-ellipsis van-col van-col--6">${data.name_user}</div>
+                                    <div data-v-0ff6946a="" class="c-tc red van-col van-col--4">${data.daily_turn_over}  </div>
+                                    <!--<div data-v-0ff6946a="" class="c-tc van-col van-col--4">
+                                        <span data-v-0ff6946a="">${(data.status == 1) ? 'Open' : 'Close'}</span>
+                                    </div> -->
+                                    <div data-v-0ff6946a="" class="c-tc red van-col van-col--4">${data.user_level}</div>
+                                    <div data-v-0ff6946a="" class="c-tc van-col van-col--4">
+                                        <span data-v-0ff6946a="" class="details-button">Details</span>
+                                        <span data-v-0ff6946a="" class="details-arrow" style="display: none;">▼</span>
+                                    </div>
+                                </div>
+                                <div data-v-0ff6946a="" class="bdshow" style="display: none;">
+                                    <div data-v-0ff6946a="" class="c-row c-row-between">
+                                        <div data-v-0ff6946a="">Today TO: ${data.daily_turn_over}</div>
+                                        <div data-v-0ff6946a="">Self RC: ${data.total_money}</div>
+                                    </div>
+                                   
+        <div data-v-0ff6946a="" id="subordinateList">Subordinate: ${data.invite_count}</div>
+                                </div>
+                         </div>
+            `;
+                        });
+                        $('#van-list').html(html);
+
+                        $('.showListButton').on('click', function () {
+                            const inviteCount = $(this).data('invite-count');
+                            console.log(inviteCount);
+                            const listHTML = Array.isArray(inviteCount) ? `<ul>${inviteCount.map(item => `<li>${item}</li>`).join('')}</ul>` : 'No Subordinates';
+                            $('#subordinateList').html(`Subordinate: ${listHTML}`);
+                        });
+                    }
                 }
+            });
+        }
 
-                $('.ipt').on('input', function () {
-                    const partialUID = $(this).val().trim();
-                    const selectedLevel = $('#levelSelect').val();
-                    filterData(partialUID, selectedLevel);
-                });
+        $('.ipt').on('input', function () {
+            const partialUID = $(this).val().trim();
+            const selectedLevel = $('#levelSelect').val();
+            filterData(partialUID, selectedLevel);
+        });
 
-                $('#levelSelect').on('change', function () {
-                    const selectedLevel = $(this).val();
-                    const partialUID = $('.ipt').val().trim();
-                    filterData(partialUID, selectedLevel);
-                });
-                filterData("", "");
+        $('#levelSelect').on('change', function () {
+            const selectedLevel = $(this).val();
+            const partialUID = $('.ipt').val().trim();
+            filterData(partialUID, selectedLevel);
+        });
+        filterData("", "");
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
 
+              
             </script>
-
 </body>
 
 </html>

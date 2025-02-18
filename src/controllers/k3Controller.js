@@ -4,10 +4,12 @@ import axios from "axios";
 import _ from "lodash";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
+import "dotenv/config";
 
 
 const K3Page = async (req, res) => {
-    return res.render("bet/k3/k3.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/k3/k3.ejs", {sandbox});
 }
 
 const isNumber = (params) => {
@@ -117,7 +119,7 @@ const validateBet = async (join, list_join, x, money, game) => {
 const betK3 = async (req, res) => {
     try {
         let { listJoin, game, gameJoin, xvalue, money } = req.body;
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
 
         // let validate = await validateBet(join, list_join, x, money, game);
 
@@ -1017,7 +1019,7 @@ const handlingK3 = async (typeid) => {
 
 const listOrderOld = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {
@@ -1069,7 +1071,7 @@ const listOrderOld = async (req, res) => {
 
 const GetMyEmerdList = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {

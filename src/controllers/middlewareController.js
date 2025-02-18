@@ -1,8 +1,9 @@
 import connection from '../config/connectDB';
+import "dotenv/config";
 
 const middlewareController = async(req, res, next) => {
     // xác nhận token
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
     if (!auth) return res.redirect("/login");
     try {
         const [rows] = await connection.execute('SELECT `token`, `status` FROM `users` WHERE `token` = ? AND `veri` = 1', [auth]);

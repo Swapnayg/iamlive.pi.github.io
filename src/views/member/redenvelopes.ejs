@@ -140,7 +140,11 @@
     
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://momentjs.com/downloads/moment.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/js/client.js"></script>
   <script>
     $(document).ready(function () {
@@ -173,27 +177,51 @@
         sic.removeClass('block-click');
       }, 1500);
     }
-    $('button').click(function (e) {
-      e.preventDefault();
-      let value = $('input').val().trim();
-      $(this).addClass('block-click');
-      let iej = $(this);
-      if (value) {
-        $.ajax({
-          type: "POST",
-          url: "/api/webapi/use/redenvelope",
-          data: {
-            code: value,
-          },
-          dataType: "json",
-          success: function (response) {
-            alertMess(response.message, iej);
-          }
-        });
-      } else {
-        alertMess('Please enter the gift code', iej);
-      }
-    });
+
+    const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('button').click(function (e) {
+            e.preventDefault();
+            let value = $('input').val().trim();
+            $(this).addClass('block-click');
+            let iej = $(this);
+            if (value) {
+              $.ajax({
+                type: "POST",
+                url: "/api/webapi/use/redenvelope",
+                data: {
+                  code: value,
+                  authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                  alertMess(response.message, iej);
+                }
+              });
+            } else {
+              alertMess('Please enter the gift code', iej);
+            }
+          });
+		    });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+
   </script>
 </body>
 

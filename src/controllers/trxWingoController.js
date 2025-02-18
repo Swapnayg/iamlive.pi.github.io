@@ -4,6 +4,7 @@ import axios from "axios";
 import _ from "lodash";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
+import "dotenv/config";
 
 export const TRX_WINGO_GAME_STATUS_MAP = {
   PENDING: 0,
@@ -18,23 +19,28 @@ export const TRX_WINGO_GAME_TYPE_MAP = {
 };
 
 const trxWingoBlockPage = async (req, res) => {
-  return res.render("bet/trx_wingo/trx_block.ejs");
+  var sandbox = process.env.SANDBOX_MODE;
+  return res.render("bet/trx_wingo/trx_block.ejs", {sandbox});
 };
 
 const trxWingoPage = async (req, res) => {
-  return res.render("bet/trx_wingo/win.ejs");
+  var sandbox = process.env.SANDBOX_MODE;
+  return res.render("bet/trx_wingo/win.ejs", {sandbox});
 };
 
 const trxWingoPage3 = async (req, res) => {
-  return res.render("bet/trx_wingo/win3.ejs");
+  var sandbox = process.env.SANDBOX_MODE;
+  return res.render("bet/trx_wingo/win3.ejs", {sandbox});
 };
 
 const trxWingoPage5 = async (req, res) => {
-  return res.render("bet/trx_wingo/win5.ejs");
+  var sandbox = process.env.SANDBOX_MODE;
+  return res.render("bet/trx_wingo/win5.ejs", {sandbox});
 };
 
 const trxWingoPage10 = async (req, res) => {
-  return res.render("bet/trx_wingo/win10.ejs");
+  var sandbox = process.env.SANDBOX_MODE;
+  return res.render("bet/trx_wingo/win10.ejs", {sandbox});
 };
 
 const isNumber = (params) => {
@@ -258,7 +264,7 @@ const rosesPlus = async (auth, money) => {
 const betTrxWingo = async (req, res) => {
   try {
     let { typeid, join, x, money } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     if (typeid != 1 && typeid != 3 && typeid != 5 && typeid != 10) {
       return res.status(200).json({
@@ -500,7 +506,7 @@ const listOrderOld = async (req, res) => {
       status: false,
     });
   }
-  let auth = req.cookies.auth;
+  let auth = req.body.authtoken;
   const [user] = await connection.query(
     "SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ",
     [auth],
@@ -635,7 +641,7 @@ const GetMyEmerdList = async (req, res) => {
       status: false,
     });
   }
-  let auth = req.cookies.auth;
+  let auth = req.body.authtoken;
 
   let game = "";
   if (typeid == 1) game = "trx_wingo";

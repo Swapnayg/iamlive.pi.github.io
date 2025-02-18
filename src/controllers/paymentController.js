@@ -2,7 +2,8 @@ import connection from "../config/connectDB";
 import axios from 'axios';
 import moment from "moment";
 import crypto from "crypto";
-import querystring from "querystring"
+import querystring from "querystring";
+import "dotenv/config";
 
 let timeNow = Date.now();
 
@@ -36,10 +37,12 @@ const initiateManualUPIPayment = async (req, res) => {
         upi_id: bank_recharge_momo_data?.stk || "",
         usdt_wallet_address: bank_recharge_momo_data?.qr_code_image || "",
     }
+    var sandbox = process.env.SANDBOX_MODE;
 
     return res.render("wallet/manual_payment.ejs", {
         Amount: query?.am,
         UpiId: momo.upi_id,
+        sandbox
     });
 }
 
@@ -59,17 +62,18 @@ const initiateManualUSDTPayment = async (req, res) => {
         upi_id: bank_recharge_momo_data?.stk || "",
         usdt_wallet_address: bank_recharge_momo_data?.qr_code_image || "",
     }
-
+    var sandbox = process.env.SANDBOX_MODE;
     return res.render("wallet/usdt_manual_payment.ejs", {
         Amount: query?.am,
         UsdtWalletAddress: momo.usdt_wallet_address,
+        sandbox
     });
 }
 
 const addManualUPIPaymentRequest = async (req, res) => {
     try {
         const data = req.body
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
         let money = parseInt(data.money);
         let utr = parseInt(data.utr);
         const minimumMoneyAllowed = parseInt(process.env.MINIMUM_MONEY)
@@ -139,7 +143,7 @@ const addManualUPIPaymentRequest = async (req, res) => {
 const addManualUSDTPaymentRequest = async (req, res) => {
     try {
         const data = req.body
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
         let money_usdt = parseInt(data.money);
         let money = money_usdt * 92;
         let utr = parseInt(data.utr);
@@ -209,7 +213,7 @@ const addManualUSDTPaymentRequest = async (req, res) => {
 
 const initiateUPIPayment = async (req, res) => {
     const type = PaymentMethodsMap.UPI_GATEWAY
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = parseInt(req.body.money);
 
     const minimumMoneyAllowed = parseInt(process.env.MINIMUM_MONEY)
@@ -298,7 +302,7 @@ const initiateUPIPayment = async (req, res) => {
 
 const verifyUPIPayment = async (req, res) => {
     const type = PaymentMethodsMap.UPI_GATEWAY
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let orderId = req.query.client_txn_id;
 
     if (!auth || !orderId) {
@@ -386,7 +390,7 @@ const verifyUPIPayment = async (req, res) => {
 
 const initiatePiPayment = async (req, res) => {
     const type = PaymentMethodsMap.WOW_PAY
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = parseInt(req.query.money);
 
     // const minimumMoneyAllowed = parseInt(process.env.MINIMUM_MONEY)
@@ -416,10 +420,10 @@ const initiatePiPayment = async (req, res) => {
             upi_id: bank_recharge_momo_data?.stk || "",
             usdt_wallet_address: bank_recharge_momo_data?.qr_code_image || "",
         }
-    
+        var sandbox = process.env.SANDBOX_MODE;
         return res.render("wallet/pipay.ejs", {
             Amount: query?.am,
-            UsdtWalletAddress: momo.usdt_wallet_address,
+            UsdtWalletAddress: momo.usdt_wallet_address,sandbox
         });
     
        

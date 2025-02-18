@@ -398,7 +398,12 @@
             </div>
             
     </div>
-    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/adminlte.min.js"></script>
     <script src="/js/admin/admin.js"></script>
@@ -560,9 +565,22 @@
                 $("#financial_details").html(html);
             });
         }
-    </script>
-    <script>
-        $('#sort-date').change(function (e) { 
+
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('#sort-date').change(function (e) { 
             e.preventDefault();
             let timeDate = $(this).val();
             $.ajax({
@@ -570,6 +588,7 @@
                 url: "/manager/infoCtv/select",
                 data: {
                     timeDate: timeDate,
+                    authtoken:auth_token,
                 }, 
                 dataType: "json",
                 success: function (response) {
@@ -585,7 +604,7 @@
             type: "POST",
             url: "/manager/infoCtv",
             data: {
-
+                authtoken:auth_token,
             }, 
             dataType: "json",
             success: function (response) {
@@ -614,6 +633,13 @@
                 $('.moneyCTV').text(formatMoney(response.moneyCTV));
             }
         });
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
     </script>
 </body>
 

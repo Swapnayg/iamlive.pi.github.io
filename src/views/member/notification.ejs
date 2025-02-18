@@ -180,7 +180,11 @@
             
     <!-- Add jQuery or any other necessary scripts -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/js/client.js"></script>
     <script>
     $(document).ready(function () {
@@ -213,53 +217,81 @@
             return strTime;
           }
           
-
-        $.ajax({
-            type: "GET",
-            url: "/api/webapi/updatenotifications",
-            dataType: "json",
-            success: function (response) {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/webapi/getnotifications",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.rows.length == 0) return;
-                        let html = response.rows.map((data,ind) => {
-                            let today = new Date(data.datetime);
-                            let not_time = formatAMPM(new Date(data.datetime));
-                            
-                            return `  <div data-v-3966082f="" class="item c-row c-row-between m-b-10">
-                    
-                                <div data-v-3966082f="" data-source="${data.noti_type}" onclick="redirect_click(this);">
+          const Pi = window.Pi;
+          Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+          async function auth() {
+            try {
+                
+                const scopes = ['username', 'payments', 'wallet_address'];
+                function onIncompletePaymentFound(payment) {
+                    console.log("incomplete Transaction");
+                }; 
+          
+                Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+                    var username = auth.user.username;
+                    var password = auth.user.uid;
+                    var auth_token = auth.accessToken;
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/webapi/updatenotifications",
+                        data: {
+                            authtoken:auth_token,
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/webapi/getnotifications",
+                                data: {
+                                    authtoken:auth_token,
+                                },
+                                dataType: "json",
+                                success: function (response) {
+                                    if (response.rows.length == 0) return;
+                                    let html = response.rows.map((data,ind) => {
+                                        let today = new Date(data.datetime);
+                                        let not_time = formatAMPM(new Date(data.datetime));
+                                        
+                                        return `  <div data-v-3966082f="" class="item c-row c-row-between m-b-10">
                                 
-                                    <div data-v-3966082f="" class="number c-row">
-                                        ${ind+1}
-                                        <div data-v-3966082f="" class="m-l-10 tag-read van-image" data-clipboard-text="" style="width: 18px; height: 15px;"><img src="/images/copy.png" class="van-image__img" /></div>
-                                    </div>
-                                    <div data-v-3966082f="">
-                                        <div data-v-3966082f="" class="money action m-b-10 m-t-10">
-                                            <!---->
-                                            <span data-v-3966082f="">${data.description}</span>
-                                        </div>
-                                    </div>
-                                    <div data-v-3966082f="" class="time">`+ not_time+`</div>
-                                </div>
-                                <div data-v-3966082f="" style="width:40%;">
-                                    <div data-v-3966082f="" class="state m-b-5" style="font-weight: 500;">
-                                        <!---->
-                                        <div data-v-4e585e69="" > ` + today.toShortFormat() + `</div>
-                                        <!---->
-                                    </div>
-                                </div>
-                            </div>`;
-                        }).join("");
-                        $('.box:eq(1) .lisys').html(html);
-                    }
+                                            <div data-v-3966082f="" data-source="${data.noti_type}" onclick="redirect_click(this);">
+                                            
+                                                <div data-v-3966082f="" class="number c-row">
+                                                    ${ind+1}
+                                                    <div data-v-3966082f="" class="m-l-10 tag-read van-image" data-clipboard-text="" style="width: 18px; height: 15px;"><img src="/images/copy.png" class="van-image__img" /></div>
+                                                </div>
+                                                <div data-v-3966082f="">
+                                                    <div data-v-3966082f="" class="money action m-b-10 m-t-10">
+                                                        <!---->
+                                                        <span data-v-3966082f="">${data.description}</span>
+                                                    </div>
+                                                </div>
+                                                <div data-v-3966082f="" class="time">`+ not_time+`</div>
+                                            </div>
+                                            <div data-v-3966082f="" style="width:40%;">
+                                                <div data-v-3966082f="" class="state m-b-5" style="font-weight: 500;">
+                                                    <!---->
+                                                    <div data-v-4e585e69="" > ` + today.toShortFormat() + `</div>
+                                                    <!---->
+                                                </div>
+                                            </div>
+                                        </div>`;
+                                    }).join("");
+                                    $('.box:eq(1) .lisys').html(html);
+                                }
+                            });
+                        }
+                    }); // Other functions like clipboard and alertMess can remain unchanged
+                
                 });
-            }
-        }); // Other functions like clipboard and alertMess can remain unchanged
-    });
+              }
+          catch (err) {
+              alert(err);
+          }
+          }
+          auth();
+        });
+        
 
     function redirect_click(ev)
     {

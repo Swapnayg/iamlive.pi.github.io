@@ -489,37 +489,79 @@ span {
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script src="/js/client.js"></script>
     <script>
 
-        $('#reload .van-image').click(function (e) {
-            e.preventDefault();
-            $(this).addClass('action block-click');
-            setTimeout(() => {
-                $(this).removeClass('action block-click');
-            }, 2500);
-            $.ajax({
-                type: "GET",
-                url: "/api/webapi/GetUserInfo",
-                dataType: "json",
-                success: function (response) {
-                    let user = response.data;
-                    $('.wallet-user .name').text(user.name_user);
-                    $('.money').text("₹" + user.money_user + ".00");
-                }
-            });
-        });
-        $.ajax({
-            type: "GET",
-            url: "/api/webapi/GetUserInfo",
-            dataType: "json",
-            success: function (response) {
-                let user = response.data;
-                $('.wallet-user .name').text(user.name_user);
-                $('.money').text("₹" + user.money_user + ".00");
-                $('.balance .item:eq(0) div:eq(1)').text("₹" + response.totalRecharge + ".00");
-                $('.balance .item:eq(1) div:eq(1)').text("₹" + response.totalWithdraw + ".00");
-            }
-        });
+ 
+      const Pi = window.Pi;
+      Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+      async function auth() {
+        try {
+            
+            const scopes = ['username', 'payments', 'wallet_address'];
+            function onIncompletePaymentFound(payment) {
+                console.log("incomplete Transaction");
+            }; 
+      
+            Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+                var username = auth.user.username;
+                var password = auth.user.uid;
+                var auth_token = auth.accessToken;
+                $.ajax({
+                  type: "POST",
+                  url: "/api/webapi/GetUserInfo",
+                  data: {
+                      authtoken:auth_token,
+                  },
+                  dataType: "json",
+                  success: function (response) {
+                      let user = response.data;
+                      $("#prof_image").attr("src","/assets/png/"+ user.user_avatar);
+                      $('.wallet-user .name').text(user.name_user);
+                      $('.money').text("₹" + user.money_user + ".00");
+                      $('.wallet-user .name').text(user.name_user);
+                      $('.money').text("₹" + user.money_user + ".00");
+                      $('.balance .item:eq(0) div:eq(1)').text("₹" + response.totalRecharge + ".00");
+                      $('.balance .item:eq(1) div:eq(1)').text("₹" + response.totalWithdraw + ".00");
+                  }
+              });
+                $('#reload .van-image').click(function (e) {
+                  console.log(auth_token);
+                  e.preventDefault();
+                  $(this).addClass('action block-click');
+                  setTimeout(() => {
+                      $(this).removeClass('action block-click');
+                  }, 2500);
+                  $.ajax({
+                      type: "POST",
+                      url: "/api/webapi/GetUserInfo",
+                      data: {
+                          authtoken:auth_token,
+                      },
+                      dataType: "json",
+                      success: function (response) {
+                          let user = response.data;
+                          $("#prof_image").attr("src","/assets/png/"+ user.user_avatar);
+                          $('.wallet-user .name').text(user.name_user);
+                          $('.money').text("₹" + user.money_user + ".00");
+                          $('.wallet-user .name').text(user.name_user);
+                          $('.money').text("₹" + user.money_user + ".00");
+                          $('.balance .item:eq(0) div:eq(1)').text("₹" + response.totalRecharge + ".00");
+                          $('.balance .item:eq(1) div:eq(1)').text("₹" + response.totalWithdraw + ".00");
+                      }
+                  });
+              });
+          });
+          }
+      catch (err) {
+          alert(err);
+      }
+      }
+      auth();
     </script>
 </body>
 

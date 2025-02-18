@@ -188,14 +188,34 @@
         </div>
         
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/js/client.js"></script>
     <script>
-        $.ajax({
-            type: "GET",
+
+        
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
+            type: "POST",
             url: "/api/webapi/xpgain_value",
             data: {
-    
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -218,46 +238,63 @@
                 });
                 $("#vip_lev_img").css('background-image', 'url(/assets/png/vip_img'+img_ind+'.png)');
                 }
-                });
-        function setCookie(cname, cvalue, exdays) {
-            const d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            let expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        }
-        function getCookie(cname) {
-            let name = cname + "=";
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let ca = decodedCookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
+        });
+        $('.sure').click(function (e) {
+            e.preventDefault();
+            let name = $('input').val().trim();
+            if (!name) {
+                let check = $('body .msg').length;
+                if (check == 0) {
+                    alertMess('Please enter your name');
                 }
-                if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
-                }
+                return;
             }
-            return "";
-        }
-
-        function unsetCookie() {
-            setCookie('token', '', 0);
-            setCookie('auth', '', 0);
-        }
-        fetch('/api/webapi/GetUserInfo')
-            .then(response => response.json())
-            .then(data => {
-                $('.Loading').fadeOut(100);
-                if (data.status === false) {
-                    unsetCookie();
+            $.ajax({
+                type: "PUT",
+                url: "/api/webapi/change/userInfo",
+                data: {
+                    name: name,
+                    type: 'editname',
+                    authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                    alertMess(response.message);
+                    $('.van-popup, .van-overlay').fadeOut(100);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/api/webapi/GetUserInfo",
+                data: {
+                    authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                    $('.Loading').fadeOut(100);
+                if (response.data.status === false) {
                     return false;
                 };
-                $("#prof_image").attr("src","/assets/png/"+ data.data.user_avatar);
-                $('.profile .name').text(data.data.name_user);
-                $('.profile .id').text(data.data.id_user);
-                $('.profile .number').text("+91 " + data.data.phone_user);
+                $("#prof_image").attr("src","/assets/png/"+ response.data.user_avatar);
+                $('.profile .name').text(response.data.name_user);
+                $('.profile .id').text(response.data.id_user);
+                $('.profile .number').text("+91 " + response.data.phone_user);
+                }
             });
+        });
+	});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+        
+        
+   
     </script>
     <!---->
     <script>
@@ -286,33 +323,7 @@
             e.preventDefault();
             $('.van-popup, .van-overlay').fadeIn(100);
         });
-        $('.sure').click(function (e) {
-            e.preventDefault();
-            let name = $('input').val().trim();
-            if (!name) {
-                let check = $('body .msg').length;
-                if (check == 0) {
-                    alertMess('Please enter your name');
-                }
-                return;
-            }
-            $.ajax({
-                type: "PUT",
-                url: "/api/webapi/change/userInfo",
-                data: {
-                    name: name,
-                    type: 'editname',
-                },
-                dataType: "json",
-                success: function (response) {
-                    alertMess(response.message);
-                    $('.van-popup, .van-overlay').fadeOut(100);
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                }
-            });
-        });
+        
     </script>
 </body>
 

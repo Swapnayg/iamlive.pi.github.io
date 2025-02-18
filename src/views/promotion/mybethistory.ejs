@@ -4490,7 +4490,13 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
          integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+         <script src="/js/client.js"></script>
+     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+     <script src="https://momentjs.com/downloads/moment.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
          <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
          <script src="https://momentjs.com/downloads/moment.js"></script>
       <script>
@@ -4535,6 +4541,21 @@ function timerJoin1(params = '') {
     let seconds = formateT(date.getSeconds());
     return years + '-' + months + '-' + days + ' ' + hours + ':' + minutes + ':' + seconds;
 }
+
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
          $("#datepickertxt").datepicker({
             format: 'mm/dd/yyyy',
             onSelect: function(dateText) {
@@ -4545,6 +4566,7 @@ function timerJoin1(params = '') {
                     url: "/api/betting/get_betting",
                     data: {
                         gameJoin: $("#game_selector_btn .ar-searchbar__selector-default").text().trim(),
+                        authtoken:auth_token,
                     },
                     success: function (response) {
                         $("#betting_details").empty();
@@ -4884,7 +4906,8 @@ function timerJoin1(params = '') {
             type: "POST",
             url: "/api/betting/get_betting",
             data: {
-                gameJoin: $("#game_selector_btn .ar-searchbar__selector-default").text().trim(),
+               gameJoin: $("#game_selector_btn .ar-searchbar__selector-default").text().trim(),
+               authtoken:auth_token,
             },
             success: function (response) {
                 $("#betting_details").empty();
@@ -5276,6 +5299,7 @@ function timerJoin1(params = '') {
                 url: "/api/betting/get_betting",
                 data: {
                     gameJoin: game,
+                    authtoken:auth_token,
                 },
                 success: function (response) {
                   $("#betting_details").empty();
@@ -5614,6 +5638,13 @@ function timerJoin1(params = '') {
                }
             } catch (error) { }
          };
+      });
+   }
+catch (err) {
+   alert(err);
+}
+}
+auth();
       </script>
    </body>
 </html>

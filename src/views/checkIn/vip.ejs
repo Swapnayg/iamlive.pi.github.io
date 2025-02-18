@@ -5809,13 +5809,17 @@
 
         
         <link rel='stylesheet' href='https://rawgit.com/OwlCarousel2/OwlCarousel2/develop/dist/assets/owl.carousel.min.css'>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
         <!-- <script src="/js/client.js"></script> -->
 
         <script src="https://momentjs.com/downloads/moment.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/js/client.js"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
         <script src='https://rawgit.com/OwlCarousel2/OwlCarousel2/develop/dist/owl.carousel.min.js'></script>
 
 <script id="rendered-js">
@@ -5909,59 +5913,81 @@
           items: 1 }
       } });
 
-    $.ajax({
-        type: "GET",
-        url: "/api/webapi/xpgain_value",
-        data: {
+      const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
-        },
-        dataType: "json",
-        success: function (response) {
-            var xp_Score = parseInt(response.xp_value);
-            $("#xp_gain").text(xp_Score);
-            var vip_array = [3000,30000,200000,2000000,20000000,50000000,100000000,1000000000,5000000000];
-            var img_ind = 0;
-            $(vip_array).each(function(index,el){
-                var xp_perc = xp_Score / el;
-                if(xp_perc.toString().indexOf('e-') != -1) 
-                {
-                    var xp_perc1 = 0;
-                }
-                else{
-                    var xp_perc1 = parseInt(xp_perc * 100).toFixed(0);
-                }
-                if(parseInt(xp_perc1)>= 100 )
-                {
-                    img_ind = index +1;
-                }
-            });
-            $("#vip_lev_img").css('background-image', 'url(/assets/png/vip_img'+img_ind+'.png)');
-            $(".swiper-slide").each(function(index){
-                var infodiv = parseInt($(this).find("#pro_div_span"+(index+1)).find("span").attr("data-max")); 
-                var percetage1 = xp_Score / infodiv;
-                if(percetage1.toString().indexOf('e-') != -1) 
-                {
-                    var percetage = 0;
-                }
-                else{
-                    var percetage = parseInt(percetage1 * 100).toFixed(0);
-                }
-                $(this).find("#pro_div_span"+(index+1)).find("span").text(parseInt(xp_Score) +"/"+infodiv)
-                if(parseInt(percetage) <= 0)
-                {
-                    updateProgress(0,'level'+(index+1));
-                }
-                else if(parseInt(percetage) <= 100)
-                {
-                    updateProgress(parseInt(percetage),'level'+(index+1));
-                }
-                else if(parseInt(percetage) > 100)
-                {
-                    updateProgress(100,'level'+(index+1));
-                }
-              });
-        }
-    });
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
+            type: "GET",
+            url: "/api/webapi/xpgain_value",
+            data: {
+                authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+                var xp_Score = parseInt(response.xp_value);
+                $("#xp_gain").text(xp_Score);
+                var vip_array = [3000,30000,200000,2000000,20000000,50000000,100000000,1000000000,5000000000];
+                var img_ind = 0;
+                $(vip_array).each(function(index,el){
+                    var xp_perc = xp_Score / el;
+                    if(xp_perc.toString().indexOf('e-') != -1) 
+                    {
+                        var xp_perc1 = 0;
+                    }
+                    else{
+                        var xp_perc1 = parseInt(xp_perc * 100).toFixed(0);
+                    }
+                    if(parseInt(xp_perc1)>= 100 )
+                    {
+                        img_ind = index +1;
+                    }
+                });
+                $("#vip_lev_img").css('background-image', 'url(/assets/png/vip_img'+img_ind+'.png)');
+                $(".swiper-slide").each(function(index){
+                    var infodiv = parseInt($(this).find("#pro_div_span"+(index+1)).find("span").attr("data-max")); 
+                    var percetage1 = xp_Score / infodiv;
+                    if(percetage1.toString().indexOf('e-') != -1) 
+                    {
+                        var percetage = 0;
+                    }
+                    else{
+                        var percetage = parseInt(percetage1 * 100).toFixed(0);
+                    }
+                    $(this).find("#pro_div_span"+(index+1)).find("span").text(parseInt(xp_Score) +"/"+infodiv)
+                    if(parseInt(percetage) <= 0)
+                    {
+                        updateProgress(0,'level'+(index+1));
+                    }
+                    else if(parseInt(percetage) <= 100)
+                    {
+                        updateProgress(parseInt(percetage),'level'+(index+1));
+                    }
+                    else if(parseInt(percetage) > 100)
+                    {
+                        updateProgress(100,'level'+(index+1));
+                    }
+                  });
+            }
+        });
+	});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+   
 </script>
     </body>
 </html>

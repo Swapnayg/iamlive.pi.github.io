@@ -156,7 +156,15 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script src="/js/client.js"></script>
     <script>
+        $(window).on('load', function () {
+            $('.Loading').fadeOut(0);
+        });
         function alertMess(text, sic) {
             $('body').append(
                 `
@@ -174,7 +182,22 @@
                 sic.removeClass('block-click');
             }, 1000);
         }
-        $('.list .item').click(function (e) {
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+
+          $('.list .item').click(function (e) {
             e.preventDefault();
             $(this).addClass('block-click');
             let data = $(this).attr('data-dpr');
@@ -184,6 +207,7 @@
                 url: "/api/webapi/checkIn",
                 data: {
                     data: data,
+                    authtoken:auth_token,
                 },
                 dataType: "json",
                 success: function (response) {
@@ -198,7 +222,7 @@
             type: "POST",
             url: "/api/webapi/checkIn",
             data: {
-
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -241,11 +265,14 @@
 
             }
         });
-    </script>
-    <script>
-        $(window).on('load', function () {
-            $('.Loading').fadeOut(0);
-        });
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+
     </script>
 </body>
 

@@ -4,22 +4,27 @@ import axios from "axios";
 import _ from "lodash";
 import GameRepresentationIds from "../constants/game_representation_id.js";
 import { generatePeriod } from "../helpers/games.js";
+import "dotenv/config";
 
 
 const K5DPage = async (req, res) => {
-    return res.render("bet/5d/5d.ejs"); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/5d/5d.ejs", {sandbox}); 
 }
 
 const K5DPage3 = async (req, res) => {
-    return res.render("bet/wingo/win3.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win3.ejs", {sandbox});
 }
 
 const K5DPage5 = async (req, res) => {
-    return res.render("bet/wingo/win5.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win5.ejs", {sandbox});
 }
 
 const K5DPage10 = async (req, res) => {
-    return res.render("bet/wingo/win10.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("bet/wingo/win10.ejs", {sandbox});
 }
 
 
@@ -130,7 +135,7 @@ const validateBet = async (join, list_join, x, money, game) => {
 const betK5D = async (req, res) => {
     try {
         let { join, list_join, x, money, game } = req.body;
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
 
         let validate = await validateBet(join, list_join, x, money, game);
 
@@ -200,7 +205,7 @@ const betK5D = async (req, res) => {
 
 const listOrderOld = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {
@@ -285,7 +290,7 @@ const Stat_listOrderOld = async (req, res) => {
 
 const GetMyEmerdList = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {

@@ -1,6 +1,5 @@
 import connection from '../config/connectDB';
-
-require('dotenv').config();
+import "dotenv/config";
 
 const sendMessageAdmin = (io) => {
     io.on('connection', (socket) => {

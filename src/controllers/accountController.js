@@ -46,17 +46,20 @@ const timeCreate = () => {
 }
 
 const loginPage = async (req, res) => {
-    return res.render("account/login.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("account/login.ejs", {sandbox});
 }
 
 const registerPage = async (req, res) => {
     var whatsapp1 = process.env.WHATSAPP_LOCAL_KEY;
     var whatsapp2 = process.env.WHATSAPP_INTERNATIONAL_KEY;
-    return res.render("account/register.ejs", {whatsapp1, whatsapp2});
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("account/register.ejs", {whatsapp1, whatsapp2,sandbox});
 }
 
 const forgotPage = async (req, res) => {
-    return res.render("account/forgot.ejs");
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("account/forgot.ejs", {sandbox});
 }
 
 const login = async (req, res) => {
@@ -551,7 +554,7 @@ const forGotPassword = async (req, res) => {
 }
 
 const keFuMenu = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     const [users] = await connection.query('SELECT `level`, `ctv` FROM users WHERE token = ?', [auth]);
 
@@ -572,14 +575,14 @@ const keFuMenu = async(req, res) => {
         }
         telegram = settings[0].telegram;
     }
-    
-    return res.render("keFuMenu.ejs", {telegram}); 
+    var sandbox = process.env.SANDBOX_MODE;
+    return res.render("keFuMenu.ejs", {telegram, sandbox}); 
 }
 
 
 const updateAvatarAPI = async (req, res) => {
     try {
-      let auth = req.cookies.auth;
+      let auth = req.body.authtoken;
       let avatar = req.body.avatar;
       const [rows] = await connection.query(
         "SELECT * FROM users WHERE token = ?",
