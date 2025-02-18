@@ -207,7 +207,6 @@ const betK5D = async (req, res) => {
 const listOrderOld = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
     let auth = req.body.authtoken;
-
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {
         return res.status(200).json({
@@ -222,7 +221,6 @@ const listOrderOld = async (req, res) => {
     const [user] = await connection.query('SELECT `phone`, `code`, `invite`, `level`, `money` FROM users WHERE token = ? AND veri = 1  LIMIT 1 ', [md5(auth)]);
 
     let game = Number(gameJoin);
-
     const [k5d] = await connection.query(`SELECT * FROM d5 WHERE status != 0 AND game = '${game}' ORDER BY id DESC LIMIT ${pageno}, ${pageto} `);
     const [k5dAll] = await connection.query(`SELECT * FROM d5 WHERE status != 0 AND game = '${game}' `);
     const [period] = await connection.query(`SELECT period FROM d5 WHERE status = 0 AND game = '${game}' ORDER BY id DESC LIMIT 1 `);
@@ -372,7 +370,6 @@ const add5D = async(game) => {
 
         let gameRepresentationId = GameRepresentationIds.G5D[game];
         let NewGamePeriod = generatePeriod(gameRepresentationId);
-
         let nextResult = '';
         if (game == 1) nextResult = setting[0].k5d;
         if (game == 3) nextResult = setting[0].k5d3;
@@ -381,7 +378,7 @@ const add5D = async(game) => {
 
         let newArr = '';
         if (nextResult == '-1') {
-            await connection.execute(`UPDATE d5 SET result = ?,status = ? WHERE period = ? AND game = "${game}"`, [result2, 1, period]);
+           await connection.execute(`UPDATE d5 SET result = ?,status = ? WHERE period = ? AND game = "${game}"`, [result2, 1, period]);
             newArr = '-1';
         } else {
             let result = '';
