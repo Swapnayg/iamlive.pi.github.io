@@ -14,7 +14,7 @@ const randomNumber = (min, max) => {
 }
 
 const verifyCode = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let now = new Date().getTime();
     let timeEnd = (+new Date) + 1000 * (60 * 2 + 0) + 500;
     let otp = randomNumber(100000, 999999);
@@ -51,7 +51,7 @@ const verifyCode = async (req, res) => {
 }
 
 const aviator = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     res.redirect(`https://247cashwin.cloud/theninja/src/api/userapi.php?action=loginandregisterbyauth&token=${auth}`);
     //res.redirect(`https://jetx.asia/#/jet/loginbyauth/${auth}`);
 }
@@ -105,7 +105,7 @@ const userInfo = async (req, res) => {
 }
 
 const changeUser = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let name = req.body.name;
     let type = req.body.type;
 
@@ -137,7 +137,7 @@ const changeUser = async (req, res) => {
 }
 
 const changePassword = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let password = req.body.password;
     let newPassWord = req.body.newPassWord;
     // let otp = req.body.otp;
@@ -183,7 +183,7 @@ const changePassword = async (req, res) => {
 }
 
 const checkInHandling = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let data = req.body.data;
 
     if (!auth) return res.status(200).json({
@@ -431,7 +431,7 @@ function timerJoin(params = '', addHours = 0) {
 }
 
 const promotion = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     if (!auth) {
         return res.status(200).json({
             message: 'Failed',
@@ -652,7 +652,7 @@ const promotion = async (req, res) => {
 }
 
 const myTeam = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     if (!auth) {
         return res.status(200).json({
             message: 'Failed',
@@ -680,7 +680,7 @@ const myTeam = async (req, res) => {
 }
 
 const listMyTeam = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     if (!auth) {
         return res.status(200).json({
             message: 'Failed',
@@ -754,7 +754,7 @@ const listMyTeam = async (req, res) => {
 
 }
 const wowpay = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = req.body.money;
 
     // Fetching the user's mobile number from the database using auth token
@@ -932,7 +932,7 @@ const recharge = async (req, res) => {
 
 const cancelRecharge = async (req, res) => {
     try {
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
 
         if (!auth) {
             return res.status(200).json({
@@ -1451,7 +1451,7 @@ const transferHistory = async (req, res) => {
     }
 }
 const recharge2 = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = req.body.money;
     if (!auth) {
         return res.status(200).json({
@@ -1516,7 +1516,7 @@ const listRecharge = async (req, res) => {
 }
 
 const search = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.body.phone;
     if (!auth) {
         return res.status(200).json({
@@ -1628,7 +1628,7 @@ const getnotificationCount = async (req, res) => {
 
 
 const useRedenvelope = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let code = req.body.code;
     if (!auth || !code) {
         return res.status(200).json({
@@ -1829,7 +1829,7 @@ const confirmUSDTRecharge = async (req, res) => {
     console.log(res?.body)
     console.log(res?.query)
     console.log(res?.cookies)
-    // let auth = req.cookies.auth;
+    // let auth = req.body.authtoken;
     // //let money = req.body.money;
     // //let paymentUrl = req.body.payment_url;
     // let client_txn_id = req.body?.client_txn_id;
@@ -1940,7 +1940,7 @@ const confirmUSDTRecharge = async (req, res) => {
 
 
 const updateRecharge = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = req.body.money;
     let order_id = req.body.id_order;
     let data = req.body.inputData;
@@ -1983,7 +1983,7 @@ const updateRecharge = async (req, res) => {
 }
 
 const getnotifications = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [auth]);
     const [rows] = await connection.query('SELECT * FROM notification WHERE `recipient` = ? ORDER BY id DESC',[user[0]?.id]);
 
@@ -2005,7 +2005,7 @@ const getnotifications = async (req, res) => {
 
 
 const updatenotifications = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let [user] = await connection.query('SELECT * FROM users WHERE `token` = ?', [auth]);
     await connection.execute("UPDATE notification SET isread = ?  WHERE `recipient` = ? AND  isread = ? ", [1,user[0]?.id,'0'] );
     return res.status(200).json({

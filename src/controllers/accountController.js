@@ -554,7 +554,7 @@ const forGotPassword = async (req, res) => {
 }
 
 const keFuMenu = async(req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     const [users] = await connection.query('SELECT `level`, `ctv` FROM users WHERE token = ?', [auth]);
 
@@ -582,7 +582,7 @@ const keFuMenu = async(req, res) => {
 
 const updateAvatarAPI = async (req, res) => {
     try {
-      let auth = req.cookies.auth;
+      let auth = req.body.authtoken;
       let avatar = req.body.avatar;
       const [rows] = await connection.query(
         "SELECT * FROM users WHERE token = ?",

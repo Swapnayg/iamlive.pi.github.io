@@ -135,7 +135,7 @@ const validateBet = async (join, list_join, x, money, game) => {
 const betK5D = async (req, res) => {
     try {
         let { join, list_join, x, money, game } = req.body;
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
 
         let validate = await validateBet(join, list_join, x, money, game);
 
@@ -205,7 +205,7 @@ const betK5D = async (req, res) => {
 
 const listOrderOld = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {
@@ -290,7 +290,7 @@ const Stat_listOrderOld = async (req, res) => {
 
 const GetMyEmerdList = async (req, res) => {
     let { gameJoin, pageno, pageto } = req.body;
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let checkGame = ['1', '3', '5', '10'].includes(String(gameJoin));
     if (!checkGame || pageno < 0 || pageto < 0) {

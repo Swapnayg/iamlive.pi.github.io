@@ -145,7 +145,7 @@ const settings = async (req, res) => {
 // xác nhận admin
 const middlewareAdminController = async (req, res, next) => {
     // xác nhận token
-    const auth = req.cookies.auth;
+    const auth = req.body.authtoken;
     if (!auth) {
         return res.redirect("/login");
     }
@@ -169,7 +169,7 @@ const middlewareAdminController = async (req, res, next) => {
 }
 
 const totalJoin = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let typeid = req.body.typeid;
     if (!typeid) {
         return res.status(200).json({
@@ -337,7 +337,7 @@ const statistical2 = async (req, res) => {
 }
 
 const changeAdmin = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let value = req.body.value;
     let type = req.body.type;
     let typeid = req.body.typeid;
@@ -424,7 +424,7 @@ function timerJoin(params = '', addHours = 0) {
 }
 
 const userInfo = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.body.phone;
     if (!phone) {
         return res.status(200).json({
@@ -552,7 +552,7 @@ const userInfo = async (req, res) => {
 
 
 const recharge = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     if (!auth) {
         return res.status(200).json({
             message: 'Failed',
@@ -577,7 +577,7 @@ const recharge = async (req, res) => {
 
 const settingGet = async (req, res) => {
     try {
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
         if (!auth) {
             return res.status(200).json({
                 message: 'Failed',
@@ -616,7 +616,7 @@ const settingGet = async (req, res) => {
 }
 
 const rechargeDuyet = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let id = req.body.id;
     let type = req.body.type;
     if (!auth || !id || !type) {
@@ -741,7 +741,7 @@ const updateLevel = async (req, res) => {
 
 
 const handlWithdraw = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let id = req.body.id;
     let type = req.body.type;
     if (!auth || !id || !type) {
@@ -797,7 +797,7 @@ const settingBank = async (req, res) => {
     try {
 
 
-        let auth = req.cookies.auth;
+        let auth = req.body.authtoken;
         let name_bank = req.body.name_bank;
         let name = req.body.name;
         let info = req.body.info;
@@ -862,7 +862,7 @@ const deleteBankRechargeById = async (id) => {
 }
 
 const tranfermode = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let tran_mode = req.body.mode_tran;
     const [rows] = await connection.query('SELECT * FROM users WHERE `token` = ? ', [auth]);
     let user = rows[0];
@@ -874,7 +874,7 @@ const tranfermode = async (req, res) => {
     } 
 
 const settingCskh = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let telegram = req.body.telegram;
     let cskh = req.body.cskh;
     let myapp_web = req.body.myapp_web;
@@ -893,7 +893,7 @@ const settingCskh = async (req, res) => {
 }
 
 const banned = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let id = req.body.id;
     let type = req.body.type;
     if (!auth || !id) {
@@ -953,7 +953,7 @@ const createBonus = async (req, res) => {
     const d = new Date();
     const time = d.getTime();
 
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let money = req.body.money;
     let type = req.body.type;
 
@@ -1059,7 +1059,7 @@ const createBonus = async (req, res) => {
 }
 
 const listRedenvelops = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
 
     let [redenvelopes] = await connection.query('SELECT * FROM redenvelopes WHERE status = 0 ');
     return res.status(200).json({
@@ -1070,7 +1070,7 @@ const listRedenvelops = async (req, res) => {
 }
 
 const settingbuff = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let id_user = req.body.id_user;
     let buff_acc = req.body.buff_acc;
     let money_value = req.body.money_value;
@@ -1561,7 +1561,7 @@ const infoCtv2 = async (req, res) => {
 }
 
 const listRechargeMem = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let { pageno, limit } = req.body;
 
@@ -1618,7 +1618,7 @@ const listRechargeMem = async (req, res) => {
 }
 
 const listWithdrawMem = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let { pageno, limit } = req.body;
 
@@ -1675,7 +1675,7 @@ const listWithdrawMem = async (req, res) => {
 }
 
 const listRedenvelope = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let { pageno, limit } = req.body;
 
@@ -1784,7 +1784,7 @@ const getLevelInfo = async (req, res) => {
 }
 
 const listBet = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     let phone = req.params.phone;
     let { pageno, limit } = req.body;
 
@@ -2078,7 +2078,7 @@ const getSalary = async (req, res) => {
 
 
 const gettranfermode = async (req, res) => {
-    let auth = req.cookies.auth;
+    let auth = req.body.authtoken;
     const [rows] = await connection.query('SELECT transfer_mode FROM users WHERE `token` = ? ', [auth]);
 
     if (!rows) {
