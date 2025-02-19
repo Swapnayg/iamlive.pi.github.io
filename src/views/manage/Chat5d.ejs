@@ -80,9 +80,13 @@
       
       <div id="d5chat"></div>
   </div> 
-  <!-- <script src="/plugins/jquery/jquery.min.js"></script> -->
   <link rel="stylesheet" type="text/css"  href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/dist/js/adminlte.min.js"></script>
@@ -98,88 +102,106 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
       import { getDatabase, ref, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-      const firebaseConfig = {
-        apiKey:  "<%=d_f_api%>",
-        authDomain:  "<%=d_f_authdomain%>",
-        databaseURL: "<%=d_f_dburl%>",
-        projectId:  "<%=d_f_projid%>",
-        storageBucket:  "<%=d_f_stobck%>",
-        messagingSenderId:  "<%=d_f_messId%>",
-        appId:  "<%=d_f_appid%>",
-        measurementId:  "<%=d_f_mesuareId%>"
-        };
+      const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
-      var chatname = "chat123";
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      var msgTxt = document.getElementById('msgTxt');
-      var sender = chatname;
-
-      let rows = '';
-      let count = 0;
-      // TO RECEIVE MSG
-      let dataSet = [];
-      onChildAdded(ref(db,"d5chat"), (data)=>{
-        count += 1;
-        let date1 = data.val().datetime;
-        if(data.val().datetime == null)
-        {
-          date1 = moment().format('DD/MM/YYYY');
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          const firebaseConfig = {
+            apiKey:  "<%=d_f_api%>",
+            authDomain:  "<%=d_f_authdomain%>",
+            databaseURL: "<%=d_f_dburl%>",
+            projectId:  "<%=d_f_projid%>",
+            storageBucket:  "<%=d_f_stobck%>",
+            messagingSenderId:  "<%=d_f_messId%>",
+            appId:  "<%=d_f_appid%>",
+            measurementId:  "<%=d_f_mesuareId%>"
+            };
+          const app = initializeApp(firebaseConfig);
+          const db = getDatabase(app);
+          var msgTxt = document.getElementById('msgTxt');
+          var sender = username;
+    
+          let rows = '';
+          let count = 0;
+          // TO RECEIVE MSG
+          let dataSet = [];
+          onChildAdded(ref(db,"d5chat"), (data)=>{
+            count += 1;
+            let date1 = data.val().datetime;
+            if(data.val().datetime == null)
+            {
+              date1 = moment().format('DD/MM/YYYY');
+            }
+            dataSet.push({Id: count,Sender: data.val().sender, Message: data.val().msg,Date:date1,Time:data.val().time,Key:data.key});
+            $(function () {
+              $('#table1').DataTable({
+                data: dataSet,
+                columns: [
+                  { data: 'Id' },
+                  { data: 'Key' },
+                  { data: 'Sender' },
+                  { data: 'Message' },
+                  { data: 'Date' },
+                  { data: 'Time' },
+                  {"mRender": function ( data, type, row ) {
+                    return '<a class="btn btn-danger btn-sm delete-btn" onclick=module.dltMsg('+row.Key+')><i class="fas fa-trash"></i>  Delete</a>';},
+                  error: function (xhr, error, code) {
+                      console.log(xhr, code);
+                  }
+            }
+                ],
+                bDestroy: true,
+              });
+            });  
+          }); 
+    
+          // TO DELETE MSG
+          module.dltMsg = function dltMsg(key){
+            remove(ref(db,"d5chat/"+key));
+            const dataset2 = dataSet.filter(v => v.Key.toString().trim() !== key.toString().trim());
+            $(function () {
+              $('#table1').DataTable({
+                data: dataset2,
+                columns: [
+                  { data: 'Id' },
+                  { data: 'Key' },
+                  { data: 'Sender' },
+                  { data: 'Message' },
+                  { data: 'Date' },
+                  { data: 'Time' },
+                  {"mRender": function ( data, type, row ) {
+                    return '<a class="btn btn-danger btn-sm delete-btn" onclick=module.dltMsg('+row.Key+')><i class="fas fa-trash"></i>  Delete</a>';},
+                  error: function (xhr, error, code) {
+                      console.log(xhr, code);
+                  }
+            }
+                ],
+                bDestroy: true,
+              });
+            });  
         }
-        dataSet.push({Id: count,Sender: data.val().sender, Message: data.val().msg,Date:date1,Time:data.val().time,Key:data.key});
-        $(function () {
-          $('#table1').DataTable({
-            data: dataSet,
-            columns: [
-              { data: 'Id' },
-              { data: 'Key' },
-              { data: 'Sender' },
-              { data: 'Message' },
-              { data: 'Date' },
-              { data: 'Time' },
-              {"mRender": function ( data, type, row ) {
-                return '<a class="btn btn-danger btn-sm delete-btn" onclick=module.dltMsg('+row.Key+')><i class="fas fa-trash"></i>  Delete</a>';},
-              error: function (xhr, error, code) {
-                  console.log(xhr, code);
-              }
-        }
-            ],
-            bDestroy: true,
-          });
-        });  
-      }); 
-
-      // TO DELETE MSG
-      module.dltMsg = function dltMsg(key){
-        remove(ref(db,"d5chat/"+key));
-        const dataset2 = dataSet.filter(v => v.Key.toString().trim() !== key.toString().trim());
-        $(function () {
-          $('#table1').DataTable({
-            data: dataset2,
-            columns: [
-              { data: 'Id' },
-              { data: 'Key' },
-              { data: 'Sender' },
-              { data: 'Message' },
-              { data: 'Date' },
-              { data: 'Time' },
-              {"mRender": function ( data, type, row ) {
-                return '<a class="btn btn-danger btn-sm delete-btn" onclick=module.dltMsg('+row.Key+')><i class="fas fa-trash"></i>  Delete</a>';},
-              error: function (xhr, error, code) {
-                  console.log(xhr, code);
-              }
-        }
-            ],
-            bDestroy: true,
-          });
-        });  
+    
+          // WHEN MSG IS DELETED
+          onChildRemoved(ref(db,"d5chat"),(data)=>{
+              $('#'+data.key).remove();
+          })
+		        });
     }
-
-      // WHEN MSG IS DELETED
-      onChildRemoved(ref(db,"d5chat"),(data)=>{
-          $('#'+data.key).remove();
-      })
-
+catch (err) {
+    alert(err);
+}
+}
+auth();
 
   </script>
 </body>

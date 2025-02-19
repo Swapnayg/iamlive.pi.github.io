@@ -477,76 +477,105 @@
     </div>
     
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"
-      integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg=="
-      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="/js/client.js"></script>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://momentjs.com/downloads/moment.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <script>
-  $(".van-grid-item").click(async function (event) {
-     try {
-        const avatar = $(this).find("img").attr("src").split("/")[3]
-        $(".active").removeClass("active")
-        $(this).find("img").addClass("active")
-        $(".van-grid-item > div > div").css("display", "none")
-        $(this).find(".checkbox_root").css("display", "block")
 
-        const response = await axios.patch("/api/webapi/change/avatar", { avatar })
-        if (response.data.status === true) {
-           $(".van-toast__text").text(response.data.message)
-           $("#successTost").fadeIn(220);
-            redirect_link = '/myProfile';
-            window.location.href = redirect_link;
-        } else {
-           $(".van-toast__text").text(response.data.message)
-           $("#failedTost").fadeIn(220)
-        }
+   const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
-        setTimeout(() => {
-           $("#failedTost").fadeOut()
-           $("#successTost").fadeOut()
-        }, 3000)
-     } catch (error) {
-        if (error.response.data.status === false) {
-           $(".van-toast__text").text(error.response.data.message)
-           $("#failedTost").fadeIn(220)
-
-           setTimeout(() => {
-              $("#failedTost").fadeOut()
-              $("#successTost").fadeOut()
-           }, 1600);
-        }
-     }
-  })
-
-  const userInfoTypes = {
-     phoneNumber: "phone_user",
-     username: "name_user",
-     balance: "money_user",
-     userId: "id_user",
-     referCode: "code",
-     betAmount: "total_bet_amount",
-     level: "level",
-     avatar: "avatar",
-  }
-
-  let userData = null
-
-  const fetchUser = async () => {
-     try {
-        const response = await axios.get("/api/webapi/GetUserInfo")
-        userData = response?.data?.data
-        $(".van-grid-item img").each(function (index, element) {
-           if ($(this).attr("src").split("/")[3] === userData.user_avatar) {
-              $(this).addClass("active")
-              $(this).parent().find(".checkbox_root").css("display", "block")
-           }
-        })
-     } catch (error) {
-        console.log(error)
-     }
-  }
-
-  fetchUser()
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $(".van-grid-item").click(async function (event) {
+            try {
+               const avatar = $(this).find("img").attr("src").split("/")[3]
+               $(".active").removeClass("active")
+               $(this).find("img").addClass("active")
+               $(".van-grid-item > div > div").css("display", "none")
+               $(this).find(".checkbox_root").css("display", "block")
+       
+               const response = await axios.patch("/api/webapi/change/avatar", {avatar: avatar,authtoken:auth_token })
+               if (response.data.status === true) {
+                  $(".van-toast__text").text(response.data.message)
+                  $("#successTost").fadeIn(220);
+                   redirect_link = '/myProfile';
+                   window.location.href = redirect_link;
+               } else {
+                  $(".van-toast__text").text(response.data.message)
+                  $("#failedTost").fadeIn(220)
+               }
+       
+               setTimeout(() => {
+                  $("#failedTost").fadeOut()
+                  $("#successTost").fadeOut()
+               }, 3000)
+            } catch (error) {
+               if (error.response.data.status === false) {
+                  $(".van-toast__text").text(error.response.data.message)
+                  $("#failedTost").fadeIn(220)
+       
+                  setTimeout(() => {
+                     $("#failedTost").fadeOut()
+                     $("#successTost").fadeOut()
+                  }, 1600);
+               }
+            }
+         });
+       
+         const userInfoTypes = {
+            phoneNumber: "phone_user",
+            username: "name_user",
+            balance: "money_user",
+            userId: "id_user",
+            referCode: "code",
+            betAmount: "total_bet_amount",
+            level: "level",
+            avatar: "avatar",
+         }
+       
+         let userData = null
+       
+       
+         $.ajax({
+          type: "POST",
+          url: "/api/webapi/GetUserInfo",
+          data: {
+              authtoken:auth_token,
+          },
+          dataType: "json",
+          success: function (response) {
+          if (response.data.status === false) {
+              return false;
+          };
+          $(".van-grid-item img").each(function (index, element) {
+             if ($(this).attr("src").split("/")[3] === response.data.user_avatar) {
+                $(this).addClass("active")
+                $(this).parent().find(".checkbox_root").css("display", "block")
+             }
+          })
+          }
+       });
+		});
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+  
 </script>
 </body>
 

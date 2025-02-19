@@ -166,111 +166,111 @@ const initWebRouter = (app) => {
 
 
     // daily
-    router.get('/manager/index', dailyController.middlewareDailyController, dailyController.dailyPage);
-    router.get('/manager/listRecharge', dailyController.middlewareDailyController, dailyController.listRecharge);
-    router.get('/manager/listWithdraw', dailyController.middlewareDailyController, dailyController.listWithdraw);
-    router.get('/manager/members', dailyController.middlewareDailyController, dailyController.listMeber);
-    router.get('/manager/profileMember', dailyController.middlewareDailyController, dailyController.profileMember);
-    router.get('/manager/settings', dailyController.middlewareDailyController, dailyController.settingPage);
-    router.get('/manager/gifts', dailyController.middlewareDailyController, dailyController.giftPage);
-    router.get('/manager/support', dailyController.middlewareDailyController, dailyController.support);
-    router.get('/manager/member/info/:phone', dailyController.middlewareDailyController, dailyController.pageInfo);
+    router.get('/manager/index',  dailyController.dailyPage);
+    router.get('/manager/listRecharge',  dailyController.listRecharge);
+    router.get('/manager/listWithdraw',  dailyController.listWithdraw);
+    router.get('/manager/members',  dailyController.listMeber);
+    router.get('/manager/profileMember',  dailyController.profileMember);
+    router.get('/manager/settings',  dailyController.settingPage);
+    router.get('/manager/gifts',  dailyController.giftPage);
+    router.get('/manager/support',  dailyController.support);
+    router.get('/manager/member/info/:phone',  dailyController.pageInfo);
 
-    router.post('/manager/member/info/:phone', dailyController.middlewareDailyController, dailyController.userInfo);
-    router.post('/manager/member/listRecharge/:phone', dailyController.middlewareDailyController, dailyController.listRechargeMem);
-    router.post('/manager/member/listWithdraw/:phone', dailyController.middlewareDailyController, dailyController.listWithdrawMem);
-    router.post('/manager/member/redenvelope/:phone', dailyController.middlewareDailyController, dailyController.listRedenvelope);
-    router.post('/manager/member/bet/:phone', dailyController.middlewareDailyController, dailyController.listBet);
+    router.post('/manager/member/info/:phone',  dailyController.userInfo);
+    router.post('/manager/member/listRecharge/:phone',  dailyController.listRechargeMem);
+    router.post('/manager/member/listWithdraw/:phone',  dailyController.listWithdrawMem);
+    router.post('/manager/member/redenvelope/:phone',  dailyController.listRedenvelope);
+    router.post('/manager/member/bet/:phone',  dailyController.listBet);
 
 
-    router.post('/manager/settings/list', dailyController.middlewareDailyController, dailyController.settings);
-    router.post('/manager/createBonus', dailyController.middlewareDailyController, dailyController.createBonus);
-    router.post('/manager/listRedenvelops', dailyController.middlewareDailyController, dailyController.listRedenvelops);
+    router.post('/manager/settings/list',  dailyController.settings);
+    router.post('/manager/createBonus',  dailyController.createBonus);
+    router.post('/manager/listRedenvelops',  dailyController.listRedenvelops);
 
-    router.post('/manager/listRecharge', dailyController.middlewareDailyController, dailyController.listRechargeP);
-    router.post('/manager/listWithdraw', dailyController.middlewareDailyController, dailyController.listWithdrawP);
+    router.post('/manager/listRecharge',  dailyController.listRechargeP);
+    router.post('/manager/listWithdraw',  dailyController.listWithdrawP);
 
-    router.post('/api/webapi/statistical', dailyController.middlewareDailyController, dailyController.statistical);
-    router.post('/manager/infoCtv', dailyController.middlewareDailyController, dailyController.infoCtv); // get info account
-    router.post('/manager/infoCtv/select', dailyController.middlewareDailyController, dailyController.infoCtv2); // get info account
-    router.post('/api/webapi/manager/listMember', dailyController.middlewareDailyController, dailyController.listMember); // get info account
+    router.post('/api/webapi/statistical',  dailyController.statistical);
+    router.post('/manager/infoCtv',  dailyController.infoCtv); // get info account
+    router.post('/manager/infoCtv/select',  dailyController.infoCtv2); // get info account
+    router.post('/api/webapi/manager/listMember',  dailyController.listMember); // get info account
 
-    router.post('/api/webapi/manager/buff', dailyController.middlewareDailyController, dailyController.buffMoney); // get info account
+    router.post('/api/webapi/manager/buff',  dailyController.buffMoney); // get info account
 
 
     // admin
-    router.get('/admin/manager/index', adminController.middlewareAdminController, adminController.adminPage); // get info account
-    router.get('/admin/manager/index/3', adminController.middlewareAdminController, adminController.adminPage3); // get info account
-    router.get('/admin/manager/index/5', adminController.middlewareAdminController, adminController.adminPage5); // get info account
-    router.get('/admin/manager/index/10', adminController.middlewareAdminController, adminController.adminPage10); // get info account
+    router.get('/admin/manager/index',  adminController.adminPage); // get info account
+    router.get('/admin/manager/index/3',  adminController.adminPage3); // get info account
+    router.get('/admin/manager/index/5',  adminController.adminPage5); // get info account
+    router.get('/admin/manager/index/10',  adminController.adminPage10); // get info account
 
-    router.get('/admin/manager/5d', adminController.middlewareAdminController, adminController.adminPage5d); // get info account
-    router.get('/admin/manager/k3', adminController.middlewareAdminController, adminController.adminPageK3); // get info account
+    router.get('/admin/manager/5d',  adminController.adminPage5d); // get info account
+    router.get('/admin/manager/k3',  adminController.adminPageK3); // get info account
 
 
-    router.get('/admin/manager/members', adminController.middlewareAdminController, adminController.membersPage); // get info account
-    router.get('/admin/manager/adminChatPage', adminController.middlewareAdminController, adminController.adminChatPage);
-    router.get('/admin/manager/k3chatPage', adminController.middlewareAdminController, adminController.k3chatPage);
-    router.get('/admin/manager/d5chatPage', adminController.middlewareAdminController, adminController.d5chatPage);
+    router.get('/admin/manager/members',  adminController.membersPage); // get info account
+    router.get('/admin/manager/adminChatPage',  adminController.adminChatPage);
+    router.get('/admin/manager/k3chatPage',  adminController.k3chatPage);
+    router.get('/admin/manager/d5chatPage',  adminController.d5chatPage);
      
-    router.get('/admin/manager/createBonus', adminController.middlewareAdminController, adminController.giftPage); // get info account
-    router.get('/admin/manager/ctv', adminController.middlewareAdminController, adminController.ctvPage); // get info account
-    router.get('/admin/manager/ctv/profile/:phone', adminController.middlewareAdminController, adminController.ctvProfilePage); // get info account
+    router.get('/admin/manager/createBonus',  adminController.giftPage); // get info account
+    router.get('/admin/manager/ctv',  adminController.ctvPage); // get info account
+    router.get('/admin/manager/ctv/profile/:phone',  adminController.ctvProfilePage); // get info account
 
-    router.get('/admin/manager/settings', adminController.middlewareAdminController, adminController.settings); // get info account
-    router.get('/admin/manager/listRedenvelops', adminController.middlewareAdminController, adminController.listRedenvelops); // get info account
-    router.post('/admin/manager/infoCtv', adminController.middlewareAdminController, adminController.infoCtv); // get info account
-    router.post('/admin/manager/infoCtv/select', adminController.middlewareAdminController, adminController.infoCtv2); // get info account
-    router.post('/admin/manager/settings/bank', adminController.middlewareAdminController, adminController.settingBank); // get info account
-    router.post('/admin/manager/settings/cskh', adminController.middlewareAdminController, adminController.settingCskh); // get info account
-    router.post('/admin/manager/settings/buff', adminController.middlewareAdminController, adminController.settingbuff); // get info account
-    router.post('/admin/manager/create/ctv', adminController.middlewareAdminController, adminController.register); // get info account
-    router.post('/admin/manager/settings/get', adminController.middlewareAdminController, adminController.settingGet); // get info account
-    router.post('/admin/manager/createBonus', adminController.middlewareAdminController, adminController.createBonus); // get info account
+    router.get('/admin/manager/settings',  adminController.settings); // get info account
+    router.get('/admin/manager/listRedenvelops',  adminController.listRedenvelops); // get info account
+    router.post('/admin/manager/infoCtv',  adminController.infoCtv); // get info account
+    router.post('/admin/manager/infoCtv/select',  adminController.infoCtv2); // get info account
+    router.post('/admin/manager/settings/bank',  adminController.settingBank); // get info account
+    router.post('/admin/manager/settings/cskh',  adminController.settingCskh); // get info account
+    router.post('/admin/manager/settings/buff',  adminController.settingbuff); // get info account
+    router.post('/admin/manager/create/ctv',  adminController.register); // get info account
+    router.post('/admin/manager/settings/get',  adminController.settingGet); // get info account
+    router.post('/admin/manager/createBonus',  adminController.createBonus); // get info account
 
-    router.post('/admin/member/listRecharge/:phone', adminController.middlewareAdminController, adminController.listRechargeMem);
-    router.post('/admin/member/listWithdraw/:phone', adminController.middlewareAdminController, adminController.listWithdrawMem);
-    router.post('/admin/member/redenvelope/:phone', adminController.middlewareAdminController, adminController.listRedenvelope);
-    router.post('/admin/member/bet/:phone', adminController.middlewareAdminController, adminController.listBet);
+    router.post('/admin/member/listRecharge/:phone',  adminController.listRechargeMem);
+    router.post('/admin/member/listWithdraw/:phone',  adminController.listWithdrawMem);
+    router.post('/admin/member/redenvelope/:phone',  adminController.listRedenvelope);
+    router.post('/admin/member/bet/:phone',  adminController.listBet);
 
 
-    router.get('/admin/manager/recharge', adminController.middlewareAdminController, adminController.rechargePage); // get info account
-    router.get('/admin/manager/withdraw', adminController.middlewareAdminController, adminController.withdraw); // get info account
-    // router.get('/admin/manager/level', adminController.middlewareAdminController, adminController.level); // get info account
-    router.get('/admin/manager/levelSetting', adminController.middlewareAdminController, adminController.levelSetting);
-    router.get('/admin/manager/CreatedSalaryRecord', adminController.middlewareAdminController, adminController.CreatedSalaryRecord);
-    router.get('/admin/manager/rechargeRecord', adminController.middlewareAdminController, adminController.rechargeRecord); // get info account
-    router.get('/admin/manager/withdrawRecord', adminController.middlewareAdminController, adminController.withdrawRecord); // get info account
-    router.get('/admin/manager/statistical', adminController.middlewareAdminController, adminController.statistical); // get info account
-    router.get('/admin/member/info/:id', adminController.middlewareAdminController, adminController.infoMember);
-    router.get('/api/webapi/admin/getLevelInfo', adminController.middlewareAdminController, adminController.getLevelInfo);
-    router.get('/api/webapi/admin/getSalary', adminController.middlewareAdminController, adminController.getSalary);
+    router.get('/admin/manager/recharge',  adminController.rechargePage); // get info account
+    router.get('/admin/manager/withdraw',  adminController.withdraw); // get info account
+    // router.get('/admin/manager/level',  adminController.level); // get info account
+    router.get('/admin/manager/levelSetting',  adminController.levelSetting);
+    router.get('/admin/manager/CreatedSalaryRecord',  adminController.CreatedSalaryRecord);
+    router.get('/admin/manager/rechargeRecord',  adminController.rechargeRecord); // get info account
+    router.get('/admin/manager/withdrawRecord',  adminController.withdrawRecord); // get info account
+    router.get('/admin/manager/statistical',  adminController.statistical); // get info account
+    router.get('/admin/member/info/:id',  adminController.infoMember);
+    router.get('/api/webapi/admin/getLevelInfo',  adminController.getLevelInfo);
+    router.get('/api/webapi/admin/getSalary',  adminController.getSalary);
 
-    router.post('/api/webapi/admin/updateLevel', adminController.middlewareAdminController, adminController.updateLevel); // get info account
-    router.post('/api/webapi/admin/CreatedSalary', adminController.middlewareAdminController, adminController.CreatedSalary); // get info account
-    router.post('/api/webapi/admin/listMember', adminController.middlewareAdminController, adminController.listMember); // get info account
-    router.post('/api/webapi/admin/listctv', adminController.middlewareAdminController, adminController.listCTV); // get info account
-    router.post('/api/webapi/admin/withdraw', adminController.middlewareAdminController, adminController.handlWithdraw); // get info account
-    router.post('/api/webapi/admin/recharge', adminController.middlewareAdminController, adminController.recharge); // get info account
-    router.post('/api/webapi/admin/tranfermode', adminController.middlewareAdminController, adminController.tranfermode); // store transfer mode
-    router.get('/api/webapi/admin/gettranfermode', adminController.middlewareAdminController, adminController.gettranfermode); // get transfer mode
+    router.post('/api/webapi/admin/updateLevel',  adminController.updateLevel); // get info account
+    router.post('/api/webapi/admin/CreatedSalary',  adminController.CreatedSalary); // get info account
+    router.post('/api/webapi/admin/listMember',  adminController.listMember); // get info account
+    router.post('/api/webapi/admin/listctv',  adminController.listCTV); // get info account
+    router.post('/api/webapi/admin/withdraw',  adminController.handlWithdraw); // get info account
+    router.post('/api/webapi/admin/recharge',  adminController.recharge); // get info account
+    router.post('/api/webapi/admin/tranfermode',  adminController.tranfermode); // store transfer mode
+    router.get('/api/webapi/admin/gettranfermode',  adminController.gettranfermode); // get transfer mode
     
-    router.post('/api/webapi/admin/rechargeDuyet', adminController.middlewareAdminController, adminController.rechargeDuyet); // get info account
-    router.post('/api/webapi/admin/member/info', adminController.middlewareAdminController, adminController.userInfo); // get info account
-    router.post('/api/webapi/admin/statistical', adminController.middlewareAdminController, adminController.statistical2); // get info account
+    router.post('/api/webapi/admin/rechargeDuyet',  adminController.rechargeDuyet); // get info account
+    router.post('/api/webapi/admin/member/info',  adminController.userInfo); // get info account
+    router.post('/api/webapi/admin/statistical',  adminController.statistical2); // get info account
 
-    router.post('/api/webapi/admin/banned', adminController.middlewareAdminController, adminController.banned); // get info account
+    router.post('/api/webapi/admin/banned',  adminController.banned); // get info account
 
 
-    router.post('/api/webapi/admin/totalJoin', adminController.middlewareAdminController, adminController.totalJoin); // get info account
-    router.post('/api/webapi/admin/change', adminController.middlewareAdminController, adminController.changeAdmin); // get info account
-    router.post('/api/webapi/admin/profileUser', adminController.middlewareAdminController, adminController.profileUser); // get info account
+    router.post('/api/webapi/admin/totalJoin',  adminController.totalJoin); // get info account
+    router.post('/api/webapi/admin/change',  adminController.changeAdmin); // get info account
+    router.post('/api/webapi/admin/profileUser',  adminController.profileUser); // get info account
 
     // admin 5d 
-    router.post('/api/webapi/admin/5d/listOrders', adminController.middlewareAdminController, adminController.listOrderOld); // get info account
-    router.post('/api/webapi/admin/k3/listOrders', adminController.middlewareAdminController, adminController.listOrderOldK3); // get info account
-    router.post('/api/webapi/admin/5d/editResult', adminController.middlewareAdminController, adminController.editResult); // get info account
-    router.post('/api/webapi/admin/k3/editResult', adminController.middlewareAdminController, adminController.editResult2); // get info account
+    router.post('/api/webapi/admin/5d/listOrders',  adminController.listOrderOld); // get info account
+    router.post('/api/webapi/admin/k3/listOrders',  adminController.listOrderOldK3); // get info account
+    router.post('/api/webapi/admin/5d/editResult',  adminController.editResult); // get info account
+    router.post('/api/webapi/admin/k3/editResult',  adminController.editResult2); // get info account
 
 
     router.post('/api/webapi/xpgain_value', userController.xpgain_value);

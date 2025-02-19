@@ -188,7 +188,8 @@
         </div>
         
     </div>
-    <script src="/js/client.js"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://momentjs.com/downloads/moment.js"></script>
@@ -213,6 +214,24 @@ async function auth() {
           var auth_token = auth.accessToken;
           $.ajax({
             type: "POST",
+            url: "/api/webapi/GetUserInfo",
+            data: {
+                authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+                $('.Loading').fadeOut(100);
+            if (response.data.status === false) {
+                return false;
+            };
+            $("#prof_image").attr("src","/assets/png/"+ response.data.user_avatar);
+            $('.profile .name').text(response.data.name_user);
+            $('.profile .id').text(response.data.id_user);
+            $('.profile .number').text("+91 " + response.data.phone_user);
+            }
+        });
+          $.ajax({
+            type: "POST",
             url: "/api/webapi/xpgain_value",
             data: {
                 authtoken:auth_token,
@@ -222,20 +241,27 @@ async function auth() {
                 var xp_Score = parseInt(response.xp_value);
                 var vip_array = [3000,30000,200000,2000000,20000000,50000000,100000000,1000000000,5000000000];
                 var img_ind = 0;
-                $(vip_array).each(function(index,el){
-                    var xp_perc = xp_Score / el;
-                    if(xp_perc.toString().indexOf('e-') != -1) 
-                    {
-                        var xp_perc1 = 0;
-                    }
-                    else{
-                        var xp_perc1 = parseInt(xp_perc * 100).toFixed(0);
-                    }
-                    if(parseInt(xp_perc1)>= 100 )
-                    {
-                        img_ind = index +1;
-                    }
-                });
+                if(xp_Score == 0)
+                {
+                    img_ind = 1;
+                }
+                else{
+                    $(vip_array).each(function(index,el){
+                        var xp_perc = xp_Score / el;
+                        console.log(xp_perc);
+                        if(xp_perc.toString().indexOf('e-') != -1) 
+                        {
+                            var xp_perc1 = 0;
+                        }
+                        else{
+                            var xp_perc1 = parseInt(xp_perc * 100).toFixed(0);
+                        }
+                        if(parseInt(xp_perc1)>= 100 )
+                        {
+                            img_ind = index +1;
+                        }
+                    });
+                }
                 $("#vip_lev_img").css('background-image', 'url(/assets/png/vip_img'+img_ind+'.png)');
                 }
         });
@@ -266,24 +292,7 @@ async function auth() {
                     }, 1000);
                 }
             });
-            $.ajax({
-                type: "POST",
-                url: "/api/webapi/GetUserInfo",
-                data: {
-                    authtoken:auth_token,
-                },
-                dataType: "json",
-                success: function (response) {
-                    $('.Loading').fadeOut(100);
-                if (response.data.status === false) {
-                    return false;
-                };
-                $("#prof_image").attr("src","/assets/png/"+ response.data.user_avatar);
-                $('.profile .name').text(response.data.name_user);
-                $('.profile .id').text(response.data.id_user);
-                $('.profile .number').text("+91 " + response.data.phone_user);
-                }
-            });
+           
         });
 	});
     }

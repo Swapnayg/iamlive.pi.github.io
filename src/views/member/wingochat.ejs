@@ -382,14 +382,22 @@
         </div>
         
     </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
   <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
     integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
     crossorigin="anonymous"></script>
+    
     <script>
         module = {};
     </script>
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+  
         var seconds = 1000 * 60;
         var timer;
         
@@ -445,7 +453,25 @@
           }, 1000);
       }
       cownDownTimer();
-        const socket = io();
+      const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          const socket = io();
+          
+  
+          $('.name').text(username);
+          var chatname = username;
         socket.on("data-server-chat", function (msg) {
             if (msg) {
               clearInterval(interval_in);
@@ -464,74 +490,22 @@
                 }
             }
         });
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getDatabase, ref, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-
-
-        var chatname = "chat123";
-  function setCookie(cname, cvalue, exdays) {
-      const d = new Date();
-      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-      let expires = "expires=" + d.toUTCString();
-      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-  }
-  function getCookie(cname) {
-      let name = cname + "=";
-      let decodedCookie = decodeURIComponent(document.cookie);
-      let ca = decodedCookie.split(';');
-      for (let i = 0; i < ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) == ' ') {
-              c = c.substring(1);
-          }
-          if (c.indexOf(name) == 0) {
-              return c.substring(name.length, c.length);
-          }
-      }
-      return "";
-  }
-
-  function unsetCookie() {
-      setCookie('token', '', 0);
-      setCookie('auth', '', 0);
-  }
-  fetch('/api/webapi/GetUserInfo')
-      .then(response => response.json())
-      .then(data => {
-          $('.Loading').fadeOut(100);
-          if (data.status === false) {
-              unsetCookie();
-              return false;
-          };
-          $('.name').text(data.data.name_user);
-          chatname = data.data.name_user;
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey:  "<%=d_f_api%>",
-  authDomain:  "<%=d_f_authdomain%>",
-  databaseURL: "<%=d_f_dburl%>",
-  projectId:  "<%=d_f_projid%>",
-  storageBucket:  "<%=d_f_stobck%>",
-  messagingSenderId:  "<%=d_f_messId%>",
-  appId:  "<%=d_f_appid%>",
-  measurementId:  "<%=d_f_mesuareId%>"
-  };
-
+      const firebaseConfig = {
+        apiKey:  "<%=d_f_api%>",
+        authDomain:  "<%=d_f_authdomain%>",
+        databaseURL: "<%=d_f_dburl%>",
+        projectId:  "<%=d_f_projid%>",
+        storageBucket:  "<%=d_f_stobck%>",
+        messagingSenderId:  "<%=d_f_messId%>",
+        appId:  "<%=d_f_appid%>",
+        measurementId:  "<%=d_f_mesuareId%>"
+        };
+      
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        // variables
         var msgTxt = document.getElementById('msgTxt');
         var sender = chatname;
-        // if(sessionStorage.getItem('sender')){
-        //     sender = sessionStorage.getItem('sender');
-        // } else {
-        //     sender = prompt('PLEASE ENTER YOUR NAME');
-        //     sessionStorage.setItem('sender',sender);
-        // }
 
-        // TO SEND MESSAGES
         module.sendMsg = function sendMsg(){
             var msg = msgTxt.value;
             var date = new Date();
@@ -543,31 +517,32 @@ const firebaseConfig = {
                 datetime:  moment().format('DD/MM/YYYY'),
                 time:moment().format("h:mm a"),
             })
-
-            msgTxt.value="";
+            msgTxt.value=""; 
         }
-
-        // TO RECEIVE MSG
         onChildAdded(ref(db,"messages"), (data)=>{
-            if(data.val().sender == sender){
-                messages.innerHTML += "<div style=justify-content:end class=outer id="+data.key+"><div id=inner class=me>you : "+data.val().msg+ " "+data.val().time+ "<button id=dltMsg onclick=module.dltMsg("+data.key+")><i class='fa fa-trash-o'></i></button></div></div>";
-            } else {
-                messages.innerHTML += "<div class=outer id="+data.key+"><div id=inner class=notMe>"+data.val().sender+" : "+data.val().msg+ " "+data.val().time+ "</div></div>";
-            }
-          $('#messages').scrollTop($('#messages')[0].scrollHeight);
-        })
-
-        // TO DELETE MSG
-        module.dltMsg = function dltMsg(key){
-            remove(ref(db,"messages/"+key));
-        }
-
-        // WHEN MSG IS DELETED
-        onChildRemoved(ref(db,"messages"),(data)=>{
-            var msgBox = document.getElementById(data.key);
-            messages.removeChild(msgBox);
-        })
-     });
+          if(data.val().sender == sender){
+              messages.innerHTML += "<div style=justify-content:end class=outer id="+data.key+"><div id=inner class=me>you : "+data.val().msg+ " "+data.val().time+ "<button id=dltMsg onclick=module.dltMsg("+data.key+")><i class='fa fa-trash-o'></i></button></div></div>";
+          } else {
+              messages.innerHTML += "<div class=outer id="+data.key+"><div id=inner class=notMe>"+data.val().sender+" : "+data.val().msg+ " "+data.val().time+ "</div></div>";
+          }
+        $('#messages').scrollTop($('#messages')[0].scrollHeight);
+      })
+      module.dltMsg = function dltMsg(key){
+        remove(ref(db,"messages/"+key));
+    }
+    onChildRemoved(ref(db,"messages"),(data)=>{
+        var msgBox = document.getElementById(data.key);
+        messages.removeChild(msgBox);
+    })
+        
+		  });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+          
     </script>
 </body>
 

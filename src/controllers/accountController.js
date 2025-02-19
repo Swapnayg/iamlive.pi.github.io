@@ -596,7 +596,7 @@ const updateAvatarAPI = async (req, res) => {
       }
       await connection.execute("UPDATE users SET avatar = ? WHERE token = ?", [
         avatar,
-        auth,
+        md5(auth),
       ]);
       return res.status(200).json({
         message: "Change avatar successfully",
