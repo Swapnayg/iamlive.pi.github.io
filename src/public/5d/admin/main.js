@@ -231,6 +231,7 @@ async function auth() {
           var password = auth.user.uid;
           var auth_token = auth.accessToken;
           const socket = io();
+          $('.admin_name').text(username);
           $('#manage .col-12').click(function(e) {
             var hasClass = $(e).attr('class');
             if(hasClass.indexOf('active-game') != -1){

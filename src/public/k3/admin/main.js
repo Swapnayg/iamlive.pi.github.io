@@ -324,6 +324,7 @@ async function auth() {
           var username = auth.user.username;
           var password = auth.user.uid;
           var auth_token = auth.accessToken;
+          $('.admin_name').text(username);
           const socket = io();
 
           function callListOrder() {

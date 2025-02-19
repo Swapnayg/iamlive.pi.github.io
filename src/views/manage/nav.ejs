@@ -166,15 +166,5 @@
             text-transform: capitalize;
         }
     </style>
-    <script>
-        fetch('/api/webapi/GetUserInfo')
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === false) {
-                unsetCookie();
-                return false;
-            };
-            $('.admin_name').text(data.data.name_user);
-        });
-    </script>
+   
 </aside>

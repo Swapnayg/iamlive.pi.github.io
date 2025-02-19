@@ -163,6 +163,7 @@ async function auth() {
           var password = auth.user.uid;
           var auth_token = auth.accessToken;
           var socket = io();
+          $('.admin_name').text(username);
 let typeid = $('html').attr('data-change');
 let game = '';
 if (typeid == '1') game = 'wingo';

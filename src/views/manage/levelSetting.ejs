@@ -81,7 +81,6 @@
       </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="/js/client.js"></script>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://momentjs.com/downloads/moment.js"></script>
@@ -106,6 +105,7 @@ async function auth() {
           var username = auth.user.username;
           var password = auth.user.uid;
           var auth_token = auth.accessToken;
+          $('.admin_name').text(username);
           $.ajax({
             type: "POST",
             url: "/api/webapi/admin/getLevelInfo",

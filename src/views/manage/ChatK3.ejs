@@ -82,7 +82,6 @@
   </div> 
   <link rel="stylesheet" type="text/css"  href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="/js/client.js"></script>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://momentjs.com/downloads/moment.js"></script>
@@ -115,6 +114,7 @@
                 var username = auth.user.username;
                 var password = auth.user.uid;
                 var auth_token = auth.accessToken;
+                $('.admin_name').text(username);
 
                 const firebaseConfig = {
                   apiKey:  "<%=d_f_api%>",
