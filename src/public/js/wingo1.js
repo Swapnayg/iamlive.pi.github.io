@@ -1103,6 +1103,25 @@ async function auth() {
           var auth_token = auth.accessToken;
           $.ajax({
             type: "POST",
+            url: "/api/webapi/check_login",
+            data: {
+                authtoken:auth_token,
+                username:username,
+                pwd:password
+            },
+            dataType: "json",
+            success: function (response) {
+                if(response.data == "register")
+                {
+                    window.location.href = '/register';
+                }
+                else if(response.data == "login")
+                {
+                    window.location.href = '/login';
+                }
+                else{
+          $.ajax({
+            type: "POST",
             url: "/api/webapi/GetUserInfo",
             data: {
               authtoken:auth_token,
@@ -1884,6 +1903,8 @@ async function auth() {
             }); 
           });
         $(".Loading").fadeOut(0);
+      }
+    },});
       });
     }
     catch (err) {

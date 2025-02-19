@@ -1163,6 +1163,25 @@ async function auth() {
           var auth_token = auth.accessToken;
           var firstGame = null;
           var socket_call = "";
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/check_login",
+            data: {
+                authtoken:auth_token,
+                username:username,
+                pwd:password
+            },
+            dataType: "json",
+            success: function (response) {
+                if(response.data == "register")
+                {
+                    window.location.href = '/register';
+                }
+                else if(response.data == "login")
+                {
+                    window.location.href = '/login';
+                }
+                else{
           $(document).ready(function(){
             callAjaxMeJoin();
           });
@@ -1674,7 +1693,11 @@ async function auth() {
                     $(".Loading").fadeOut(0);
                 }
             });
+        }
+    },});
+            
         });
+    
         
     }
     catch (err) {

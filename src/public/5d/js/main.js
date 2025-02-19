@@ -812,6 +812,25 @@ var socket_call = "";
           var username = auth.user.username;
           var password = auth.user.uid;
           var auth_token = auth.accessToken;
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/check_login",
+            data: {
+                authtoken:auth_token,
+                username:username,
+                pwd:password
+            },
+            dataType: "json",
+            success: function (response) {
+                if(response.data == "register")
+                {
+                    window.location.href = '/register';
+                }
+                else if(response.data == "login")
+                {
+                    window.location.href = '/login';
+                }
+                else{
           $(".Loading").fadeIn(0);
           $(document).ready(function(){
             callAjaxMeJoin();
@@ -1441,6 +1460,8 @@ socket.on("data-server-5d", function (msg) {
     });
 
           $(".Loading").fadeOut(0);
+        }
+    },});
         });
       }
       catch (err) {
