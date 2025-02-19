@@ -1446,10 +1446,7 @@ async function auth() {
 
 
           socket.on("data-server-trx-wingo", async function (msg) {
-            console.log("fired");
             try {
-              console.log(GAME_NAME);
-              console.log(msg.data[0].game);
               console.log(msg);
           
               GAME_TYPE_ID = getGameType();
@@ -1506,11 +1503,6 @@ async function auth() {
           
               console.log("lastGame", lastGame);
               console.log("lastGameHash", lastGameHash);
-              console.log("lastGameBets", lastGameBets);
-              console.log("lostGames", lostGames);
-              console.log("lostGamesMoney", lostGamesMoney);
-              console.log("winGames", winGames);
-              console.log("winGamesMoney", winGamesMoney);
           
               if (lastGameBets.length > 0) {
                 if (winGamesMoney > 0) {
