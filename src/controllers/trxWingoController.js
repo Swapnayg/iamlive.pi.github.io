@@ -778,6 +778,7 @@ const addTrxWingo = async (game) => {
           })
           .find((item) => item.timeSS === process.env.TRX_WINGO_GAME_TIME_SS);
 
+          //console.log(NextBlock);
         if (NextBlock === undefined) {
           throw new Error("NextBlock is undefined");
         }

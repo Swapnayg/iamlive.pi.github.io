@@ -378,7 +378,7 @@ const add5D = async(game) => {
 
         let newArr = '';
         if (nextResult == '-1') {
-           await connection.execute(`UPDATE d5 SET result = ?,status = ? WHERE period = ? AND game = "${game}"`, [result2, 1, period]);
+          await connection.execute(`UPDATE d5 SET result = ?,status = ? WHERE period = ? AND game = "${game}"`, [result2, 1, period]);
             newArr = '-1';
         } else {
             let result = '';

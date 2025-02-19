@@ -302,7 +302,13 @@
       <i class="fas fa-chevron-up"></i>
     </a> 
   </div>
-  <script src="/plugins/jquery/jquery.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
@@ -310,38 +316,7 @@
   <script src="/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
   <script src="/plugins/raphael/raphael.min.js"></script>
   <script src="/k3/admin/main.js"></script>
-  <script>
-    $(".start-order").click(function (e) { 
-      e.preventDefault();
-      let game = $('html').attr('data-change');
-      let value = $('#editResult').val().trim();
-      let arr = value.split('|');
-      for (let i = 0; i < arr.length; i++) {
-          let check = isNumber(arr[i]);
-          if (arr[i] == "" || arr[i].length != 3 || !check) {
-              alert("Please enter the correct format (e.g., 123|456|234).");
-              return false;
-          }
-      }
-      $.ajax({
-        type: "POST",
-        url: "/api/webapi/admin/k3/editResult",
-        data: {
-          game: game,
-          list: value,
-        },
-        dataType: "json",
-        success: function (response) {
-          Swal.fire(
-              'Good job!',
-              `${response.message}`,
-              'success'
-          );
-          $('#ketQua').text(`Next Result: ${value}`);
-        }
-      });
-    });
-  </script>
+
 </body>
 
 </html>

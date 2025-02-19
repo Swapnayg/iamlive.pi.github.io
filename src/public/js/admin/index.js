@@ -1,12 +1,4 @@
 
-var socket = io();
-let typeid = $('html').attr('data-change');
-let game = '';
-if (typeid == '1') game = 'wingo';
-if (typeid == '2') game = 'wingo3';
-if (typeid == '3') game = 'wingo5';
-if (typeid == '4') game = 'wingo10';
-$(`.container-fluid:eq(1) .row:eq(0) .info-box-content:eq(${Number(typeid) - 1}) .info-box-text`).css('color', '#e67e22');
 
 function formatMoney(money, type) {
     return String(money).replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${type}`);
@@ -40,6 +32,8 @@ function timerJoin(params = '', addHours = 0) {
     
         return years + '-' + months + '-' + days + ' ' + hours + ':' + minutes + ':' + seconds + ' ' + ampm;
 }
+
+
 const isNumber = (params) => {
     let pattern = /^[0-9]*\d$/;
     return pattern.test(params);
@@ -64,6 +58,7 @@ function showJoinMember(data) {
     $('.direct-chat-msg').append(result);
 }
 
+
 function showJoinMember2(data) {
     if (data.change == 1) return;
     let bet = data.join;
@@ -82,6 +77,102 @@ function showJoinMember2(data) {
       </div>`;
     $('.direct-chat-msg').append(result);
 }
+
+function showListOrder4(list_orders, x) {
+    let htmls = "";
+    let result = list_orders.map((list_orders) => {
+        return (htmls += `
+                    <div data-v-a9660e98="" class="c-tc item van-row">
+                        <div data-v-a9660e98="" class="van-col van-col--8">
+                            <div data-v-a9660e98="" class="c-tc goItem">${list_orders.period}</div>
+                        </div>
+                        <div data-v-a9660e98="" class="van-col van-col--5">
+                            <div data-v-a9660e98="" class="c-tc goItem">
+                                <!---->
+                                <span data-v-a9660e98="" class="${list_orders.amount % 2 == 0 ? "red" : "green"}"> ${list_orders.amount} </span>
+                            </div>
+                        </div>
+                        <div data-v-a9660e98="" class="van-col van-col--5">
+                            <div data-v-a9660e98="" class="c-tc goItem">
+                                <span data-v-a9660e98=""> ${list_orders.amount < 5 ? "Small" : "Big"} </span>
+                                <!---->
+                            </div>
+                        </div>
+                        <div data-v-a9660e98="" class="van-col van-col--6">
+                            <div data-v-a9660e98="" class="goItem c-row c-tc c-row-center">
+                                <div data-v-a9660e98="" class="c-tc c-row box c-row-center">
+                                    <span data-v-a9660e98="" class="li ${list_orders.amount % 2 == 0 ? "red" : "green"}"></span>
+                                    ${list_orders.amount == 0 || list_orders.amount == 5 ? '<span data-v-a9660e98="" class="li violet"></span>' : ""}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `);
+    });
+    $(`#list-orders`).html(htmls);
+}
+
+function showListOrder3(list_orders, x) {
+    let htmls = "";
+    let result = list_orders.map((list_orders) => {
+        return (htmls += `
+                    <div data-v-a9660e98="" class="c-tc item van-row">
+                        <div data-v-a9660e98="" class="van-col van-col--8">
+                            <div data-v-a9660e98="" class="c-tc goItem">${list_orders.period}</div>
+                        </div>
+                        <div data-v-a9660e98="" class="van-col van-col--5">
+                            <div data-v-a9660e98="" class="c-tc goItem">
+                                <!---->
+                                <span data-v-a9660e98="" class="${list_orders.amount % 2 == 0 ? "red" : "green"}"> ${list_orders.amount} </span>
+                            </div>
+                        </div>
+                        <div data-v-a9660e98="" class="van-col van-col--5">
+                            <div data-v-a9660e98="" class="c-tc goItem">
+                                <span data-v-a9660e98=""> ${list_orders.amount < 5 ? "Small" : "Big"} </span>
+                                <!---->
+                            </div>
+                        </div>
+                        <div data-v-a9660e98="" class="van-col van-col--6">
+                            <div data-v-a9660e98="" class="goItem c-row c-tc c-row-center">
+                                <div data-v-a9660e98="" class="c-tc c-row box c-row-center">
+                                    <span data-v-a9660e98="" class="li ${list_orders.amount % 2 == 0 ? "red" : "green"}"></span>
+                                    ${list_orders.amount == 0 || list_orders.amount == 5 ? '<span data-v-a9660e98="" class="li violet"></span>' : ""}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `);
+    });
+    $(`#list-orders`).html(htmls);
+    // $(`.game-list .con-box:eq(${x}) .hb .c-tc`).last().remove();
+}
+
+
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          var socket = io();
+let typeid = $('html').attr('data-change');
+let game = '';
+if (typeid == '1') game = 'wingo';
+if (typeid == '2') game = 'wingo3';
+if (typeid == '3') game = 'wingo5';
+if (typeid == '4') game = 'wingo10';
+$(`.container-fluid:eq(1) .row:eq(0) .info-box-content:eq(${Number(typeid) - 1}) .info-box-text`).css('color', '#e67e22');
+
+
+
 
 
 socket.on("data-server_2", function (msg) {
@@ -177,39 +268,7 @@ socket.on("data-server_2", function (msg) {
     $('.orderNumbers').attr('totalmoney', ns);
 });
 
-function showListOrder4(list_orders, x) {
-    let htmls = "";
-    let result = list_orders.map((list_orders) => {
-        return (htmls += `
-                    <div data-v-a9660e98="" class="c-tc item van-row">
-                        <div data-v-a9660e98="" class="van-col van-col--8">
-                            <div data-v-a9660e98="" class="c-tc goItem">${list_orders.period}</div>
-                        </div>
-                        <div data-v-a9660e98="" class="van-col van-col--5">
-                            <div data-v-a9660e98="" class="c-tc goItem">
-                                <!---->
-                                <span data-v-a9660e98="" class="${list_orders.amount % 2 == 0 ? "red" : "green"}"> ${list_orders.amount} </span>
-                            </div>
-                        </div>
-                        <div data-v-a9660e98="" class="van-col van-col--5">
-                            <div data-v-a9660e98="" class="c-tc goItem">
-                                <span data-v-a9660e98=""> ${list_orders.amount < 5 ? "Small" : "Big"} </span>
-                                <!---->
-                            </div>
-                        </div>
-                        <div data-v-a9660e98="" class="van-col van-col--6">
-                            <div data-v-a9660e98="" class="goItem c-row c-tc c-row-center">
-                                <div data-v-a9660e98="" class="c-tc c-row box c-row-center">
-                                    <span data-v-a9660e98="" class="li ${list_orders.amount % 2 == 0 ? "red" : "green"}"></span>
-                                    ${list_orders.amount == 0 || list_orders.amount == 5 ? '<span data-v-a9660e98="" class="li violet"></span>' : ""}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    `);
-    });
-    $(`#list-orders`).html(htmls);
-}
+
 
 
 socket.on("data-server", function (msg) {
@@ -228,6 +287,7 @@ socket.on("data-server", function (msg) {
         url: "/api/webapi/admin/totalJoin",
         data: {
             typeid: typeid,
+            authtoken:auth_token,
         },
         dataType: "json",
         success: function (response) {
@@ -322,40 +382,7 @@ socket.on("data-server", function (msg) {
         }
     });
 });
-function showListOrder3(list_orders, x) {
-    let htmls = "";
-    let result = list_orders.map((list_orders) => {
-        return (htmls += `
-                    <div data-v-a9660e98="" class="c-tc item van-row">
-                        <div data-v-a9660e98="" class="van-col van-col--8">
-                            <div data-v-a9660e98="" class="c-tc goItem">${list_orders.period}</div>
-                        </div>
-                        <div data-v-a9660e98="" class="van-col van-col--5">
-                            <div data-v-a9660e98="" class="c-tc goItem">
-                                <!---->
-                                <span data-v-a9660e98="" class="${list_orders.amount % 2 == 0 ? "red" : "green"}"> ${list_orders.amount} </span>
-                            </div>
-                        </div>
-                        <div data-v-a9660e98="" class="van-col van-col--5">
-                            <div data-v-a9660e98="" class="c-tc goItem">
-                                <span data-v-a9660e98=""> ${list_orders.amount < 5 ? "Small" : "Big"} </span>
-                                <!---->
-                            </div>
-                        </div>
-                        <div data-v-a9660e98="" class="van-col van-col--6">
-                            <div data-v-a9660e98="" class="goItem c-row c-tc c-row-center">
-                                <div data-v-a9660e98="" class="c-tc c-row box c-row-center">
-                                    <span data-v-a9660e98="" class="li ${list_orders.amount % 2 == 0 ? "red" : "green"}"></span>
-                                    ${list_orders.amount == 0 || list_orders.amount == 5 ? '<span data-v-a9660e98="" class="li violet"></span>' : ""}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    `);
-    });
-    $(`#list-orders`).html(htmls);
-    // $(`.game-list .con-box:eq(${x}) .hb .c-tc`).last().remove();
-}
+
 
 
 $.ajax({
@@ -363,6 +390,7 @@ $.ajax({
     url: "/api/webapi/admin/totalJoin",
     data: {
         typeid: typeid,
+        authtoken:auth_token,
     },
     dataType: "json",
     success: function (response) {
@@ -476,6 +504,7 @@ $('.start-order').click(function (e) {
                 type: 'change-wingo1',
                 value: value,
                 typeid: typeid,
+                authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
@@ -496,40 +525,13 @@ $('.start-order').click(function (e) {
     }
 });
 
-// $('.editWinRate').click(function (e) {
-//     e.preventDefault();
-//     let value = $('#editWinRate').val();
-//     let arr = value.split('|');
-//     for (let i = 0; i < arr.length; i++) {
-//         if (arr[i] == "" || arr[i].length > 1 || arr[i] != 0 && arr[i] != '1') {
-//             alert("Vui lòng nhập đúng định dạng (VD: 1|0|0|1|1)");
-//             return false;
-//         }
-//     }
-//     if (value != '') {
-//         $.ajax({
-//             type: "POST",
-//             url: "/api/webapi/admin/change",
-//             data: {
-//                 type: 'change-win_rate',
-//                 value: value,
-//                 typeid: typeid,
-//             },
-//             dataType: "json",
-//             success: function (response) {
-//                 Swal.fire(
-//                     'Good job!',
-//                     `${response.message}`,
-//                     'success'
-//                 );
-//                 $('#ketQua').text(`Next Result: ${value}`);
-//             }
-//         });
-//     } else {
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Oops...',
-//             text: 'Something went wrong!',
-//         })
-//     }
-// });
+	    });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+
+
+
