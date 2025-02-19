@@ -218,7 +218,7 @@ const initWebRouter = (app) => {
     router.get('/admin/manager/ctv/profile/:phone',  adminController.ctvProfilePage); // get info account
 
     router.get('/admin/manager/settings',  adminController.settings); // get info account
-    router.get('/admin/manager/listRedenvelops',  adminController.listRedenvelops); // get info account
+    router.post('/admin/manager/listRedenvelops',  adminController.listRedenvelops); // get info account
     router.post('/admin/manager/infoCtv',  adminController.infoCtv); // get info account
     router.post('/admin/manager/infoCtv/select',  adminController.infoCtv2); // get info account
     router.post('/admin/manager/settings/bank',  adminController.settingBank); // get info account
@@ -244,7 +244,7 @@ const initWebRouter = (app) => {
     router.get('/admin/manager/statistical',  adminController.statistical); // get info account
     router.get('/admin/member/info/:id',  adminController.infoMember);
     router.get('/api/webapi/admin/getLevelInfo',  adminController.getLevelInfo);
-    router.get('/api/webapi/admin/getSalary',  adminController.getSalary);
+    router.post('/api/webapi/admin/getSalary',  adminController.getSalary);
 
     router.post('/api/webapi/admin/updateLevel',  adminController.updateLevel); // get info account
     router.post('/api/webapi/admin/CreatedSalary',  adminController.CreatedSalary); // get info account

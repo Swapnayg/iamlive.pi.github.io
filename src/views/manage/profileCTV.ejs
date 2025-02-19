@@ -397,7 +397,12 @@
             </div>
             
     </div>
-    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/adminlte.min.js"></script>
     <script src="/js/admin/admin.js"></script>
@@ -426,136 +431,22 @@
             let seconds = formateT(date.getSeconds());
             return years + '/' + months + '/' + days + ' - ' + hours + ':' + minutes + ':' + seconds;
         }
-    </script>
-    <script>
-        const RenderMemberNews = (datas) => {
-            if (datas.length == 0) {
-                $('#list-mem-news').html(`
-                    <tr class="text-center">
-                    <td colspan="7">No Data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td>${data.id_user}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
-                    <td><b style="color: #e74c3c">${(data.total_money)}</b></td>
-                    <td class="project-state"><span class="badge badge-${(data.total_money > 0 ? 'success' : 'warning')}">${(data.total_money > 0 ? 'success' : 'pending')}</span></td>
-                    <td style="min-width: 110px;"><b>${data.ip_address}</b></td>
-                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-mem-news").html(html);
-        }
 
-        const RenderRechargeNews = (datas) => {
-            if (datas.length == 0) {
-                $('#list-recharge-news').html(`
-                    <tr class="text-center">
-                    <td colspan="7">no data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td>${data.id}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
-                    <td><b style="color: #e74c3c">${(data.money)}</b></td>
-                    <td class="project-state"><span class="badge badge-success">success</span></td>
-                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-recharge-news").html(html);
-        }
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
-        const RenderWithdrawNews = (datas) => {
-            if (datas.length == 0) {
-                $('#list-withdraw-news').html(`
-                    <tr class="text-center">
-                    <td colspan="7">no data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td>${data.id}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
-                    <td><b style="color: #e74c3c">${(data.money)}</b></td>
-                    <td class="project-state"><span class="badge badge-success">success</span></td>
-                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-withdraw-news").html(html);
-        }
-        
-        const redenvelopesUsed = (datas) => {
-            if (datas.length == 0) {
-                $('#list-details-news').html(`
-                    <tr class="text-center">
-                    <td colspan="7">no data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td>${data.id_redenvelops}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone_used}</td>
-                    <td><b style="color: #e74c3c">+${(data.money)}</b></td>
-                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-            });
-            $("#list-details-news").html(html);
-        }
-
-        const financial_details = (datas) => {
-            if (datas.length == 0) {
-                $('#financial_details').html(`
-                    <tr class="text-center">
-                    <td colspan="7">no data...</td>
-                    </tr>
-                `);
-                return;
-            }
-            let html = '';
-            datas.map((data) => {
-                html += 
-                `
-                <tr class="text-center" style="">
-                    <td>${data.id}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
-                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone_used}</td>
-                    <td><b style="color: #e74c3c">${(data.type == '1') ? '+' : '-'} ${(data.money)}</b></td>
-                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
-                </tr>
-                `;
-                $("#financial_details").html(html);
-            });
-        }
-    </script>
-    <script>
-        $('#sort-date').change(function (e) { 
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('#sort-date').change(function (e) { 
             e.preventDefault();
             let timeDate = $(this).val();
             $.ajax({
@@ -564,6 +455,7 @@
                 data: {
                     timeDate: timeDate,
                     phone: "<%=phone%>",
+                    authtoken:auth_token,
                 }, 
                 dataType: "json",
                 success: function (response) {
@@ -580,6 +472,7 @@
             url: "/admin/manager/infoCtv",
             data: {
                 phone: "<%=phone%>",
+                authtoken:auth_token,
             }, 
             dataType: "json",
             success: function (response) {
@@ -608,7 +501,140 @@
                 $('.moneyCTV').text((response.moneyCTV));
             }
         });
+	    });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+    </script>
+    <script>
+        function RenderMemberNews(datas) {
+            if (datas.length == 0) {
+                $('#list-mem-news').html(`
+                    <tr class="text-center">
+                    <td colspan="7">No Data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td>${data.id_user}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
+                    <td><b style="color: #e74c3c">${(data.total_money)}</b></td>
+                    <td class="project-state"><span class="badge badge-${(data.total_money > 0 ? 'success' : 'warning')}">${(data.total_money > 0 ? 'success' : 'pending')}</span></td>
+                    <td style="min-width: 110px;"><b>${data.ip_address}</b></td>
+                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-mem-news").html(html);
+        }
 
+        function RenderRechargeNews(datas){
+            if (datas.length == 0) {
+                $('#list-recharge-news').html(`
+                    <tr class="text-center">
+                    <td colspan="7">no data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td>${data.id}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
+                    <td><b style="color: #e74c3c">${(data.money)}</b></td>
+                    <td class="project-state"><span class="badge badge-success">success</span></td>
+                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-recharge-news").html(html);
+        }
+
+        function RenderWithdrawNews(datas) {
+            if (datas.length == 0) {
+                $('#list-withdraw-news').html(`
+                    <tr class="text-center">
+                    <td colspan="7">no data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td>${data.id}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
+                    <td><b style="color: #e74c3c">${(data.money)}</b></td>
+                    <td class="project-state"><span class="badge badge-success">success</span></td>
+                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-withdraw-news").html(html);
+        }
+        
+        function redenvelopesUsed(datas) {
+            if (datas.length == 0) {
+                $('#list-details-news').html(`
+                    <tr class="text-center">
+                    <td colspan="7">no data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td>${data.id_redenvelops}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone_used}</td>
+                    <td><b style="color: #e74c3c">+${(data.money)}</b></td>
+                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+            });
+            $("#list-details-news").html(html);
+        }
+
+        function financial_details(datas) {
+            if (datas.length == 0) {
+                $('#financial_details').html(`
+                    <tr class="text-center">
+                    <td colspan="7">no data...</td>
+                    </tr>
+                `);
+                return;
+            }
+            let html = '';
+            datas.map((data) => {
+                html += 
+                `
+                <tr class="text-center" style="">
+                    <td>${data.id}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone}</td>
+                    <td style="color: #3498db;font-weight: 600;min-width: 210px">${data.phone_used}</td>
+                    <td><b style="color: #e74c3c">${(data.type == '1') ? '+' : '-'} ${(data.money)}</b></td>
+                    <td style="min-width: 110px;"><b>${timerJoin(data.time)}</b></td>
+                </tr>
+                `;
+                $("#financial_details").html(html);
+            });
+        }
     </script>
 </body>
 

@@ -70,114 +70,144 @@
     </div>
     
   </div>
-  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/dist/js/adminlte.min.js"></script>
   <script src="/js/admin/admin.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
   <script>
-    function show(params) {
-      if (params.length == 0) {
-        $('tbody').html(`
-            <tr class="text-center">
-              <td colspan="7">No more data...</td>
-            </tr>
-          `);
-        return;
-      }
-      let html = '';
-      let show = params.map((data) => {
-        html += `<tr class="text-center">
-                  <td id="${data.id}">
-                    ${data.id}
-                  </td>
-                  <td>
-                    <b>${data.phone}</b>
-                  </td>
-                  <td>
-                    <b>${data.name_bank}</b>
-                  </td>
-                  <td style="min-width: 190px;">
-                    <b>${data.stk}</b>
-                  </td>
-                  <td style="min-width: 190px;">
-                    <b>${data.name_user}</b>
-                  </td>
-                  <td>
-                    <b>${(data.money)}</b>
-                  </td>
-                  <td class="project-state">
-                    <span class="badge badge-warning">Waiting...</span>
-                  </td>
-                  <td class="project-actions text-center" style="min-width: 160px;">
-                    <!-- xác nhận -->
-                    <a class="btn btn-success btn-sm confirm-btn" href="" data="${data.id}"><i class="fa fa-check"></i></a>
-                    <!-- ? -->
-                    <!-- <a class="btn btn-info btn-sm" href="#"><i class="fas fa-pencil-alt"></i></a> -->
-                    <!-- Xóa -->
-                    <a class="btn btn-danger btn-sm delete-btn" href="#" data="${data.id}"><i class="fas fa-trash"></i></a>
-                  </td>
-                </tr>`;
-              })
-          $('tbody').html(html);
-          $('.btn-success').click(function (e) { 
-            e.preventDefault();
-            let id = $(this).attr('data');
-            $.ajax({
-              type: "POST",
-              url: "/api/webapi/admin/withdraw",
-              data: {
-                id: id,
-                type: 'confirm'
-              },
-              dataType: "json",
-              success: function (response) {
-                Swal.fire(
-                  'Good job!',
-                  'Withdrawal Accepted Successfully!',
-                  'success'
-                )
-                setTimeout(() => {
-                  location.reload();
-                }, 100);
-              }
-            });
+
+    const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          function show(params) {
+            if (params.length == 0) {
+              $('tbody').html(`
+                  <tr class="text-center">
+                    <td colspan="7">No more data...</td>
+                  </tr>
+                `);
+              return;
+            }
+            let html = '';
+            let show = params.map((data) => {
+              html += `<tr class="text-center">
+                        <td id="${data.id}">
+                          ${data.id}
+                        </td>
+                        <td>
+                          <b>${data.phone}</b>
+                        </td>
+                        <td>
+                          <b>${data.name_bank}</b>
+                        </td>
+                        <td style="min-width: 190px;">
+                          <b>${data.stk}</b>
+                        </td>
+                        <td style="min-width: 190px;">
+                          <b>${data.name_user}</b>
+                        </td>
+                        <td>
+                          <b>${(data.money)}</b>
+                        </td>
+                        <td class="project-state">
+                          <span class="badge badge-warning">Waiting...</span>
+                        </td>
+                        <td class="project-actions text-center" style="min-width: 160px;">
+                          <!-- xác nhận -->
+                          <a class="btn btn-success btn-sm confirm-btn" href="" data="${data.id}"><i class="fa fa-check"></i></a>
+                          <!-- ? -->
+                          <!-- <a class="btn btn-info btn-sm" href="#"><i class="fas fa-pencil-alt"></i></a> -->
+                          <!-- Xóa -->
+                          <a class="btn btn-danger btn-sm delete-btn" href="#" data="${data.id}"><i class="fas fa-trash"></i></a>
+                        </td>
+                      </tr>`;
+                    })
+                $('tbody').html(html);
+                $('.btn-success').click(function (e) { 
+                  e.preventDefault();
+                  let id = $(this).attr('data');
+                  $.ajax({
+                    type: "POST",
+                    url: "/api/webapi/admin/withdraw",
+                    data: {
+                      id: id,
+                      type: 'confirm',
+                      authtoken:auth_token,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                      Swal.fire(
+                        'Good job!',
+                        'Withdrawal Accepted Successfully!',
+                        'success'
+                      )
+                      setTimeout(() => {
+                        location.reload();
+                      }, 100);
+                    }
+                  });
+                });
+                $('.btn-danger').click(function (e) { 
+                  e.preventDefault();
+                  let id = $(this).attr('data');
+                  $.ajax({
+                    type: "POST",
+                    url: "/api/webapi/admin/withdraw",
+                    data: {
+                      id: id,
+                      type: 'delete',
+                      authtoken:auth_token,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                      setTimeout(() => {
+                        location.reload();
+                      }, 100);
+                      Swal.fire(
+                        'Good job!',
+                        'Withdrawal Rejected Successfully!',
+                        'success'
+                      )
+                    }
+                  });
+                });
+          }
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/admin/recharge",
+            data: {
+              authtoken:auth_token,
+            },
+            dataType: "json",
+            success: function (response) {
+              show(response.datas3)
+            }
           });
-          $('.btn-danger').click(function (e) { 
-            e.preventDefault();
-            let id = $(this).attr('data');
-            $.ajax({
-              type: "POST",
-              url: "/api/webapi/admin/withdraw",
-              data: {
-                id: id,
-                type: 'delete'
-              },
-              dataType: "json",
-              success: function (response) {
-                setTimeout(() => {
-                  location.reload();
-                }, 100);
-                Swal.fire(
-                  'Good job!',
-                  'Withdrawal Rejected Successfully!',
-                  'success'
-                )
-              }
-            });
-          });
+		  });
     }
-    $.ajax({
-      type: "POST",
-      url: "/api/webapi/admin/recharge",
-      data: {
-        
-      },
-      dataType: "json",
-      success: function (response) {
-        show(response.datas3)
-      }
-    });
+catch (err) {
+    alert(err);
+}
+}
+auth();
+
   </script>
 </body>
 

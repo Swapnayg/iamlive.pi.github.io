@@ -119,7 +119,12 @@
             </div>
             
     </div>
-    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/adminlte.min.js"></script>
     <script src="/js/admin/admin.js"></script>
@@ -189,11 +194,37 @@
                 'success'
             );
         });
-        
-        $.ajax({
-            type: "GET",
+
+        $('select').change(function() {
+            var value = $('select :selected').val();
+            if (value == 2 || value == 3) {
+                $('.quantity').show();
+            } else {
+                $('#quantity').val("");
+                $('.quantity').hide();
+            }
+        });
+
+        const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
+            type: "POST",
             url: "/admin/manager/listRedenvelops",
-            // data: "",
+            data: {
+                authtoken:auth_token,
+            },
             dataType: "json",
             success: function (response) {
                 RenderMemberNews(response.redenvelopes);
@@ -211,6 +242,7 @@
                     data: {
                         money: money,
                         numberOfUsers: numberOfUsers,
+                        authtoken:auth_token,
                     },
                     dataType: "json",
                     success: function (response) {
@@ -224,15 +256,13 @@
                 alert("Please Enter The Amount");
             }
         });
-        $('select').change(function() {
-            var value = $('select :selected').val();
-            if (value == 2 || value == 3) {
-                $('.quantity').show();
-            } else {
-                $('#quantity').val("");
-                $('.quantity').hide();
-            }
-        });
+	    });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
     </script>
 </body>
 

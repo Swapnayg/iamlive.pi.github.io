@@ -124,16 +124,39 @@
             </div>
             
     </div>
-    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/dist/js/adminlte.min.js"></script>
     <script src="/js/admin/admin.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
-        $.ajax({
+
+        
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
             type: "POST",
             url: "/admin/manager/settings/get",
-            data: "data",
+            data: {
+                authtoken:auth_token,
+            },
             dataType: "json",
             success: function (response) {
                 let bank = response.datas[0];
@@ -163,6 +186,7 @@
                     params1: params1,
                     params2: params2,
                     typer: typer,
+                    authtoken:auth_token,
                 },
                 dataType: "json",
                 success: function (response) {
@@ -196,7 +220,8 @@
                     name: name,
                     info: info,
                     qr: qr,
-                    typer: typer
+                    typer: typer,
+                    authtoken:auth_token,
                 },
                 dataType: "json",
                 success: function (response) {
@@ -289,6 +314,7 @@
                     telegram: telegram,
                     cskh: cskh,
                     myapp_web: myapp_web,
+                    authtoken:auth_token,
                 },
                 dataType: "json",
                 success: function (response) {
@@ -321,6 +347,7 @@
                         id_user: id_user,
                         buff_acc: buff_acc,
                         money_value: money_value,
+                        authtoken:auth_token,
                     },
                     dataType: "json",
                     success: function (response) {
@@ -345,6 +372,14 @@
                 })
             }
         });
+	    });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+        
     </script>
 </body>
 

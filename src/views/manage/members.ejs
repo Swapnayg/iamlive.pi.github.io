@@ -91,7 +91,12 @@
         
       </div>
   </div> 
-  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/dist/js/adminlte.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
@@ -103,9 +108,8 @@
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
         });
     });
-  </script>
-  <script>
-    const Render = (datas) => {
+
+    function Render(datas){
       let html = '';
       datas.map((data) => {
         html += `
@@ -148,133 +152,159 @@
         </tr>`;
         $("tbody").html(html);
       });
-      $('.btn-danger').click(function (e) { 
-        e.preventDefault();
-        let check = confirm("Are you sure you want to lock this account ?");
-        let id = $(this).attr('id');
-        if (check) {
-          $.ajax({
-            type: "POST",
-            url: "/api/webapi/admin/banned",
-            data: {
-              id: id,
-              type: 'close'
-            },
-            dataType: "json",
-            success: function (response) {
-              alert(response.message);
-              location.reload();
-            }
-          });
-        }
-      });
+    };
+const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
       
-      $('.btn-info1').click(function (e) { 
-        e.preventDefault();
-        let check = confirm("Are you sure you want to unlock this account ?");
-        let id = $(this).attr('id');
-        if (check) {
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('.btn-danger').click(function (e) { 
+            e.preventDefault();
+            let check = confirm("Are you sure you want to lock this account ?");
+            let id = $(this).attr('id');
+            if (check) {
+              $.ajax({
+                type: "POST",
+                url: "/api/webapi/admin/banned",
+                data: {
+                  id: id,
+                  type: 'close',
+                  authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                  alert(response.message);
+                  location.reload();
+                }
+              });
+            }
+          });
+
+          $('.btn-info1').click(function (e) { 
+            e.preventDefault();
+            let check = confirm("Are you sure you want to unlock this account ?");
+            let id = $(this).attr('id');
+            if (check) {
+              $.ajax({
+                type: "POST",
+                url: "/api/webapi/admin/banned",
+                data: {
+                  id: id,
+                  type: 'open',
+                  authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                  alert(response.message);
+                  location.reload();
+                }
+              });
+            }
+          });
+          let pageno = 0;
+          let limit = 30;
+          let page = 1;
           $.ajax({
             type: "POST",
-            url: "/api/webapi/admin/banned",
+            url: "/api/webapi/admin/listMember",
             data: {
-              id: id,
-              type: 'open'
+              typeid: "1",
+              pageno: pageno,
+              limit: limit,
+              language: "vi",
+              authtoken:auth_token,
             },
             dataType: "json",
             success: function (response) {
-              alert(response.message);
-              location.reload();
-            }
+              $('#text-page').text(page + ' / ' + response.page_total);
+              if (response.status === true) return Render(response.datas);
+            },
           });
-        }
-      });
-
+          $('#search').keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            var value = $('#search').val().trim();
+            if(keycode == '13'){
+              $.ajax({
+                type: "POST",
+                url: "/api/webapi/search",
+                data: {
+                  phone: value,
+                  authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                  if (response.status === true) return Render(response.datas);
+                }
+              });
+            }
+      
+          });
+      
+          $('#next').click(function (e) {
+            pageno += limit;
+            e.preventDefault();
+            $.ajax({
+              type: "POST",
+              url: "/api/webapi/admin/listMember",
+              data: {
+                typeid: "1",
+                pageno: pageno,
+                limit: limit,
+                language: "vi",
+                authtoken:auth_token,
+              },
+              dataType: "json",
+              success: function (response) {
+                if(response.datas.length == 0) {
+                  $('#next').addClass('block-click');
+                  return pageno -= limit
+                };
+                $('#text-page').text(++page + ' / ' + response.page_total);
+                if (response.status === true) return Render(response.datas);
+              }
+            });
+          });
+          
+          $('#previous').click(function (e) { 
+            e.preventDefault();
+            $('#next').removeClass('block-click');
+            pageno -= limit;
+            if(pageno < 0) return pageno = 0;
+            $.ajax({
+              type: "POST",
+              url: "/api/webapi/admin/listMember",
+              data: {
+                typeid: "1",
+                pageno: pageno,
+                limit: limit,
+                language: "vi",
+                authtoken:auth_token,
+              },
+              dataType: "json",
+              success: function (response) {
+                $('#text-page').text(--page + ' / ' + response.page_total);
+                if (response.status === true) return Render(response.datas);
+              }
+            });
+          });
+		    });
     }
-
-    let pageno = 0;
-    let limit = 30;
-    let page = 1;
-    $.ajax({
-      type: "POST",
-      url: "/api/webapi/admin/listMember",
-      data: {
-        typeid: "1",
-        pageno: pageno,
-        limit: limit,
-        language: "vi",
-      },
-      dataType: "json",
-      success: function (response) {
-        $('#text-page').text(page + ' / ' + response.page_total);
-        if (response.status === true) return Render(response.datas);
-      },
-    });
-
-    $('#search').keypress(function(event){
-      var keycode = (event.keyCode ? event.keyCode : event.which);
-      var value = $('#search').val().trim();
-      if(keycode == '13'){
-        $.ajax({
-          type: "POST",
-          url: "/api/webapi/search",
-          data: {
-            phone: value,
-          },
-          dataType: "json",
-          success: function (response) {
-            if (response.status === true) return Render(response.datas);
-          }
-        });
-      }
-
-    });
-
-    $('#next').click(function (e) {
-      pageno += limit;
-      e.preventDefault();
-      $.ajax({
-        type: "POST",
-        url: "/api/webapi/admin/listMember",
-        data: {
-          typeid: "1",
-          pageno: pageno,
-          limit: limit,
-          language: "vi",
-        },
-        dataType: "json",
-        success: function (response) {
-          if(response.datas.length == 0) {
-            $('#next').addClass('block-click');
-            return pageno -= limit
-          };
-          $('#text-page').text(++page + ' / ' + response.page_total);
-          if (response.status === true) return Render(response.datas);
-        }
-      });
-    });
-    
-    $('#previous').click(function (e) { 
-      e.preventDefault();
-      $('#next').removeClass('block-click');
-      pageno -= limit;
-      if(pageno < 0) return pageno = 0;
-      $.ajax({
-        type: "POST",
-        url: "/api/webapi/admin/listMember",
-        data: {
-          typeid: "1",
-          pageno: pageno,
-          limit: limit,
-          language: "vi",
-        },
-        dataType: "json",
-        success: function (response) {
-          $('#text-page').text(--page + ' / ' + response.page_total);
-          if (response.status === true) return Render(response.datas);
-        }
-      });
-    });
+catch (err) {
+    alert(err);
+}
+}
+auth();
+  </script>
+  <script>
   </script>
 </body>
 

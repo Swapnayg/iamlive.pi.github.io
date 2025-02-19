@@ -129,6 +129,7 @@ async function auth() {
                 phone: phoneNumber,
                 amount: amount,
                 type: type,
+                authtoken:auth_token,
               },
               success: function (response) {
                 // Handle success, e.g., show a success message
@@ -153,8 +154,11 @@ async function auth() {
                     // Function to fetch and update the table data
                     function fetchAndUpdateTable() {
                       $.ajax({
-                        type: "GET",
+                        type: "POST",
                         url: "/api/webapi/admin/getSalary",
+                        data: {
+                          authtoken:auth_token,
+                        },
                         dataType: "json",
                         success: function (response) {
                           // Update the table with the new data

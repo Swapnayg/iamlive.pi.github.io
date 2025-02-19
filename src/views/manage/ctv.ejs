@@ -81,25 +81,131 @@
       </div>
       
   </div>
-  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/dist/js/adminlte.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
   <script src="/js/admin/admin.js"></script>
   <script>
+
+    const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
+
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $('.btn-danger').click(function (e) { 
+            e.preventDefault();
+            let check = confirm("Are you sure you want to lock this account ?");
+            let id = $(this).attr('id');
+            if (check) {
+              $.ajax({
+                type: "POST",
+                url: "/api/webapi/admin/banned",
+                data: {
+                  id: id,
+                  type: 'close',
+                  authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                  alert(response.message);
+                  location.reload();
+                }
+              });
+            }
+          });
+    
+          $('.btn-info1').click(function (e) { 
+            e.preventDefault();
+            let check = confirm("Are you sure you want to unlock this account ?");
+            let id = $(this).attr('id');
+            if (check) {
+              $.ajax({
+                type: "POST",
+                url: "/api/webapi/admin/banned",
+                data: {
+                  id: id,
+                  type: 'open',
+                  authtoken:auth_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                  alert(response.message);
+                  location.reload();
+                }
+              });
+            }
+          });
+    
+        
+    
+        $('#search').keypress(function(event){
+          var keycode = (event.keyCode ? event.keyCode : event.which);
+          var value = $('#search').val().trim();
+          if(keycode == '13'){
+            $.ajax({
+              type: "POST",
+              url: "/api/webapi/search",
+              data: {
+                phone: value,
+                authtoken:auth_token,
+              },
+              dataType: "json",
+              success: function (response) {
+                if (response.status === true) return Render(response.datas);
+              }
+            });
+          }
+    
+        });
+        $.ajax({
+          type: "POST",
+          url: "/api/webapi/admin/listctv",
+          data: {
+            typeid: "1",
+            pageno: pageno,
+            pageto: pageto,
+            language: "vi",
+            authtoken:auth_token,
+          },
+          dataType: "json",
+          success: function (response) {
+            if (response.status === true) return Render(response.datas);
+          },
+        
+		    });
+      });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
     $("#search").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $("tbody tr").filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
         });
     });
-  </script>
-  <script>
     var pageno = 0;
     var pageto = 30;
     var page = 1;
 
-    const Render = (datas) => {
+    function Render(datas){
       let html = '';
       datas.map((data) => {
         html += `
@@ -140,83 +246,9 @@
         </tr>`;
         $("tbody").html(html);
       });
-      $('.btn-danger').click(function (e) { 
-        e.preventDefault();
-        let check = confirm("Are you sure you want to lock this account ?");
-        let id = $(this).attr('id');
-        if (check) {
-          $.ajax({
-            type: "POST",
-            url: "/api/webapi/admin/banned",
-            data: {
-              id: id,
-              type: 'close'
-            },
-            dataType: "json",
-            success: function (response) {
-              alert(response.message);
-              location.reload();
-            }
-          });
-        }
-      });
-
-      $('.btn-info1').click(function (e) { 
-        e.preventDefault();
-        let check = confirm("Are you sure you want to unlock this account ?");
-        let id = $(this).attr('id');
-        if (check) {
-          $.ajax({
-            type: "POST",
-            url: "/api/webapi/admin/banned",
-            data: {
-              id: id,
-              type: 'open'
-            },
-            dataType: "json",
-            success: function (response) {
-              alert(response.message);
-              location.reload();
-            }
-          });
-        }
-      });
-
-    }
-
-    $('#search').keypress(function(event){
-      var keycode = (event.keyCode ? event.keyCode : event.which);
-      var value = $('#search').val().trim();
-      if(keycode == '13'){
-        $.ajax({
-          type: "POST",
-          url: "/api/webapi/search",
-          data: {
-            phone: value,
-          },
-          dataType: "json",
-          success: function (response) {
-            if (response.status === true) return Render(response.datas);
-          }
-        });
-      }
-
-    });
-    $.ajax({
-      type: "POST",
-      url: "/api/webapi/admin/listctv",
-      data: {
-        typeid: "1",
-        pageno: pageno,
-        pageto: pageto,
-        language: "vi",
-      },
-      dataType: "json",
-      success: function (response) {
-        if (response.status === true) return Render(response.datas);
-      },
-    });
+      };
   </script>
+
   <script src="/js/admin/tables.js"></script>
 </body>
 

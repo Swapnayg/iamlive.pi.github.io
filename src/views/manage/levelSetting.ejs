@@ -80,102 +80,112 @@
         
       </div>
   </div>
-  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="/js/client.js"></script>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/dist/js/adminlte.min.js"></script>
   <script src="/js/admin/admin.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
   <script>
-    //  $.ajax({
-    //         type: "GET",
-    //         url: "/api/webapi/admin/getLevelInfo",
-    //         data: "data",
-    //         dataType: "json",
-    //         success: function (response) {
-    //           docum
-    //         }
-    // })
-    $.ajax({
-      type: "GET",
-      url: "/api/webapi/admin/getLevelInfo",
-      dataType: "json", // Set dataType to "json" to automatically parse the JSON response
-      success: function (response) {
-        // Assuming response is an array of objects with data
-        if (Array.isArray(response.rows) && response.rows.length > 0) {
-          // Get the table body element where you want to display the data
-          var tableBody = $('#tableget').find('tbody'); // Replace 'yourTableId' with the actual ID of your table
 
-          // Clear any existing content in the table body
-          tableBody.empty();
+    const Pi = window.Pi;
+Pi.init({ version: "2.0", sandbox: '<%=sandbox%>' });
+async function auth() {
+  try {
+      
+      const scopes = ['username', 'payments', 'wallet_address'];
+      function onIncompletePaymentFound(payment) {
+          console.log("incomplete Transaction");
+      }; 
 
-          // Loop through the response data and append rows to the table body
-          response.rows.forEach(function (item) {
-            var row = '<tr>' +
-              // '<td>' + item.id + '</td>' + // Replace item.property1, item.property2, etc., with actual properties from your JSON response
-              '<td class="text-center">' + item.level + '</td>' +
-              '<td class="text-center"><input type="text" name = "f1" value="' + item.f1 + '"></td>' +
-              '<td class="text-center"><input type="text" name = "f2" value="' + item.f2 + '"></td>' +
-              '<td class="text-center"><input type="text" name = "f3" value="' + item.f3 + '"></td>' +
-              '<td class="text-center"><input type="text" name = "f4" value="' + item.f4 + '"></td>' +
-              '<td class="text-center"><a class="btn btn-success btn-sm confirm-btn" href="" data-id="' + item.id + '"><i class="fa-solid fa-arrows-rotate"></i></a></td>' +
-              // Add more columns as needed
-              '</tr>';
-            tableBody.append(row);
+      Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+          var username = auth.user.username;
+          var password = auth.user.uid;
+          var auth_token = auth.accessToken;
+          $.ajax({
+            type: "POST",
+            url: "/api/webapi/admin/getLevelInfo",
+            data: {
+              authtoken:auth_token,
+          },
+            dataType: "json", 
+            success: function (response) {
+              if (Array.isArray(response.rows) && response.rows.length > 0) {
+                var tableBody = $('#tableget').find('tbody');
+                tableBody.empty();
+                response.rows.forEach(function (item) {
+                  var row = '<tr>' +
+                    '<td class="text-center">' + item.level + '</td>' +
+                    '<td class="text-center"><input type="text" name = "f1" value="' + item.f1 + '"></td>' +
+                    '<td class="text-center"><input type="text" name = "f2" value="' + item.f2 + '"></td>' +
+                    '<td class="text-center"><input type="text" name = "f3" value="' + item.f3 + '"></td>' +
+                    '<td class="text-center"><input type="text" name = "f4" value="' + item.f4 + '"></td>' +
+                    '<td class="text-center"><a class="btn btn-success btn-sm confirm-btn" href="" data-id="' + item.id + '"><i class="fa-solid fa-arrows-rotate"></i></a></td>' +
+                    '</tr>';
+                  tableBody.append(row);
+                });
+              } else {
+                console.log('No data found or invalid response format');
+              }
+            },
+            error: function (xhr, status, error) {
+              console.log('Error fetching data:', error);
+            }
           });
-        } else {
-          console.log('No data found or invalid response format');
-        }
-      },
-      error: function (xhr, status, error) {
-        console.log('Error fetching data:', error);
-      }
-    });
-    // Assuming the button has the class "confirm-btn"
-    $('#tableget').on('click', '.confirm-btn', function (event) {
-      event.preventDefault();
-
-      // Get the row containing the clicked button
-      var row = $(this).closest('tr');
-
-      // Extract data from the input fields in that row
-      var id = $(this).data('id'); // Retrieve the 'id' from the data attribute
-
-      var f1 = row.find('input[name="f1"]').val();
-      var f2 = row.find('input[name="f2"]').val();
-      var f3 = row.find('input[name="f3"]').val();
-      var f4 = row.find('input[name="f4"]').val();
-
-      // Perform the update by making a POST request to the server
-      $.ajax({
-        type: "POST",
-        url: "/api/webapi/admin/updateLevel",
-        dataType: "json",
-        data: {
-          id: id,
-          f1: f1,
-          f2: f2,
-          f3: f3,
-          f4: f4
-        },
-        success: function (response) {
-          // Handle success, for example, show a success message to the user
-          console.log('Update successful:', response.message);
-          Swal.fire(
-            'UPDATED SUCCESSFULLY',
-            'success'
-          )
-        },
-        error: function (xhr, status, error) {
-          // Handle error, for example, show an error message to the user
-          console.log('Error updating data:', error);
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!",
+          $('#tableget').on('click', '.confirm-btn', function (event) {
+            event.preventDefault();
+            var row = $(this).closest('tr');
+            var id = $(this).data('id');
+      
+            var f1 = row.find('input[name="f1"]').val();
+            var f2 = row.find('input[name="f2"]').val();
+            var f3 = row.find('input[name="f3"]').val();
+            var f4 = row.find('input[name="f4"]').val();
+            $.ajax({
+              type: "POST",
+              url: "/api/webapi/admin/updateLevel",
+              dataType: "json",
+              data: {
+                id: id,
+                f1: f1,
+                f2: f2,
+                f3: f3,
+                f4: f4,
+                authtoken:auth_token,
+              },
+              success: function (response) {
+                // Handle success, for example, show a success message to the user
+                console.log('Update successful:', response.message);
+                Swal.fire(
+                  'UPDATED SUCCESSFULLY',
+                  'success'
+                )
+              },
+              error: function (xhr, status, error) {
+                // Handle error, for example, show an error message to the user
+                console.log('Error updating data:', error);
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Something went wrong!",
+                });
+              }
+            });
           });
-        }
-      });
-    });
+		        });
+    }
+catch (err) {
+    alert(err);
+}
+}
+auth();
+
+
+    
   </script>
 
 </body>
